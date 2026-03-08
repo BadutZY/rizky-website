@@ -6,7 +6,7 @@ interface Project {
   title: string;
   category: string;
   description: string;
-  filter: string;
+  filter: string;           // ← tetap ada (tidak mengganggu)
   link: string;
   fullDescription?: string;
   image?: string;
@@ -16,22 +16,6 @@ interface ProjectModalProps {
   project: Project | null;
   onClose: () => void;
 }
-
-const difficultyColor: Record<string, string> = {
-  basic: 'from-emerald-500 to-emerald-400',
-  intermediate: 'from-sky-500 to-sky-400',
-  advanced: 'from-amber-500 to-amber-400',
-  hard: 'from-orange-500 to-orange-400',
-  expert: 'from-rose-500 to-rose-400',
-};
-
-const difficultyLabel: Record<string, string> = {
-  basic: 'Basic',
-  intermediate: 'Intermediate',
-  advanced: 'Advanced',
-  hard: 'Hard',
-  expert: 'Expert',
-};
 
 const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -44,7 +28,6 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
     if (project) {
       document.body.style.overflow = 'hidden';
       window.addEventListener('keydown', handleEscape);
-      // Trigger enter animation
       requestAnimationFrame(() => setIsVisible(true));
     } else {
       setIsVisible(false);
@@ -62,9 +45,6 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
   };
 
   if (!project) return null;
-
-  const gradientClass = difficultyColor[project.filter] || difficultyColor.basic;
-  const label = difficultyLabel[project.filter] || 'Basic';
 
   return (
     <div
@@ -105,13 +85,6 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
             className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ${isVisible ? 'scale-100' : 'scale-110'}`}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
-
-          {/* Floating badges on image */}
-          <div className="absolute bottom-4 left-6 flex items-center gap-3">
-            <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r ${gradientClass} shadow-lg`}>
-              {label}
-            </div>
-          </div>
         </div>
 
         {/* Content */}

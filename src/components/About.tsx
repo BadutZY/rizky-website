@@ -139,12 +139,12 @@ const About = ({ onEasterEggUnlock, easterEggUnlocked }: AboutProps) => {
                   <p key="l3" className="pl-4 text-foreground-muted mt-1">
                     <span className="text-primary/80">passion</span>
                     <span className="text-foreground-muted">:</span>{' '}
-                    <span className="text-accent">"Building engaging websites & games"</span>,
+                    <span className="text-accent">"Building engaging websites & mods"</span>,
                   </p>,
                   <p key="l4" className="pl-4 text-foreground-muted mt-1">
-                    <span className="text-primary/80">motto</span>
+                    <span className="text-primary/80">quote</span>
                     <span className="text-foreground-muted">:</span>{' '}
-                    <span className="text-accent">"Every project is a new opportunity to grow"</span>
+                    <span className="text-accent">"Don't be afraid to fail. Be afraid not to try."</span>
                   </p>,
                   <p key="l5" className="text-green-400">{`}`}</p>,
                 ].map((line, i) => (

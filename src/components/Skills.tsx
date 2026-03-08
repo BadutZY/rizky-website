@@ -18,43 +18,43 @@ interface TagInfo {
 const techDescriptions: Record<string, { logo: string; description: string }> = {
   HTML: {
     logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg',
-    description: 'HyperText Markup Language — the standard language for structuring web pages and content.',
+    description: 'HyperText Markup Language (HTML) is the standard language for structuring web pages and content.',
   },
   CSS: {
     logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg',
-    description: 'Cascading Style Sheets — used to style and layout web pages with colors, fonts, and spacing.',
+    description: 'Cascading Style Sheets (CSS) is used to style and layout web pages with colors, fonts, and spacing.',
   },
   JavaScript: {
     logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg',
-    description: 'A versatile programming language for adding interactivity and dynamic behavior to websites.',
+    description: ' JavaScript (JS) is a versatile programming language for adding interactivity and dynamic behavior to websites.',
   },
   React: {
     logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg',
-    description: 'A popular JavaScript library by Meta for building fast, component-based user interfaces.',
+    description: 'React is a popular JavaScript library by Meta for building fast, component-based user interfaces.',
   },
   Tailwind: {
     logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg',
-    description: 'A utility-first CSS framework for rapidly building custom designs without writing custom CSS.',
+    description: 'Tailwind CSS is a utility-first CSS framework for rapidly building custom designs without writing custom CSS.',
   },
   Java: {
     logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg',
-    description: 'A robust, object-oriented programming language widely used for enterprise and Minecraft modding.',
+    description: 'Java is a robust, object-oriented programming language widely used for enterprise and Minecraft modding.',
   },
   Fabric: {
     logo: fabricIcon,
-    description: 'A lightweight modding toolchain for Minecraft, known for fast updates and performance.',
+    description: 'Fabric is a lightweight modding toolchain for Minecraft, known for fast updates and performance.',
   },
   Forge: {
     logo: forgeIcon,
-    description: 'A well-established Minecraft modding API with a large community and extensive mod support.',
+    description: 'Forge is a well-established Minecraft modding API with a large community and extensive mod support.',
   },
   Unity: {
     logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/unity/unity-original.svg',
-    description: 'A powerful cross-platform game engine used to create 2D and 3D games for all platforms.',
+    description: 'Unity is a powerful cross-platform game engine used to create 2D and 3D games for all platforms.',
   },
   'C#': {
     logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg',
-    description: 'A modern, object-oriented language by Microsoft, primarily used with Unity for game development.',
+    description: 'C Sharp (C#) is a modern, object-oriented language by Microsoft, primarily used with Unity for game development.',
   },
 };
 
@@ -68,12 +68,9 @@ const skills = [
     file: 'web-dev.ts',
     buildCode: (): CodeLine[] => [
       { content: <><span className="text-primary">interface</span> <span className="text-foreground font-semibold">WebDev</span> <span className="text-green-400">{'{'}</span></>, indent: 0 },
-      { content: '', indent: 0 },
       { content: <><span className="text-primary/80">frameworks</span><span className="text-foreground-muted">:</span> <span className="text-accent">["React", "Tailwind"]</span><span className="text-foreground-muted">;</span></>, indent: 1 },
       { content: <><span className="text-primary/80">languages</span><span className="text-foreground-muted">:</span> <span className="text-accent">["HTML", "CSS", "JS"]</span><span className="text-foreground-muted">;</span></>, indent: 1 },
-      { content: <><span className="text-primary/80">tools</span><span className="text-foreground-muted">:</span> <span className="text-accent">["VS Code", "Git"]</span><span className="text-foreground-muted">;</span></>, indent: 1 },
-      { content: <><span className="text-primary/80">level</span><span className="text-foreground-muted">:</span> <span className="text-accent">"Learning"</span><span className="text-foreground-muted">;</span></>, indent: 1 },
-      { content: '', indent: 0 },
+      { content: <><span className="text-primary/80">tools</span><span className="text-foreground-muted">:</span> <span className="text-accent">["VS Code"]</span><span className="text-foreground-muted">;</span></>, indent: 1 },
       { content: <span className="text-green-400">{'}'}</span>, indent: 0 },
     ],
   },
@@ -86,12 +83,10 @@ const skills = [
     file: 'mc-modding.java',
     buildCode: (): CodeLine[] => [
       { content: <><span className="text-primary">public class</span> <span className="text-foreground font-semibold">MinecraftMod</span> <span className="text-green-400">{'{'}</span></>, indent: 0 },
-      { content: '', indent: 0 },
-      { content: <><span className="text-primary/80">String</span> <span className="text-foreground">engine</span> <span className="text-foreground-muted">=</span> <span className="text-accent">"Fabric / Forge"</span><span className="text-foreground-muted">;</span></>, indent: 1 },
+      { content: <><span className="text-primary/80">String</span> <span className="text-foreground">engine</span> <span className="text-foreground-muted">=</span> <span className="text-accent">"Fabric", "Forge"</span><span className="text-foreground-muted">;</span></>, indent: 1 },
       { content: <><span className="text-primary/80">String</span> <span className="text-foreground">language</span> <span className="text-foreground-muted">=</span> <span className="text-accent">"Java"</span><span className="text-foreground-muted">;</span></>, indent: 1 },
-      { content: <><span className="text-primary/80">String</span> <span className="text-foreground">platform</span> <span className="text-foreground-muted">=</span> <span className="text-accent">"Modrinth"</span><span className="text-foreground-muted">;</span></>, indent: 1 },
-      { content: <><span className="text-primary/80">String</span> <span className="text-foreground">level</span> <span className="text-foreground-muted">=</span> <span className="text-accent">"Intermediate"</span><span className="text-foreground-muted">;</span></>, indent: 1 },
-      { content: '', indent: 0 },
+      { content: <><span className="text-primary/80">String</span> <span className="text-foreground">tools</span> <span className="text-foreground-muted">=</span> <span className="text-accent">"Intellij IDEA"</span><span className="text-foreground-muted">;</span></>, indent: 1 },
+      { content: <><span className="text-primary/80">String</span> <span className="text-foreground">platform</span> <span className="text-foreground-muted">=</span> <span className="text-accent">"Modrinth", "Curseforege"</span><span className="text-foreground-muted">;</span></>, indent: 1 },
       { content: <span className="text-green-400">{'}'}</span>, indent: 0 },
     ],
   },
@@ -104,12 +99,9 @@ const skills = [
     file: 'game-dev.cs',
     buildCode: (): CodeLine[] => [
       { content: <><span className="text-primary">public class</span> <span className="text-foreground font-semibold">GameDev</span> <span className="text-green-400">{'{'}</span></>, indent: 0 },
-      { content: '', indent: 0 },
       { content: <><span className="text-primary/80">string</span> <span className="text-foreground">engine</span> <span className="text-foreground-muted">=</span> <span className="text-accent">"Unity"</span><span className="text-foreground-muted">;</span></>, indent: 1 },
       { content: <><span className="text-primary/80">string</span> <span className="text-foreground">language</span> <span className="text-foreground-muted">=</span> <span className="text-accent">"C#"</span><span className="text-foreground-muted">;</span></>, indent: 1 },
       { content: <><span className="text-primary/80">string</span> <span className="text-foreground">genre</span> <span className="text-foreground-muted">=</span> <span className="text-accent">"PvP Co-op"</span><span className="text-foreground-muted">;</span></>, indent: 1 },
-      { content: <><span className="text-primary/80">string</span> <span className="text-foreground">level</span> <span className="text-foreground-muted">=</span> <span className="text-accent">"Beginner"</span><span className="text-foreground-muted">;</span></>, indent: 1 },
-      { content: '', indent: 0 },
       { content: <span className="text-green-400">{'}'}</span>, indent: 0 },
     ],
   },

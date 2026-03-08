@@ -46,7 +46,7 @@ const Footer = () => {
           <p className="text-muted-foreground text-sm flex items-center gap-1.5">
             © {currentYear} <span className="text-primary font-semibold">Rizky</span>
             <span className="text-muted-foreground/50">·</span>
-            Built with <Heart className="w-3.5 h-3.5 text-red-500 inline-block animate-pulse" /> and code
+            Built with <Heart className="w-3.5 h-3.5 text-red-500 inline-block animate-pulse" /> for Kimmy
           </p>
           <div className="flex items-center gap-4">
             {socialLinks.map((link) => {

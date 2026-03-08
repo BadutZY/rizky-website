@@ -108,11 +108,6 @@ const Contact = () => {
           </div>
         </div>
 
-        {/* Location hint */}
-        <div className={`flex items-center justify-center gap-2 text-sm text-muted-foreground transition-all duration-700 ${socialVisible ? 'opacity-100' : 'opacity-0'}`}>
-          <MapPin className="w-4 h-4 text-primary" />
-          <span>Based in Indonesia</span>
-        </div>
       </div>
     </section>
   );
