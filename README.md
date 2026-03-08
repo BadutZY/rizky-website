@@ -2,13 +2,12 @@
 
 Ikuti instruksinya:
 
-Step 1:
+```sh
+# Step 1
 Download project
 
-Step 2:
+# Step 2
 Buka project di VS Code
-
-```sh
 
 # Step 3
 npm i
