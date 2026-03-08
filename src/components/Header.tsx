@@ -70,9 +70,22 @@ const Header = () => {
   }, [activeSection]);
 
   useEffect(() => {
-    updateIndicator();
+    // Double rAF to ensure layout is fully settled after mount/fonts loaded
+    const raf1 = requestAnimationFrame(() => {
+      const raf2 = requestAnimationFrame(() => {
+        updateIndicator();
+      });
+      (raf1 as any)._raf2 = raf2;
+    });
+    // Also update after fonts are ready
+    document.fonts?.ready?.then(() => updateIndicator());
+    const timeout = setTimeout(updateIndicator, 200);
     window.addEventListener('resize', updateIndicator);
-    return () => window.removeEventListener('resize', updateIndicator);
+    return () => {
+      cancelAnimationFrame(raf1);
+      clearTimeout(timeout);
+      window.removeEventListener('resize', updateIndicator);
+    };
   }, [updateIndicator]);
 
   const handleNavClick = (e: React.MouseEvent<HTMLButtonElement>, href: string) => {

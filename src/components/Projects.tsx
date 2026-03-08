@@ -202,7 +202,7 @@ const Projects = () => {
             My <span className="text-gradient">Projects</span>
           </h2>
           <p className="text-muted-foreground max-w-lg mx-auto text-base md:text-lg">
-            A collection of projects I've built — from web apps to game mods, each crafted with passion.
+            A collection of projects I've built from web apps to mods for minecraft, each crafted with passion.
           </p>
         </div>
       </div>
@@ -267,7 +267,7 @@ const Projects = () => {
           >
             <SliderRow key={`row1-${activeFilter}`} items={row1} speed={0.4} direction="left" onSelectProject={setSelectedProject} />
           </div>
-          
+
           <div
             className={`transition-all duration-1000 ease-out ${slidersVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-32'}`}
             style={{ transitionDelay: slidersVisible ? '250ms' : '0ms' }}

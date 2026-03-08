@@ -107,60 +107,30 @@ const skills = [
   },
 ];
 
-const TechTag = ({ name, openTag, setOpenTag }: { name: string; openTag: string | null; setOpenTag: (v: string | null) => void }) => {
-  const isOpen = openTag === name;
+const TechTag = ({ name, isOpen, onToggle }: { name: string; isOpen: boolean; onToggle: () => void }) => {
   const info = techDescriptions[name];
-  const buttonRef = React.useRef<HTMLButtonElement>(null);
-  const [alignRight, setAlignRight] = React.useState(false);
-
-  const toggle = () => {
-    if (!isOpen && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      const dropdownWidth = 240;
-      // If not enough space on the right, align right
-      if (rect.left + dropdownWidth > window.innerWidth - 16) {
-        setAlignRight(true);
-      } else {
-        setAlignRight(false);
-      }
-    }
-    setOpenTag(isOpen ? null : name);
-  };
 
   return (
-    <div className="relative">
-      <button
-        ref={buttonRef}
-        onClick={toggle}
-        className="inline-flex items-center gap-1.5 px-2 md:px-3 py-1 md:py-1.5 text-[10px] md:text-xs font-medium rounded-lg bg-muted text-foreground border border-border/50 transition-all duration-300 hover:border-primary/40 hover:text-primary cursor-pointer"
-      >
-        {info && (
-          <img
-            src={info.logo}
-            alt={`${name} logo`}
-            className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0"
-          />
-        )}
-        <span>{name}</span>
-        {isOpen ? (
-          <ChevronDown className="w-2.5 h-2.5 md:w-3 md:h-3 text-primary transition-transform" />
-        ) : (
-          <ChevronRight className="w-2.5 h-2.5 md:w-3 md:h-3 text-primary transition-transform" />
-        )}
-      </button>
-
-      {isOpen && info && (
-        <div className={`absolute top-full mt-2 z-[100] w-56 md:w-64 p-3 rounded-lg bg-card border border-border shadow-lg animate-in fade-in-0 zoom-in-95 duration-200 ${alignRight ? 'right-0' : 'left-0'}`}>
-          <div className="flex items-center gap-2 mb-1.5">
-            <img src={info.logo} alt={`${name} logo`} className="w-4 h-4" />
-            <span className="text-xs font-semibold text-foreground">{name}</span>
-          </div>
-          <p className="text-[10px] md:text-[11px] leading-relaxed text-foreground-muted">
-            {info.description}
-          </p>
-        </div>
+    <button
+      onClick={onToggle}
+      className={`inline-flex items-center gap-1.5 px-2 md:px-3 py-1 md:py-1.5 text-[10px] md:text-xs font-medium rounded-lg bg-muted text-foreground border transition-all duration-300 hover:border-primary/40 hover:text-primary cursor-pointer ${
+        isOpen ? 'border-primary/60 text-primary' : 'border-border/50'
+      }`}
+    >
+      {info && (
+        <img
+          src={info.logo}
+          alt={`${name} logo`}
+          className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0"
+        />
       )}
-    </div>
+      <span>{name}</span>
+      {isOpen ? (
+        <ChevronDown className="w-2.5 h-2.5 md:w-3 md:h-3 text-primary transition-transform" />
+      ) : (
+        <ChevronRight className="w-2.5 h-2.5 md:w-3 md:h-3 text-primary transition-transform" />
+      )}
+    </button>
   );
 };
 
@@ -169,6 +139,7 @@ const Skills = () => {
   const { ref: contentRef, isVisible: contentVisible } = useScrollAnimation();
   const [activeTab, setActiveTab] = useState(0);
   const [openTag, setOpenTag] = useState<string | null>(null);
+  const [displayTag, setDisplayTag] = useState<string | null>(null);
   const [visibleLines, setVisibleLines] = useState(0);
   const [tabKey, setTabKey] = useState(0);
 
@@ -316,13 +287,49 @@ const Skills = () => {
                   </div>
                 </div>
 
-                {/* Tags with logos and dropdown */}
+                {/* Tags with logos and inline dropdown */}
                 <div>
                   <span className="text-[10px] md:text-[11px] uppercase tracking-wider text-foreground-muted/70 font-medium mb-2 block">Tech Stack</span>
                   <div className="flex flex-wrap gap-1.5 md:gap-2">
                     {active.tags.map((tag) => (
-                      <TechTag key={tag} name={tag} openTag={openTag} setOpenTag={setOpenTag} />
+                      <TechTag
+                        key={tag}
+                        name={tag}
+                        isOpen={openTag === tag}
+                        onToggle={() => {
+                          const newTag = openTag === tag ? null : tag;
+                          if (newTag) setDisplayTag(newTag);
+                          setOpenTag(newTag);
+                          // Clear displayTag after close animation
+                          if (!newTag) setTimeout(() => setDisplayTag(null), 300);
+                        }}
+                      />
                     ))}
+                  </div>
+                  {/* Inline description below tags with smooth animation */}
+                  <div
+                    className="overflow-hidden transition-all duration-300 ease-in-out"
+                    style={{
+                      maxHeight: openTag && techDescriptions[openTag] && active.tags.includes(openTag) ? '200px' : '0px',
+                      opacity: openTag && techDescriptions[openTag] && active.tags.includes(openTag) ? 1 : 0,
+                      marginTop: openTag && techDescriptions[openTag] && active.tags.includes(openTag) ? '12px' : '0px',
+                    }}
+                  >
+                    {(() => {
+                      const shownTag = openTag || displayTag;
+                      if (!shownTag || !techDescriptions[shownTag] || !active.tags.includes(shownTag)) return null;
+                      return (
+                        <div className="p-3 rounded-lg bg-muted/60 border border-border/50">
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <img src={techDescriptions[shownTag].logo} alt={`${shownTag} logo`} className="w-4 h-4" />
+                            <span className="text-xs font-semibold text-foreground">{shownTag}</span>
+                          </div>
+                          <p className="text-[10px] md:text-[11px] leading-relaxed text-foreground-muted">
+                            {techDescriptions[shownTag].description}
+                          </p>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>

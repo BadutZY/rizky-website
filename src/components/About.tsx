@@ -139,7 +139,7 @@ const About = ({ onEasterEggUnlock, easterEggUnlocked }: AboutProps) => {
                   <p key="l3" className="pl-4 text-foreground-muted mt-1">
                     <span className="text-primary/80">passion</span>
                     <span className="text-foreground-muted">:</span>{' '}
-                    <span className="text-accent">"Building engaging websites & mods"</span>,
+                    <span className="text-accent">"Building engaging websites & games"</span>,
                   </p>,
                   <p key="l4" className="pl-4 text-foreground-muted mt-1">
                     <span className="text-primary/80">quote</span>
