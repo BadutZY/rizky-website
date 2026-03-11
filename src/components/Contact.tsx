@@ -1,4 +1,4 @@
-import { Youtube, Instagram, Github, ArrowUpRight, Mail, MapPin } from 'lucide-react';
+import { Youtube, Instagram, Github, ArrowUpRight, Globe, MapPin } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useState } from 'react';
 
@@ -72,7 +72,6 @@ const Contact = () => {
 
   return (
     <section id="contact" className="relative overflow-hidden">
-      {/* Background decorations */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
         <div className="absolute bottom-40 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
@@ -80,10 +79,9 @@ const Contact = () => {
       </div>
 
       <div className="container relative z-10 py-16 md:py-24">
-        {/* Header */}
         <div ref={socialRef} className="text-center mb-12">
           <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 mb-6 transition-all duration-700 ${socialVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            <Mail className="w-4 h-4 text-primary" />
+            <Globe className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-primary">Get In Touch</span>
           </div>
           <h2 className={`text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 transition-all duration-700 delay-100 ${socialVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
@@ -94,20 +92,17 @@ const Contact = () => {
           </p>
         </div>
 
-        {/* Social grid */}
         <div className="max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-4">
           {gridSocialLinks.map((link, i) => (
             <SocialCard key={link.label} link={link} index={i} isVisible={socialVisible} />
           ))}
         </div>
 
-        {/* GitHub centered */}
         <div className="max-w-2xl mx-auto flex justify-center mb-16">
           <div className="w-full sm:w-[calc(50%-0.5rem)]">
             <SocialCard link={githubLink} index={gridSocialLinks.length} isVisible={socialVisible} />
           </div>
         </div>
-
       </div>
     </section>
   );

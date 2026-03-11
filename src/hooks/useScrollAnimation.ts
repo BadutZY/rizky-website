@@ -31,12 +31,12 @@ export const useActiveSection = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['home', 'about', 'skills', 'projects', 'contact'];
+      const baseSections = ['home', 'about', 'skills', 'projects', 'equipment', 'wife', 'contact'];
+      const sections = baseSections.filter(id => document.getElementById(id));
       const scrollPosition = window.scrollY + window.innerHeight / 3;
 
-      // If near bottom of page, activate last section
       if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 100) {
-        setActiveSection('contact');
+        setActiveSection(sections[sections.length - 1] || 'contact');
         return;
       }
 
@@ -44,7 +44,11 @@ export const useActiveSection = () => {
         const element = document.getElementById(sections[i]);
         if (element) {
           if (scrollPosition >= element.offsetTop) {
-            setActiveSection(sections[i]);
+            if (sections[i] === 'wife') {
+              setActiveSection('');
+            } else {
+              setActiveSection(sections[i]);
+            }
             break;
           }
         }
@@ -52,6 +56,7 @@ export const useActiveSection = () => {
     };
 
     window.addEventListener('scroll', handleScroll);
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 

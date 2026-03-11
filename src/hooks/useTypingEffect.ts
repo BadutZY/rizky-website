@@ -44,7 +44,6 @@ export const useScrollTypingEffect = (text: string, isVisible: boolean, speed = 
     let currentIndex = 0;
 
     if (isVisible && !prevVisible.current) {
-      // Reset and start typing when section becomes visible
       setDisplayText('');
       setIsTyping(true);
       setIsComplete(false);

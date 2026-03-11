@@ -1,13 +1,13 @@
-## Silahkan clone jika ingin menggunakan code ini
+## To clone a website, follow the instructions below.
 
-Ikuti instruksinya:
+Follow the instructions:
 
 ```sh
 # Step 1
 Download project
 
 # Step 2
-Buka project di VS Code
+Open project in VS Code
 
 # Step 3
 npm i
@@ -16,7 +16,7 @@ npm i
 npm run dev
 ```
 
-Project ini dibuat menggunakan:
+This project was created using:
 
 - Vite
 - TypeScript

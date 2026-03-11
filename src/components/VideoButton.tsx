@@ -21,15 +21,11 @@ const VideoButton = ({ visible }: VideoButtonProps) => {
     } else {
       setIsVisible(false);
     }
-    return () => {
-      document.body.style.overflow = '';
-    };
+    return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleClose();
-    };
+    const handleEscape = (e: KeyboardEvent) => { if (e.key === 'Escape') handleClose(); };
     if (isOpen) window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
   }, [isOpen]);
@@ -53,48 +49,15 @@ const VideoButton = ({ visible }: VideoButtonProps) => {
         }}
         aria-label="Watch video"
       >
-        <Play
-          size={16}
-          className="text-muted-foreground transition-all duration-300 ml-0.5"
-          style={{
-            color: isHovered ? 'hsl(var(--primary))' : undefined,
-            filter: isHovered ? 'drop-shadow(0 0 6px hsl(var(--primary) / 0.4))' : 'none',
-          }}
-        />
+        <Play size={16} className="text-muted-foreground transition-all duration-300 ml-0.5" style={{ color: isHovered ? 'hsl(var(--primary))' : undefined, filter: isHovered ? 'drop-shadow(0 0 6px hsl(var(--primary) / 0.4))' : 'none' }} />
       </button>
 
       {isOpen && createPortal(
-        <div
-          className="fixed inset-0 flex items-center justify-center p-4 sm:p-6 md:p-12"
-          style={{ zIndex: 9999 }}
-          role="dialog"
-          aria-modal="true"
-        >
-          {/* Backdrop with animation */}
-          <div
-            className={`absolute inset-0 bg-background/90 backdrop-blur-xl transition-opacity duration-500 ${
-              isVisible ? 'opacity-100' : 'opacity-0'
-            }`}
-            onClick={handleClose}
-          />
-
-          {/* Modal card with animation */}
-          <div
-            className={`relative w-full max-w-4xl transition-all duration-500 ease-out ${
-              isVisible
-                ? 'opacity-100 scale-100 translate-y-0'
-                : 'opacity-0 scale-95 translate-y-6'
-            }`}
-          >
-            {/* Glow behind card */}
-            <div
-              className={`absolute -inset-3 rounded-3xl bg-primary/10 blur-2xl transition-opacity duration-700 ${
-                isVisible ? 'opacity-100' : 'opacity-0'
-              }`}
-            />
-
+        <div className="fixed inset-0 flex items-center justify-center p-4 sm:p-6 md:p-12" style={{ zIndex: 9999 }} role="dialog" aria-modal="true">
+          <div className={`absolute inset-0 bg-background/90 backdrop-blur-xl transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`} onClick={handleClose} />
+          <div className={`relative w-full max-w-4xl transition-all duration-500 ease-out ${isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-6'}`}>
+            <div className={`absolute -inset-3 rounded-3xl bg-primary/10 blur-2xl transition-opacity duration-700 ${isVisible ? 'opacity-100' : 'opacity-0'}`} />
             <div className="relative bg-card border border-border/50 rounded-2xl shadow-2xl overflow-hidden">
-              {/* Header */}
               <div className="flex items-center justify-between px-5 py-3.5 border-b border-border/30 bg-muted/30">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1.5">
@@ -104,19 +67,12 @@ const VideoButton = ({ visible }: VideoButtonProps) => {
                   </div>
                   <h3 className="text-xs font-medium text-muted-foreground font-mono">secret-video.mp4</h3>
                 </div>
-                <button
-                  onClick={handleClose}
-                  className="p-2 rounded-xl bg-background/60 border border-border/50 text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 group"
-                  aria-label="Close video"
-                >
+                <button onClick={handleClose} className="p-2 rounded-xl bg-background/60 border border-border/50 text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 group" aria-label="Close video">
                   <X className="w-4 h-4 transition-transform duration-300 group-hover:rotate-90" />
                 </button>
               </div>
-
-              {/* Video area */}
               <div className="p-4 sm:p-5">
                 <div className="relative w-full rounded-xl overflow-hidden bg-muted/50" style={{ aspectRatio: '16/9' }}>
-                  {/* Loading spinner */}
                   {isLoading && (
                     <div className="absolute inset-0 flex items-center justify-center z-10">
                       <Loader2 className="w-8 h-8 text-primary animate-spin" />
@@ -130,9 +86,6 @@ const VideoButton = ({ visible }: VideoButtonProps) => {
                     allowFullScreen
                     title="Secret Video"
                     onLoad={() => setIsLoading(false)}
-                    style={{
-                      /* Hint mobile browsers to use landscape when fullscreen */
-                    }}
                   />
                 </div>
               </div>
@@ -142,25 +95,13 @@ const VideoButton = ({ visible }: VideoButtonProps) => {
         document.body
       )}
 
-      {/* CSS for mobile fullscreen landscape hint */}
       <style>{`
         @media (max-width: 768px) {
-          iframe[title="Secret Video"]:-webkit-full-screen {
-            width: 100vw !important;
-            height: 100vh !important;
-          }
-          iframe[title="Secret Video"]:fullscreen {
-            width: 100vw !important;
-            height: 100vh !important;
-          }
+          iframe[title="Secret Video"]:-webkit-full-screen { width: 100vw !important; height: 100vh !important; }
+          iframe[title="Secret Video"]:fullscreen { width: 100vw !important; height: 100vh !important; }
         }
         @media screen and (orientation: portrait) and (max-width: 768px) {
-          iframe[title="Secret Video"]:-webkit-full-screen {
-            transform: rotate(90deg);
-            transform-origin: center center;
-            width: 100vh !important;
-            height: 100vw !important;
-          }
+          iframe[title="Secret Video"]:-webkit-full-screen { transform: rotate(90deg); transform-origin: center center; width: 100vh !important; height: 100vw !important; }
         }
       `}</style>
     </>

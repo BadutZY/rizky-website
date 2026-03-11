@@ -9,4 +9,3 @@ export const useEasterEgg = () => {
 
   return { isUnlocked, unlock };
 };
-

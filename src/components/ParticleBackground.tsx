@@ -43,14 +43,9 @@ const ParticleBackground = () => {
 
     const drawParticle = (particle: Particle) => {
       if (!ctx) return;
-
-      const gradient = ctx.createRadialGradient(
-        particle.x, particle.y, 0,
-        particle.x, particle.y, particle.size * 2
-      );
+      const gradient = ctx.createRadialGradient(particle.x, particle.y, 0, particle.x, particle.y, particle.size * 2);
       gradient.addColorStop(0, `hsla(30, 100%, 50%, ${particle.opacity})`);
       gradient.addColorStop(1, 'hsla(30, 100%, 50%, 0)');
-
       ctx.beginPath();
       ctx.arc(particle.x, particle.y, particle.size * 2, 0, Math.PI * 2);
       ctx.fillStyle = gradient;
@@ -59,14 +54,12 @@ const ParticleBackground = () => {
 
     const connectParticles = () => {
       if (!ctx) return;
-
       const particles = particlesRef.current;
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const distance = Math.sqrt(dx * dx + dy * dy);
-
           if (distance < 150) {
             const opacity = (1 - distance / 150) * 0.2;
             ctx.beginPath();
@@ -82,73 +75,50 @@ const ParticleBackground = () => {
 
     const animate = () => {
       if (!ctx || !canvas) return;
-
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       particlesRef.current.forEach((particle) => {
         const mouseX = mouseRef.current.x;
         const mouseY = mouseRef.current.y + scrollRef.current;
         const dx = mouseX - particle.x;
         const dy = mouseY - particle.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-
         if (distance < 100) {
           const force = (100 - distance) / 100;
           particle.x -= dx * force * 0.02;
           particle.y -= dy * force * 0.02;
         }
-
         particle.x += particle.speedX;
         particle.y += particle.speedY;
-
         if (particle.x < 0) particle.x = canvas.width;
         if (particle.x > canvas.width) particle.x = 0;
         if (particle.y < 0) particle.y = canvas.height;
         if (particle.y > canvas.height) particle.y = 0;
-
         drawParticle(particle);
       });
-
       connectParticles();
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseRef.current = { x: e.clientX, y: e.clientY };
-    };
-
-    const handleScroll = () => {
-      scrollRef.current = window.scrollY;
-    };
+    const handleMouseMove = (e: MouseEvent) => { mouseRef.current = { x: e.clientX, y: e.clientY }; };
+    const handleScroll = () => { scrollRef.current = window.scrollY; };
 
     resizeCanvas();
     createParticles();
     animate();
 
-    window.addEventListener('resize', () => {
-      resizeCanvas();
-      createParticles();
-    });
+    window.addEventListener('resize', () => { resizeCanvas(); createParticles(); });
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
       window.removeEventListener('resize', resizeCanvas);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none z-0"
-      aria-hidden="true"
-    />
-  );
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" aria-hidden="true" />;
 };
 
 export default ParticleBackground;
