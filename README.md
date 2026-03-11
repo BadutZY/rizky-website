@@ -7,7 +7,7 @@ Follow the instructions:
 Download project
 
 # Step 2
-Open project in VS Code
+Open project in Visual Studio Code
 
 # Step 3
 npm i
