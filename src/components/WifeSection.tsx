@@ -94,7 +94,6 @@ const WifeSection = () => {
     }
   }, [codeVisible, codeOpen]);
 
-  // Auto-close code dropdown when scrolling away from wife section
   useEffect(() => {
     if (!codeOpen) return;
     const observer = new IntersectionObserver(
@@ -278,7 +277,7 @@ const WifeSection = () => {
               ))}
             </div>
             <p className="text-center text-sm text-muted-foreground mt-3">
-              Gallery of{' '}<a href="https://jkt48.com/member/detail/id/293" target="_blank" rel="noopener noreferrer" className="text-primary font-medium hover:underline">Kimmy</a>
+              Gallery of{' '}<a href="https://jkt48.com/member/detail?member=victoria-kimberly-244&type=JKT48" target="_blank" rel="noopener noreferrer" className="text-primary font-medium hover:underline">Kimmy</a>
             </p>
           </div>
         </div>
