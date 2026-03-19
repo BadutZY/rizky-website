@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Cpu, MonitorSpeaker, MemoryStick, HardDrive, Zap, CircuitBoard, Box, Fan, ChevronRight, Terminal, Monitor, Keyboard, Mouse, Headphones } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import ImageWithSkeleton from '@/components/ImageWithSkeleton';
+import setupImg from '@/assets/setup.jpeg';
 
 interface SpecItem { icon: typeof Cpu; label: string; value: string; detail?: string; color: string; }
 
@@ -60,7 +62,7 @@ const Equipment = () => {
       <div className="container mx-auto px-5 sm:px-4 relative z-10">
         <div ref={sectionRef} className={`fade-in ${sectionVisible ? 'show' : ''} text-center mb-12`}>
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 mb-6">
-            <Cpu className="w-4 h-4 text-primary" /><span className="text-sm font-medium text-primary">Secret Unlocked</span>
+            <Cpu className="w-4 h-4 text-primary" /><span className="text-sm font-medium text-primary">Battle Station</span>
           </div>
           <h2 id="equipment-title" className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">My <span className="text-gradient">Equipment</span></h2>
           <p className="text-muted-foreground max-w-xl mx-auto text-sm md:text-base">The battle station behind every line of code.</p>
@@ -125,7 +127,20 @@ const Equipment = () => {
           })}
         </div>
 
-        <div className={`mt-10 transition-all duration-700 ${showSpecs ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: showSpecs ? '800ms' : '0ms' }}>
+        {/* Setup Photo */}
+        <div className={`mt-12 transition-all duration-700 ${showSpecs ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: showSpecs ? '600ms' : '0ms' }}>
+          <div className="max-w-3xl mx-auto rounded-2xl overflow-hidden border border-border/40 bg-card/40 backdrop-blur-sm shadow-card">
+            <div className="relative">
+              <ImageWithSkeleton src={setupImg} alt="My setup" className="w-full h-auto object-contain" skeletonClassName="rounded-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-4 bg-card/80 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-border/30">
+                <span className="text-xs font-mono text-foreground">my_setup.jpg</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className={`mt-6 transition-all duration-700 ${showSpecs ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: showSpecs ? '800ms' : '0ms' }}>
           <div className="bg-card/40 backdrop-blur-sm rounded-xl border border-border/30 p-5">
             <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs font-mono text-muted-foreground">
               <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" /><span>System Status: <span className="text-foreground font-semibold">Online</span></span></div>

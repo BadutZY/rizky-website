@@ -27,37 +27,39 @@ export const useScrollAnimation = <T extends HTMLElement = HTMLDivElement>(thres
 };
 
 export const useActiveSection = () => {
-  const [activeSection, setActiveSection] = useState('home');
+  const [activeSection, setActiveSection] = useState('hero');
 
   useEffect(() => {
-    const handleScroll = () => {
-      const baseSections = ['home', 'about', 'skills', 'projects', 'equipment', 'wife', 'contact'];
-      const sections = baseSections.filter(id => document.getElementById(id));
-      const scrollPosition = window.scrollY + window.innerHeight / 3;
+    const sectionIds = ['hero', 'about', 'skills', 'projects', 'equipment', 'wife', 'contact'];
+    const sections = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((section): section is HTMLElement => Boolean(section));
 
-      if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 100) {
-        setActiveSection(sections[sections.length - 1] || 'contact');
-        return;
-      }
+    if (!sections.length) return;
 
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const element = document.getElementById(sections[i]);
-        if (element) {
-          if (scrollPosition >= element.offsetTop) {
-            if (sections[i] === 'wife') {
-              setActiveSection('');
-            } else {
-              setActiveSection(sections[i]);
-            }
-            break;
-          }
+    const scrollContainer = document.querySelector('.fp-container');
+    const root = scrollContainer instanceof HTMLElement ? scrollContainer : null;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const mostVisible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (mostVisible?.target?.id) {
+          setActiveSection(mostVisible.target.id);
         }
+      },
+      {
+        root,
+        threshold: [0.35, 0.55, 0.75],
       }
-    };
+    );
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    sections.forEach((section) => observer.observe(section));
+    setActiveSection(sections[0].id);
+
+    return () => observer.disconnect();
   }, []);
 
   return activeSection;

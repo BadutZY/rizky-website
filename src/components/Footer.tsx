@@ -29,8 +29,8 @@ const socialLinks = [
   { icon: Youtube, href: 'https://www.youtube.com/@badutzy', label: 'YouTube' },
   { icon: Instagram, href: 'https://www.instagram.com/rzky.mp_36/', label: 'Instagram' },
   { icon: XIcon, href: 'https://x.com/BadutZYY_', label: 'X', isCustomIcon: true },
-  { icon: ModrinthIcon, href: 'https://modrinth.com/user/BadutZY', label: 'Modrinth', isCustomIcon: true },
   { icon: TikTokIcon, href: 'https://www.tiktok.com/@badutzy._', label: 'TikTok', isCustomIcon: true },
+  { icon: ModrinthIcon, href: 'https://modrinth.com/user/BadutZY', label: 'Modrinth', isCustomIcon: true },
   { icon: CurseForgeIcon, href: 'https://www.curseforge.com/members/badutzy', label: 'CurseForge', isCustomIcon: true },
   { icon: Github, href: 'https://github.com/BadutZY', label: 'GitHub' },
 ];
@@ -41,7 +41,7 @@ const Footer = () => {
 
   return (
     <footer role="contentinfo" className="border-t border-border/50 bg-card/30 backdrop-blur-sm">
-      <div ref={bottomRef} className="container py-6">
+      <div ref={bottomRef} className="container mx-auto px-6 md:px-10 lg:px-20 py-6">
         <div className={`flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-700 ${bottomVisible ? 'opacity-100' : 'opacity-0'}`}>
           <p className="text-muted-foreground text-sm flex items-center gap-1.5">
             © {currentYear} <span className="text-primary font-semibold">Rizky</span>
@@ -52,14 +52,8 @@ const Footer = () => {
             {socialLinks.map((link) => {
               const Icon = link.icon;
               return (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-300"
-                  aria-label={link.label}
-                >
+                <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-300" aria-label={link.label}>
                   <Icon className="w-4 h-4" />
                 </a>
               );

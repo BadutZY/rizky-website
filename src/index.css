@@ -202,3 +202,92 @@
 ::-webkit-scrollbar-track { @apply bg-background; }
 ::-webkit-scrollbar-thumb { @apply bg-muted rounded-full; }
 ::-webkit-scrollbar-thumb:hover { @apply bg-muted-foreground; }
+
+/* Skeleton shimmer animation */
+@keyframes skeletonShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Cinematic theme transition */
+.theme-transitioning,
+.theme-transitioning *,
+.theme-transitioning *::before,
+.theme-transitioning *::after {
+  transition: background-color 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+              fill 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+              stroke 0.7s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* ═══════════ FullPage Smooth Scroll ═══════════ */
+.fp-container {
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scroll-snap-type: y mandatory;
+  scroll-padding-top: 0;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
+  scroll-timeline: --scroll-timeline block;
+}
+
+.fp-section {
+  height: 100vh;
+  height: 100dvh;
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+  position: relative;
+  contain: layout style paint;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fp-container {
+    scroll-behavior: auto;
+  }
+}
+
+/* Legacy class support */
+.fullpage-section {
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+}
+
+/* Subtle separator between sections */
+.fp-section + .fp-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, hsl(var(--border) / 0.3), transparent);
+  z-index: 2;
+}
+
+/* Page transition */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(30px) scale(0.98);
+}
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-30px) scale(0.98);
+  transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}

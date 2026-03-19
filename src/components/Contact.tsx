@@ -1,4 +1,4 @@
-import { Youtube, Instagram, Github, ArrowUpRight, Globe, MapPin } from 'lucide-react';
+import { Youtube, Instagram, Github, ArrowUpRight, Globe } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useState } from 'react';
 
@@ -62,43 +62,38 @@ const SocialCard = ({ link, index, isVisible, className }: { link: typeof gridSo
       <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${isHovered ? 'bg-primary/10 text-primary translate-x-0 opacity-100' : 'opacity-0 -translate-x-2'}`}>
         <ArrowUpRight className="w-4 h-4" />
       </div>
-      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-r from-transparent via-primary/[0.02] to-transparent" />
     </a>
   );
 };
 
 const Contact = () => {
+  const { ref: sectionRef, isVisible: sectionVisible } = useScrollAnimation(0.1, true);
   const { ref: socialRef, isVisible: socialVisible } = useScrollAnimation(0.1, true);
 
   return (
-    <section id="contact" className="relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-        <div className="absolute bottom-40 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute top-20 right-1/4 w-48 h-48 bg-primary/3 rounded-full blur-3xl" />
-      </div>
-
-      <div className="container relative z-10 py-16 md:py-24">
-        <div ref={socialRef} className="text-center mb-12">
-          <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 mb-6 transition-all duration-700 ${socialVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            <Globe className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">Get In Touch</span>
+    <section id="contact" className="py-20 md:py-32 relative overflow-hidden">
+      {/* Section Banner */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-20 mb-16 md:mb-24">
+        <div ref={sectionRef} className={`rounded-3xl overflow-hidden border border-border/30 bg-card/30 p-8 md:p-12 lg:p-16 text-center transition-all duration-700 ${sectionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 italic">Get In Touch</h2>
+          <div className="flex gap-1 justify-center mb-6">
+            <div className="w-12 h-1 rounded-full bg-primary" />
+            <div className="w-6 h-1 rounded-full bg-primary/50" />
           </div>
-          <h2 className={`text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 transition-all duration-700 delay-100 ${socialVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            Connect <span className="text-gradient">With Me</span>
-          </h2>
-          <p className={`text-muted-foreground max-w-md mx-auto text-sm md:text-base transition-all duration-700 delay-200 ${socialVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <p className="text-muted-foreground max-w-md mx-auto text-base md:text-lg leading-relaxed">
             Feel free to reach out through any of my social platforms. I'm always open to new connections!
           </p>
         </div>
+      </div>
 
+      {/* Social Grid */}
+      <div ref={socialRef} className="container mx-auto px-6 md:px-10 lg:px-20">
         <div className="max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-4">
           {gridSocialLinks.map((link, i) => (
             <SocialCard key={link.label} link={link} index={i} isVisible={socialVisible} />
           ))}
         </div>
-
-        <div className="max-w-2xl mx-auto flex justify-center mb-16">
+        <div className="max-w-2xl mx-auto flex justify-center">
           <div className="w-full sm:w-[calc(50%-0.5rem)]">
             <SocialCard link={githubLink} index={gridSocialLinks.length} isVisible={socialVisible} />
           </div>
