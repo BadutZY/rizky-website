@@ -11,7 +11,7 @@ import jktImg from "@/assets/project/jkt48-website.png";
 import fritzyImg from "@/assets/project/fritzy-force-website.png";
 import taskImg from "@/assets/project/task-manager.png";
 import classImg from "@/assets/project/class-website.png";
-import portoImg from "@/assets/project/portofolio.png";
+import portoImg from "@/assets/project/rizky-website.png";
 import fritzyF from "@/assets/project/fritzyforce-website.png";
 import CurseF from "@/assets/project/curseforge.png";
 
@@ -23,7 +23,7 @@ const projects = [
   { id: 5, title: 'Fritzy Force', category: 'Website', lang: 'HTML / CSS / JS', image: fritzyImg, link: 'https://fritzy-force-website.vercel.app/', fullDescription: 'This is a fan-made website created by me for a fanbase called fritzy force.', description: 'Fanbase website' },
   { id: 6, title: 'Task Manager', category: 'Website', lang: 'HTML / CSS / JS / Local Storage', image: taskImg, link: 'https://task-web-snowy.vercel.app/', fullDescription: 'Website to remind me about unfinished tasks.', description: 'Task manager' },
   { id: 7, title: 'Class Website', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind', image: classImg, link: 'https://xi-rpl-2.vercel.app/', fullDescription: 'Website for my class schedule and duty schedule.', description: 'Class website' },
-  { id: 8, title: 'Portfolio', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind', image: portoImg, link: '#home', fullDescription: 'Portfolio website to showcase projects.', description: 'Portfolio' },
+  { id: 8, title: 'Rizky Website', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind', image: portoImg, link: 'https://rizky-portfolio.vercel.app/', fullDescription: 'Portfolio website to showcase projects.', description: 'Portfolio Website' },
   { id: 9, title: 'Fanbase Website', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind / Supabase', image: fritzyF, link: 'https://fritzyforce.vercel.app/', fullDescription: 'Remake of Fritzy Force Website.', description: 'Fanbase Website' },
   { id: 10, title: 'Minecraft Mods', category: 'Mod', lang: 'Java / Forge / Fabric', image: CurseF, link: 'https://www.curseforge.com/members/badutzy/projects', fullDescription: 'Several minecraft mods available on Curseforge.', description: 'Minecraft mods available on Curseforge.' },
 ];
