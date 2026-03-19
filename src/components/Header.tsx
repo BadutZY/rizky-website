@@ -60,12 +60,20 @@ const Header = () => {
         </button>
       </header>
 
+      {/* Side nav — top: 50% + translateY(-50%) = selalu tepat di tengah viewport */}
       <motion.nav
         initial={{ x: -20, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="fixed left-0 z-40 hidden md:flex flex-col items-center gap-1 py-4 px-2 rounded-r-2xl bg-card/60 backdrop-blur-xl border border-l-0 border-border/30"
-        style={{ top: '38%', transform: 'translateY(-50%)', boxShadow: '4px 0 30px hsl(var(--background) / 0.5)' }}
+        style={{
+          top: 0,
+          bottom: 0,
+          marginTop: 'auto',
+          marginBottom: 'auto',
+          height: 'fit-content',
+          boxShadow: '4px 0 30px hsl(var(--background) / 0.5)',
+        }}
       >
         {activeIndex >= 0 && (
           <motion.div className="absolute left-0 w-[3px] h-6 rounded-r-full bg-primary"
