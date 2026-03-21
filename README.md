@@ -23,3 +23,4 @@ This project was created using:
 - React
 - shadcn-ui
 - Tailwind CSS
+- Supabase
