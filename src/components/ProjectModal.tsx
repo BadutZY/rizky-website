@@ -26,12 +26,10 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
     };
 
     if (project) {
-      // Simpan scroll position & lebar sebelum lock, lalu kompensasi scrollbar
       const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = "hidden";
       document.body.style.paddingRight = `${scrollbarWidth}px`;
       window.addEventListener("keydown", handleEscape);
-      // Double rAF agar animasi masuk tidak skip
       requestAnimationFrame(() => requestAnimationFrame(() => setIsVisible(true)));
     } else {
       setIsVisible(false);
@@ -51,8 +49,6 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
 
   if (!project) return null;
 
-  // createPortal memastikan modal di-render langsung ke document.body,
-  // sehingga bebas dari efek transform/will-change milik Framer Motion parent
   return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8"

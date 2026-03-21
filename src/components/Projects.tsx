@@ -28,7 +28,6 @@ const projects = [
   { id: 10, title: 'Minecraft Mods', category: 'Mod', lang: 'Java / Forge / Fabric', image: CurseF, link: 'https://www.curseforge.com/members/badutzy/projects', fullDescription: 'Several minecraft mods available on Curseforge.', description: 'Minecraft mods available on Curseforge.' },
 ];
 
-// Project yang dijadikan Featured — ganti id sesuai kebutuhan
 const FEATURED_ID = 9;
 
 const categories = [
@@ -42,14 +41,11 @@ const Projects = () => {
   const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
   const [activeFilter, setActiveFilter] = useState('all');
 
-  // Masing-masing section punya visibility tracker sendiri
   const { ref: titleRef, isVisible: titleVisible } = useScrollAnimation();
   const { ref: featuredRef, isVisible: featuredVisible } = useScrollAnimation();
   const { ref: filterRef, isVisible: filterVisible } = useScrollAnimation();
   const { ref: gridRef, isVisible: gridVisible } = useScrollAnimation();
 
-  // "hasBeenVisible" — sekali masuk viewport, tidak pernah hilang lagi.
-  // Ini mencegah filter/grid menghilang ketika section header di-scroll keluar viewport.
   const [titleShown, setTitleShown] = useState(false);
   const [featuredShown, setFeaturedShown] = useState(false);
   const [filterShown, setFilterShown] = useState(false);

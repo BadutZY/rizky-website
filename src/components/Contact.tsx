@@ -1,4 +1,4 @@
-import { Youtube, Instagram, Github, ArrowUpRight, Globe } from 'lucide-react';
+import { Youtube, Instagram, Github, ArrowUpRight, Play, Film } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useState } from 'react';
 
@@ -35,9 +35,46 @@ const gridSocialLinks = [
   { icon: CurseForgeIcon, href: 'https://www.curseforge.com/members/badutzy', label: 'CurseForge', username: '@badutzy', isCustomIcon: true, color: 'hover:bg-[#F16436]/10 hover:text-[#F16436] hover:border-[#F16436]/30' },
 ];
 
-const githubLink = { icon: Github, href: 'https://github.com/BadutZY', label: 'GitHub', username: '@BadutZY', color: 'hover:bg-purple-500/10 hover:text-purple-500 hover:border-purple-500/30' };
+const githubLink = {
+  icon: Github,
+  href: 'https://github.com/BadutZY',
+  label: 'GitHub',
+  username: '@BadutZY',
+  color: 'hover:bg-purple-500/10 hover:text-purple-500 hover:border-purple-500/30',
+};
 
-const SocialCard = ({ link, index, isVisible, className }: { link: typeof gridSocialLinks[0]; index: number; isVisible: boolean; className?: string }) => {
+const youtubeVideos = [
+  {
+    id: 'eIxj1ing7_E',
+    title: 'Kerandoman para lanang',
+    subtitle: 'VALORANT × CS2',
+    href: 'https://youtu.be/eIxj1ing7_E?si=78OY6d6JZvJzgIM_',
+  },
+  {
+    id: '4Ntn6hOPlzA',
+    title: 'Random Moment',
+    subtitle: 'VALORANT',
+    href: 'https://youtu.be/4Ntn6hOPlzA?si=ImoP4B1hOH999Eae',
+  },
+];
+
+const instagramReels = [
+  { shortcode: 'DVT03rLicSo', href: 'https://www.instagram.com/reel/DVT03rLicSo/' },
+  { shortcode: 'DWGUd9TiTVe', href: 'https://www.instagram.com/reel/DWGUd9TiTVe/' },
+  { shortcode: 'DVZK61DiUyx', href: 'https://www.instagram.com/reel/DVZK61DiUyx/' },
+];
+
+const SocialCard = ({
+  link,
+  index,
+  isVisible,
+  className,
+}: {
+  link: typeof gridSocialLinks[0];
+  index: number;
+  isVisible: boolean;
+  className?: string;
+}) => {
   const [isHovered, setIsHovered] = useState(false);
   const Icon = link.icon;
 
@@ -59,23 +96,259 @@ const SocialCard = ({ link, index, isVisible, className }: { link: typeof gridSo
         <div className="text-sm font-semibold text-foreground transition-colors duration-300">{link.label}</div>
         <div className="text-xs text-muted-foreground mt-0.5 truncate">{link.username}</div>
       </div>
-      <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${isHovered ? 'bg-primary/10 text-primary translate-x-0 opacity-100' : 'opacity-0 -translate-x-2'}`}>
+      <div
+        className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
+          isHovered ? 'bg-primary/10 text-primary translate-x-0 opacity-100' : 'opacity-0 -translate-x-2'
+        }`}
+      >
         <ArrowUpRight className="w-4 h-4" />
       </div>
     </a>
   );
 };
 
+const YouTubeCard = ({
+  video,
+  index,
+  isVisible,
+}: {
+  video: typeof youtubeVideos[0];
+  index: number;
+  isVisible: boolean;
+}) => {
+  const [active, setActive] = useState(false);
+
+  return (
+    <div
+      className="transition-all duration-700"
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? 'translateY(0)' : 'translateY(24px)',
+        transitionDelay: isVisible ? `${index * 120}ms` : '0ms',
+      }}
+    >
+      {/* Card shell — YouTube red-dark theme */}
+      <div
+        className="relative rounded-2xl overflow-hidden"
+        style={{
+          background: 'linear-gradient(160deg, #1a0a0a 0%, #0f0f0f 100%)',
+          border: '1px solid rgba(255,50,50,0.15)',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
+        }}
+      >
+        {/* Header bar */}
+        <div
+          className="flex items-center justify-between px-4 py-3"
+          style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+        >
+          <div className="flex items-center gap-2">
+            {/* YT logo */}
+            <div className="w-6 h-6 rounded-md bg-[#FF0000] flex items-center justify-center">
+              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-white">
+                <polygon points="9.5,7.5 16.5,12 9.5,16.5" />
+              </svg>
+            </div>
+            <span className="text-[11px] font-bold tracking-widest uppercase text-white/60">
+              YouTube
+            </span>
+          </div>
+          <a
+            href={video.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 text-[10px] text-white/35 hover:text-red-400 transition-colors"
+          >
+            <ArrowUpRight className="w-3 h-3" />
+            <span>Open</span>
+          </a>
+        </div>
+
+        {/* Embed area */}
+        <div className="relative" style={{ aspectRatio: '16/9' }}>
+          {!active ? (
+            /* Thumbnail + play overlay */
+            <button
+              onClick={() => setActive(true)}
+              className="absolute inset-0 w-full h-full group"
+              aria-label={`Play ${video.title}`}
+            >
+              <img
+                src={`https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`}
+                alt={video.title}
+                className="w-full h-full object-cover"
+                style={{ filter: 'brightness(0.6)' }}
+              />
+              {/* Red gradient bottom */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(to top, rgba(180,0,0,0.35) 0%, transparent 50%)',
+                }}
+              />
+              {/* Play button */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
+                  style={{
+                    background: 'rgba(255,0,0,0.9)',
+                    boxShadow: '0 0 30px rgba(255,0,0,0.5)',
+                  }}
+                >
+                  <Play className="w-7 h-7 text-white ml-1" fill="currentColor" />
+                </div>
+              </div>
+            </button>
+          ) : (
+            <iframe
+              src={`https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1`}
+              title={video.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute inset-0 w-full h-full"
+              style={{ border: 'none' }}
+            />
+          )}
+        </div>
+
+        {/* Footer info */}
+        <div className="px-4 py-3">
+          <p className="text-white font-bold text-[13px] leading-snug truncate">{video.title}</p>
+          <div className="flex items-center gap-2 mt-1">
+            <span
+              className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+              style={{
+                background: 'rgba(255,0,0,0.15)',
+                color: 'rgba(255,100,100,0.9)',
+                border: '1px solid rgba(255,0,0,0.2)',
+              }}
+            >
+              {video.subtitle}
+            </span>
+            <span className="text-[10px] text-white/30">@badutzy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const IG_GRADIENT = 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)';
+
+const InstagramCard = ({
+  reel,
+  index,
+  isVisible,
+}: {
+  reel: typeof instagramReels[0];
+  index: number;
+  isVisible: boolean;
+}) => {
+  return (
+    <div
+      className="transition-all duration-700"
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? 'translateY(0)' : 'translateY(24px)',
+        transitionDelay: isVisible ? `${index * 110}ms` : '0ms',
+      }}
+    >
+      <div
+        className="relative rounded-2xl overflow-hidden"
+        style={{
+          background: 'linear-gradient(160deg, #120d1a 0%, #0d0d0f 100%)',
+          border: '1px solid rgba(193,53,132,0.18)',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
+        }}
+      >
+        {/* Header bar */}
+        <div
+          className="flex items-center justify-between px-4 py-3"
+          style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+        >
+          <div className="flex items-center gap-2">
+            <div
+              className="w-5 h-5 rounded-md flex items-center justify-center shadow-sm"
+              style={{ background: IG_GRADIENT }}
+            >
+              <Instagram className="w-3 h-3 text-white" />
+            </div>
+            <span className="text-[10px] font-bold tracking-widest uppercase text-white/55">
+              Instagram Reels
+            </span>
+          </div>
+          <a
+            href={reel.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 text-[10px] text-white/30 hover:text-pink-400 transition-colors"
+          >
+            <ArrowUpRight className="w-3 h-3" />
+            <span>Open</span>
+          </a>
+        </div>
+
+        {/* Embed — slightly larger than before */}
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            paddingBottom: '195%',
+          }}
+        >
+          <iframe
+            src={`https://www.instagram.com/reel/${reel.shortcode}/embed/`}
+            title={`Instagram Reel ${reel.shortcode}`}
+            allowFullScreen
+            scrolling="no"
+            frameBorder="0"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              border: 'none',
+            }}
+          />
+        </div>
+
+        {/* Footer label */}
+        <div
+          className="flex items-center gap-1.5 px-4 py-2.5"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
+        >
+          <div
+            className="w-3.5 h-3.5 rounded-sm flex items-center justify-center flex-shrink-0"
+            style={{ background: IG_GRADIENT }}
+          >
+            <Film className="w-2 h-2 text-white" />
+          </div>
+          <span className="text-[10px] text-white/35 font-medium">@rzky.mp_36</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Contact = () => {
   const { ref: sectionRef, isVisible: sectionVisible } = useScrollAnimation(0.1, true);
   const { ref: socialRef, isVisible: socialVisible } = useScrollAnimation(0.1, true);
+  const { ref: contentRef, isVisible: contentVisible } = useScrollAnimation(0.05, true);
 
   return (
     <section id="contact" className="py-20 md:py-32 relative overflow-hidden">
-      {/* Section Banner */}
+      {/* ── Section Banner ── */}
       <div className="container mx-auto px-6 md:px-10 lg:px-20 mb-16 md:mb-24">
-        <div ref={sectionRef} className={`rounded-3xl overflow-hidden border border-border/30 bg-card/30 p-8 md:p-12 lg:p-16 text-center transition-all duration-700 ${sectionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 italic">Get In Touch</h2>
+        <div
+          ref={sectionRef}
+          className={`rounded-3xl overflow-hidden border border-border/30 bg-card/30 p-8 md:p-12 lg:p-16 text-center transition-all duration-700 ${
+            sectionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 italic">
+            Get In Touch
+          </h2>
           <div className="flex gap-1 justify-center mb-6">
             <div className="w-12 h-1 rounded-full bg-primary" />
             <div className="w-6 h-1 rounded-full bg-primary/50" />
@@ -86,7 +359,7 @@ const Contact = () => {
         </div>
       </div>
 
-      {/* Social Grid */}
+      {/* ── Social Grid ── */}
       <div ref={socialRef} className="container mx-auto px-6 md:px-10 lg:px-20">
         <div className="max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-4">
           {gridSocialLinks.map((link, i) => (
@@ -97,6 +370,75 @@ const Contact = () => {
           <div className="w-full sm:w-[calc(50%-0.5rem)]">
             <SocialCard link={githubLink} index={gridSocialLinks.length} isVisible={socialVisible} />
           </div>
+        </div>
+      </div>
+
+      {/* ── Content Section ── */}
+      <div ref={contentRef} className="container mx-auto px-6 md:px-10 lg:px-20 mt-20 md:mt-28">
+        {/* Divider with label */}
+        <div
+          className={`flex items-center gap-4 mb-10 transition-all duration-700 ${
+            contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+          }`}
+        >
+          <div className="flex-1 h-px bg-border/40" />
+          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-border/40 bg-card/40 backdrop-blur-sm">
+            <Play className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="text-xs font-semibold text-muted-foreground tracking-wide uppercase">
+              My Content
+            </span>
+          </div>
+          <div className="flex-1 h-px bg-border/40" />
+        </div>
+
+        {/* ── YouTube Row ── */}
+        <div
+          className={`mb-3 transition-all duration-500 ${
+            contentVisible ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{ transitionDelay: '60ms' }}
+        >
+          <div className="flex items-center gap-2 mb-5">
+            <div className="w-5 h-5 rounded bg-[#FF0000] flex items-center justify-center">
+              <svg viewBox="0 0 24 24" className="w-3 h-3 fill-white">
+                <polygon points="9.5,7.5 16.5,12 9.5,16.5" />
+              </svg>
+            </div>
+            <span className="text-sm font-bold text-foreground">YouTube</span>
+          </div>
+        </div>
+
+        <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5 mb-14">
+          {youtubeVideos.map((v, i) => (
+            <YouTubeCard key={v.id} video={v} index={i} isVisible={contentVisible} />
+          ))}
+        </div>
+
+        {/* ── Instagram Row ── */}
+        <div
+          className={`mb-3 transition-all duration-500 ${
+            contentVisible ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{ transitionDelay: '160ms' }}
+        >
+          <div className="flex items-center gap-2 mb-5">
+            <div
+              className="w-5 h-5 rounded flex items-center justify-center"
+              style={{
+                background:
+                  'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+              }}
+            >
+              <Instagram className="w-3 h-3 text-white" />
+            </div>
+            <span className="text-sm font-bold text-foreground">Instagram Reels</span>
+          </div>
+        </div>
+
+        <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-5 pb-8">
+          {instagramReels.map((r, i) => (
+            <InstagramCard key={r.shortcode} reel={r} index={i} isVisible={contentVisible} />
+          ))}
         </div>
       </div>
     </section>

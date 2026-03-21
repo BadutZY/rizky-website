@@ -17,7 +17,6 @@ const DetailPageLayout = ({ children, title }: DetailPageLayoutProps) => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Build the return URL with the last section hash
   const lastSection = sessionStorage.getItem('last_active_section') || 'hero';
   const returnUrl = `/#${lastSection}`;
 
