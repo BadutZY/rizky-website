@@ -924,8 +924,8 @@ const KimmyLiveStatus = () => {
         isChecking:  false,
         lastChecked: data?.checked_at ?? new Date().toISOString(),
         liveUrl:     data?.is_live
-          ? `https://www.showroom-live.com/r/${SHOWROOM_KEY}`  // direct live room when on air
-          : `https://www.showroom-live.com/room/profile?room_id=510073`, // profile page when offline
+          ? `https://www.showroom-live.com/r/${SHOWROOM_KEY}`
+          : `https://www.showroom-live.com/room/profile?room_id=510073`,
         streamUrl:   data?.stream_url ?? null,
         slug:        null,
       });
