@@ -10,7 +10,7 @@ const IDN_USERNAME = "jkt48_kimmy";
 const SHOWROOM_KEY = "JKT48_Kimmy";
 
 const DISPLAY_NAME = "Victoria Kimberly";
-const FOLLOWERS    = "150K";
+const FOLLOWERS    = "150.1K";
 const FOLLOWING    = "49";
 
 type PlatformStatus = {
