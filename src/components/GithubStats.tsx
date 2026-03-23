@@ -449,9 +449,6 @@ const GitHubStats = () => {
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-primary" />
                           <span className="text-sm font-semibold text-foreground">Contribution Activity</span>
-                          <span className="text-[10px] text-muted-foreground/50 border border-border/40 px-1.5 py-0.5 rounded-full">
-                            Synced with GitHub
-                          </span>
                         </div>
                         <a href={GITHUB_PROFILE_URL} target="_blank" rel="noopener noreferrer"
                           className="flex items-center gap-1 text-[10px] text-muted-foreground/50 hover:text-primary transition-colors duration-200">
@@ -468,9 +465,6 @@ const GitHubStats = () => {
                       <div className="flex items-center gap-2 mb-4">
                         <Award className="w-4 h-4 text-primary" />
                         <span className="text-sm font-semibold text-foreground">GitHub Stats Cards</span>
-                        <span className="text-[10px] text-muted-foreground/50 border border-border/40 px-1.5 py-0.5 rounded-full ml-1">
-                          Auto-updates on commit
-                        </span>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div className="rounded-lg overflow-hidden border border-border/30 bg-card/40">
