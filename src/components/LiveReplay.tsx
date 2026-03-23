@@ -137,7 +137,6 @@ function EmbedModal({ video, platform, onClose }: EmbedModalProps) {
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           className="relative z-10 w-full max-w-4xl"
         >
-          {/* Top bar */}
           <div className="flex items-center justify-between mb-2 px-0.5">
             <div className="flex items-center gap-2.5 min-w-0">
               <div
@@ -170,7 +169,6 @@ function EmbedModal({ video, platform, onClose }: EmbedModalProps) {
             </div>
           </div>
 
-          {/* iframe wrapper */}
           <div
             className="relative w-full rounded-2xl overflow-hidden bg-black"
             style={{
@@ -337,7 +335,6 @@ function ReplayCard({ platform, delay = 0 }: ReplayCardProps) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Top accent line */}
         <div
           className="absolute top-0 inset-x-0 h-[2px] pointer-events-none"
           style={{
@@ -347,7 +344,6 @@ function ReplayCard({ platform, delay = 0 }: ReplayCardProps) {
           }}
         />
 
-        {/* Ambient glow */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -357,7 +353,6 @@ function ReplayCard({ platform, delay = 0 }: ReplayCardProps) {
           }}
         />
 
-        {/* Header */}
         <div className="relative flex items-center justify-between px-4 pt-4 pb-3">
           <div className="flex items-center gap-2.5">
             <div
@@ -380,7 +375,6 @@ function ReplayCard({ platform, delay = 0 }: ReplayCardProps) {
           </div>
 
           <div className="flex items-center gap-1">
-            {/* Playlist button */}
             <a
               href={cfg.playlistUrl}
               target="_blank"
@@ -425,13 +419,10 @@ function ReplayCard({ platform, delay = 0 }: ReplayCardProps) {
           </div>
         </div>
 
-        {/* Divider */}
         <div className="mx-4 h-px bg-border/30 mb-3" />
 
-        {/* Body */}
         <div className="relative flex flex-col flex-1 px-4 pb-4 gap-3">
 
-          {/* LOADING */}
           {loading && (
             <>
               <div className="w-full aspect-video rounded-xl bg-muted/50 animate-pulse" />
@@ -442,7 +433,6 @@ function ReplayCard({ platform, delay = 0 }: ReplayCardProps) {
             </>
           )}
 
-          {/* ERROR */}
           {!loading && errInfo && (
             <div className="flex flex-col items-center text-center gap-3 py-4">
               <div
@@ -468,7 +458,6 @@ function ReplayCard({ platform, delay = 0 }: ReplayCardProps) {
             </div>
           )}
 
-          {/* SUCCESS */}
           {!loading && !error && video && (
             <>
               <AnimatePresence mode="wait">

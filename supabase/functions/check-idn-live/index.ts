@@ -118,7 +118,7 @@ serve(async (req) => {
     try {
       const body = await req.json();
       if (body?.username) username = body.username;
-    } catch { /* pakai default */ }
+    } catch { /**/ }
 
     const profileUrl = `https://www.idn.app/${username}`;
     let profileHtml = '';

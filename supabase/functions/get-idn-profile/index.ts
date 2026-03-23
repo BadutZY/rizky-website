@@ -15,14 +15,12 @@ const FETCH_HEADERS = {
 const JKT48CONNECT_API_KEY = "J-D55B";
 const JKT48CONNECT_BASE_URL = "https://v2.jkt48connect.my.id/api";
 
-/** Format angka jadi singkatan, misal 150100 -> "150.1K" */
 function formatCount(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`;
   if (n >= 1_000)     return `${(n / 1_000).toFixed(1).replace(/\.0$/, "")}K`;
   return String(n);
 }
 
-/** Coba parse angka dari string seperti "150.1K", "1.2M", "49" */
 function parseCount(raw: string): number | null {
   if (!raw) return null;
   const clean = raw.trim().replace(/,/g, "");
@@ -36,11 +34,6 @@ function parseCount(raw: string): number | null {
   return Math.round(num);
 }
 
-/**
- * Scrape follower/following dari HTML halaman profil IDN.
- * IDN adalah Next.js SSR — data biasanya ada di <script id="__NEXT_DATA__">
- * atau di meta tag / JSON-LD.
- */
 function extractProfileFromHtml(html: string): {
   followers: number | null;
   following: number | null;
@@ -52,14 +45,12 @@ function extractProfileFromHtml(html: string): {
   let display_name: string | null = null;
   let avatar_url: string | null = null;
 
-  // ── 1. __NEXT_DATA__ JSON ──────────────────────────────────────────────────
   const nextMatch = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/i);
   if (nextMatch) {
     try {
       const nextData = JSON.parse(nextMatch[1]);
       const jsonStr = JSON.stringify(nextData);
 
-      // Followers
       const followerPatterns = [
         /"follower[s]?[_]?count"\s*:\s*(\d+)/i,
         /"fans[_]?count"\s*:\s*(\d+)/i,
@@ -71,7 +62,6 @@ function extractProfileFromHtml(html: string): {
         if (m) { followers = parseInt(m[1], 10); break; }
       }
 
-      // Following
       const followingPatterns = [
         /"following[_]?count"\s*:\s*(\d+)/i,
         /"total[_]?following"\s*:\s*(\d+)/i,
@@ -82,7 +72,6 @@ function extractProfileFromHtml(html: string): {
         if (m) { following = parseInt(m[1], 10); break; }
       }
 
-      // Display name
       const namePatterns = [
         /"display[_]?name"\s*:\s*"([^"]+)"/i,
         /"name"\s*:\s*"([^"]+)"/i,
@@ -93,7 +82,6 @@ function extractProfileFromHtml(html: string): {
         if (m && m[1].length > 1) { display_name = m[1]; break; }
       }
 
-      // Avatar
       const avatarPatterns = [
         /"avatar[_]?url"\s*:\s*"(https?:[^"]+)"/i,
         /"profile[_]?picture"\s*:\s*"(https?:[^"]+)"/i,
@@ -108,7 +96,6 @@ function extractProfileFromHtml(html: string): {
     }
   }
 
-  // ── 2. Fallback: raw HTML regex ────────────────────────────────────────────
   if (followers === null) {
     const patterns = [
       /"followers_count"\s*:\s*(\d+)/i,
@@ -139,7 +126,6 @@ function extractProfileFromHtml(html: string): {
     }
   }
 
-  // ── 3. meta og / JSON-LD ──────────────────────────────────────────────────
   if (!display_name) {
     const ogTitle = html.match(/<meta[^>]+property="og:title"[^>]+content="([^"]+)"/i);
     if (ogTitle) display_name = ogTitle[1].replace(/\s*[-|].*$/, "").trim();
@@ -152,16 +138,12 @@ function extractProfileFromHtml(html: string): {
   return { followers, following, display_name, avatar_url };
 }
 
-/**
- * Coba dapat profil dari JKT48Connect API (endpoint member list).
- */
 async function getProfileFromJkt48Connect(username: string): Promise<{
   followers: number | null;
   following: number | null;
   display_name: string | null;
 } | null> {
   try {
-    // Endpoint member detail (jika ada)
     const res = await fetch(
       `${JKT48CONNECT_BASE_URL}/idn/user?username=${username}&api_key=${JKT48CONNECT_API_KEY}`,
       { headers: { "User-Agent": "Mozilla/5.0", Accept: "application/json" } }
@@ -197,7 +179,7 @@ serve(async (req) => {
     try {
       const body = await req.json();
       if (body?.username) username = body.username;
-    } catch { /* gunakan default */ }
+    } catch { /**/ }
 
     const profileUrl = `https://www.idn.app/${username}`;
     let followers: number | null = null;
@@ -206,7 +188,6 @@ serve(async (req) => {
     let avatar_url: string | null = null;
     let source = "unknown";
 
-    // ── Langkah 1: Scrape halaman profil IDN ──────────────────────────────────
     try {
       const res = await fetch(profileUrl, { headers: FETCH_HEADERS });
       const html = await res.text();
@@ -220,7 +201,6 @@ serve(async (req) => {
       console.error("[Profile scrape] Error:", e);
     }
 
-    // ── Langkah 2: Fallback ke JKT48Connect API ───────────────────────────────
     if (followers === null && following === null) {
       const jkt48Data = await getProfileFromJkt48Connect(username);
       if (jkt48Data) {

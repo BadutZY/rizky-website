@@ -56,7 +56,6 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
       aria-modal="true"
       aria-labelledby="modal-title"
     >
-      {/* Backdrop */}
       <div
         className={`absolute inset-0 bg-background/85 backdrop-blur-md transition-opacity duration-300 ${
           isVisible ? "opacity-100" : "opacity-0"
@@ -64,7 +63,6 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
         onClick={handleClose}
       />
 
-      {/* Modal Card */}
       <div
         className={`relative w-full max-w-3xl bg-card border border-border/50 rounded-3xl shadow-2xl overflow-hidden transition-all duration-500 ${
           isVisible
@@ -72,7 +70,6 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
             : "opacity-0 scale-95 translate-y-8"
         }`}
       >
-        {/* Close Button */}
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 z-20 p-2.5 rounded-xl bg-background/60 backdrop-blur-md border border-border/50 text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 group"
@@ -80,7 +77,6 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
           <X className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
         </button>
 
-        {/* Image */}
         {project.image && (
           <div className="relative overflow-hidden aspect-video bg-muted">
             <img
@@ -94,7 +90,6 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
           </div>
         )}
 
-        {/* Content */}
         <div className="p-6 md:p-8">
           <div className="flex items-center gap-3 mb-4">
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-primary/10 text-primary border border-primary/20">

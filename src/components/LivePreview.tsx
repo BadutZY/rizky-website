@@ -7,7 +7,6 @@ import {
 import { createPortal } from 'react-dom';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
-// ─── Config ───────────────────────────────────────────────────────────────────
 const PREVIEW_SITES = [
   {
     id:          1,
@@ -44,7 +43,6 @@ const VIEWPORT_CFG = {
   mobile:  { icon: Smartphone, label: 'Mobile',  iframeWidth: '390px',  aspect: 177.78 },
 } as const;
 
-// ─── Custom hook: deteksi apakah layar mobile (<768px) ────────────────────────
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth < 768 : false
@@ -59,7 +57,6 @@ function useIsMobile() {
   return isMobile;
 }
 
-// ─── Fullscreen modal ─────────────────────────────────────────────────────────
 function FullscreenModal({ url, title, onClose }: { url: string; title: string; onClose: () => void }) {
   useEffect(() => {
     const prev = document.documentElement.style.overflow;
@@ -102,7 +99,6 @@ function FullscreenModal({ url, title, onClose }: { url: string; title: string; 
   );
 }
 
-// ─── Phone mockup (mobile only) ───────────────────────────────────────────────
 function PhoneMockup({
   url, title, color, isLoading, refreshKey, direction, onLoad,
 }: {
@@ -118,7 +114,6 @@ function PhoneMockup({
 
   return (
     <div className="flex justify-center items-center py-6">
-      {/* Phone outer shell */}
       <div
         className="relative rounded-[2.5rem] overflow-hidden shadow-2xl"
         style={{
@@ -128,12 +123,9 @@ function PhoneMockup({
           boxShadow: `0 0 0 1px rgba(255,255,255,0.05), 0 32px 64px rgba(0,0,0,0.6), 0 0 40px ${color}22`,
         }}
       >
-        {/* Status bar */}
         <div className="flex items-center justify-between px-5 py-2 bg-black/60" style={{ height: 32 }}>
           <span className="text-[9px] font-semibold text-white/70 font-mono">9:41</span>
-          {/* Dynamic island */}
           <div className="w-16 h-4 rounded-full bg-black" />
-          {/* Right status icons */}
           <div className="flex items-center gap-1">
             <div className="flex items-end gap-px h-3">
               {[2, 3, 4, 5].map(h => (
@@ -147,7 +139,6 @@ function PhoneMockup({
           </div>
         </div>
 
-        {/* Screen area — 9:19.5 aspect (iPhone ratio) */}
         <div className="relative bg-white" style={{ paddingTop: `${(530/280)*100}%` }}>
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
@@ -170,7 +161,6 @@ function PhoneMockup({
             </motion.div>
           </AnimatePresence>
 
-          {/* Loading overlay */}
           <AnimatePresence>
             {isLoading && (
               <motion.div
@@ -190,18 +180,15 @@ function PhoneMockup({
           </AnimatePresence>
         </div>
 
-        {/* Home indicator */}
         <div className="flex justify-center py-2 bg-black/40">
           <div className="w-24 h-1 rounded-full bg-white/30" />
         </div>
 
-        {/* Side buttons — decorative */}
         <div className="absolute right-[-3px] top-28 w-[3px] h-10 rounded-l-sm" style={{ background: 'rgba(255,255,255,0.08)' }} />
         <div className="absolute left-[-3px] top-20 w-[3px] h-7 rounded-r-sm" style={{ background: 'rgba(255,255,255,0.08)' }} />
         <div className="absolute left-[-3px] top-32 w-[3px] h-7 rounded-r-sm" style={{ background: 'rgba(255,255,255,0.08)' }} />
         <div className="absolute left-[-3px] top-44 w-[3px] h-7 rounded-r-sm" style={{ background: 'rgba(255,255,255,0.08)' }} />
 
-        {/* Accent color glow on screen edge */}
         <div
           className="absolute inset-0 rounded-[2.5rem] pointer-events-none"
           style={{ boxShadow: `inset 0 0 0 1px ${color}25`, transition: 'box-shadow 0.4s ease' }}
@@ -211,7 +198,6 @@ function PhoneMockup({
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
 const LivePreview = () => {
   const { ref: sectionRef, isVisible } = useScrollAnimation(0.05, true);
   const [shown,      setShown]      = useState(false);
@@ -224,7 +210,6 @@ const LivePreview = () => {
 
   const isMobile = useIsMobile();
 
-  // Di mobile, selalu paksa viewport = 'mobile' dan sembunyikan viewport switcher
   const effectiveViewport: Viewport = isMobile ? 'mobile' : viewport;
   const vpCfg = VIEWPORT_CFG[effectiveViewport];
 
@@ -251,7 +236,6 @@ const LivePreview = () => {
     switchSite(next.id, 1);
   }, [activeIndex, switchSite]);
 
-  // Keyboard nav
   useEffect(() => {
     if (!shown) return;
     const onKey = (e: KeyboardEvent) => {
@@ -272,7 +256,6 @@ const LivePreview = () => {
   return (
     <section className="py-20 md:py-28 relative overflow-hidden">
 
-      {/* Ambient glow */}
       <div className="absolute inset-x-0 top-0 h-px pointer-events-none"
         style={{ background: `linear-gradient(90deg, transparent, ${activeSite.color}40, transparent)`, transition: 'all 0.6s ease' }} />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] pointer-events-none"
@@ -280,7 +263,6 @@ const LivePreview = () => {
 
       <div className="container mx-auto px-6 md:px-10 lg:px-20">
 
-        {/* Header */}
         <motion.div
           ref={sectionRef}
           initial={{ opacity: 0, y: 30 }}
@@ -303,14 +285,12 @@ const LivePreview = () => {
           </p>
         </motion.div>
 
-        {/* ── MOBILE layout: phone mockup ── */}
         {isMobile && (
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
             transition={{ duration: 0.8, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            {/* Site tabs — horizontal scrollable pills */}
             <div className="flex items-center gap-2 mb-6 overflow-x-auto scrollbar-hide pb-1">
               {PREVIEW_SITES.map(site => {
                 const isActive = site.id === activeId;
@@ -336,7 +316,6 @@ const LivePreview = () => {
               })}
             </div>
 
-            {/* Phone mockup */}
             <PhoneMockup
               url={activeSite.url}
               title={activeSite.title}
@@ -347,15 +326,12 @@ const LivePreview = () => {
               onLoad={() => setIsLoading(false)}
             />
 
-            {/* Controls below phone */}
             <div className="flex items-center justify-between mt-4 px-2">
-              {/* Site info */}
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-foreground truncate">{activeSite.title}</p>
                 <p className="text-xs text-muted-foreground truncate">{activeSite.description}</p>
               </div>
 
-              {/* Nav + open */}
               <div className="flex items-center gap-2 ml-3 flex-shrink-0">
                 <div className="flex items-center gap-1.5">
                   {PREVIEW_SITES.map(site => (
@@ -388,7 +364,6 @@ const LivePreview = () => {
               </div>
             </div>
 
-            {/* Refresh */}
             <div className="flex justify-center mt-4">
               <button
                 onClick={() => { setIsLoading(true); setRefreshKey(k => k + 1); }}
@@ -401,7 +376,6 @@ const LivePreview = () => {
           </motion.div>
         )}
 
-        {/* ── DESKTOP layout: browser chrome ── */}
         {!isMobile && (
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -413,7 +387,6 @@ const LivePreview = () => {
               transition: 'box-shadow 0.6s ease',
             }}
           >
-            {/* Chrome top bar */}
             <div className="flex items-center gap-2 px-4 py-3 bg-muted/60 border-b border-border/40">
               <div className="flex items-center gap-1.5 flex-shrink-0">
                 <div className="w-3 h-3 rounded-full bg-red-400/80" />
@@ -448,7 +421,6 @@ const LivePreview = () => {
               </div>
             </div>
 
-            {/* Tab bar + viewport switcher */}
             <div className="flex items-center bg-muted/40 border-b border-border/40 overflow-x-auto scrollbar-hide">
               <div className="flex items-center flex-shrink-0">
                 {PREVIEW_SITES.map(site => {
@@ -478,7 +450,6 @@ const LivePreview = () => {
                 })}
               </div>
               <div className="flex-1" />
-              {/* Viewport switcher — hanya desktop */}
               <div className="flex items-center gap-1 px-3 py-2 border-l border-border/30 flex-shrink-0">
                 {(['desktop', 'tablet', 'mobile'] as Viewport[]).map(vp => {
                   const VPIcon = VIEWPORT_CFG[vp].icon;
@@ -495,7 +466,6 @@ const LivePreview = () => {
               </div>
             </div>
 
-            {/* Preview area */}
             <div className="bg-[#1a1a1a] flex justify-center items-start p-4 md:p-6 min-h-[480px]">
               <motion.div
                 layout
@@ -546,7 +516,6 @@ const LivePreview = () => {
               </motion.div>
             </div>
 
-            {/* Info bar */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-5 py-4 border-t border-border/40 bg-muted/20">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -593,7 +562,6 @@ const LivePreview = () => {
           </motion.div>
         )}
 
-        {/* Hint — hanya desktop */}
         {!isMobile && (
           <motion.p
             initial={{ opacity: 0 }}
@@ -606,7 +574,6 @@ const LivePreview = () => {
         )}
       </div>
 
-      {/* Fullscreen modal */}
       <AnimatePresence>
         {fullscreen && (
           <FullscreenModal url={activeSite.url} title={activeSite.title} onClose={() => setFullscreen(false)} />

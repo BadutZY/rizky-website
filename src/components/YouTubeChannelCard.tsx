@@ -7,12 +7,10 @@ import {
 } from "@/hooks/useYouTubeChannelStats";
 import { ExternalLink, RefreshCw, Play, Eye, Film, Users, Bell, CheckCircle } from "lucide-react";
 
-// ─── Config ────────────────────────────────────────────────────────────────────
 const CHANNEL_HANDLE     = "badutzy";
 const CHANNEL_URL        = "https://www.youtube.com/@badutzy";
 const CHANNEL_HANDLE_STR = "@badutzy";
 
-// ─── Skeleton shimmer ─────────────────────────────────────────────────────────
 const Shimmer = ({ className = "" }: { className?: string }) => (
   <div
     className={`relative overflow-hidden rounded-md bg-white/5 ${className}`}
@@ -20,7 +18,6 @@ const Shimmer = ({ className = "" }: { className?: string }) => (
   />
 );
 
-// ─── Stat pill ────────────────────────────────────────────────────────────────
 const StatPill = ({
   icon,
   label,
@@ -45,7 +42,6 @@ const StatPill = ({
       animationDelay: `${delay}ms`,
     }}
   >
-    {/* Hover glow */}
     <div
       className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"
       style={{ background: `radial-gradient(ellipse at center, ${accentColor}14 0%, transparent 70%)` }}
@@ -62,7 +58,6 @@ const StatPill = ({
   </div>
 );
 
-// ─── Main Component ───────────────────────────────────────────────────────────
 const YouTubeChannelCard = ({
   isVisible = true,
 }: {
@@ -80,12 +75,10 @@ const YouTubeChannelCard = ({
     setTimeout(() => setIsRefreshing(false), 1000);
   };
 
-  // Channel creation year
   const joinYear = stats?.publishedAt
     ? new Date(stats.publishedAt).getFullYear()
     : null;
 
-  // Error messages
   const errorLabel =
     error === "no_api_key"       ? "YouTube API Key belum dikonfigurasi." :
     error === "quota_exceeded"   ? "Kuota YouTube API habis untuk hari ini." :
@@ -130,7 +123,6 @@ const YouTubeChannelCard = ({
         .sub-btn-glow { animation: ytGlow 2.5s ease-in-out infinite; }
       `}</style>
 
-      {/* ── Outer card ── */}
       <div
         className="relative rounded-3xl overflow-hidden"
         style={{
@@ -140,12 +132,8 @@ const YouTubeChannelCard = ({
         }}
       >
 
-        {/* ═══════════════════════════════════════════════════════════
-            BANNER SECTION
-        ════════════════════════════════════════════════════════════ */}
         <div className="relative w-full overflow-hidden" style={{ height: "clamp(100px, 28vw, 140px)" }}>
 
-          {/* Banner image or gradient fallback */}
           {!bannerError && stats?.bannerUrl ? (
             <img
               src={stats.bannerUrl}
@@ -155,7 +143,6 @@ const YouTubeChannelCard = ({
               onError={() => setBannerError(true)}
             />
           ) : (
-            /* Gradient banner fallback */
             <div
               className="w-full h-full"
               style={{
@@ -163,7 +150,6 @@ const YouTubeChannelCard = ({
                   "linear-gradient(135deg, #1a0000 0%, #2d0000 20%, #1a0000 40%, #0d0d0d 60%, #1a0000 80%, #2d0000 100%)",
               }}
             >
-              {/* YouTube-style noise pattern */}
               <div
                 className="absolute inset-0 opacity-30"
                 style={{
@@ -174,7 +160,6 @@ const YouTubeChannelCard = ({
                   `,
                 }}
               />
-              {/* Grid pattern overlay */}
               <div
                 className="absolute inset-0 opacity-[0.06]"
                 style={{
@@ -185,12 +170,10 @@ const YouTubeChannelCard = ({
             </div>
           )}
 
-          {/* Shimmer while loading */}
           {loading && (
             <div className="absolute inset-0 yt-shimmer" />
           )}
 
-          {/* Dark gradient at bottom for smooth blend */}
           <div
             className="absolute inset-0"
             style={{
@@ -198,7 +181,6 @@ const YouTubeChannelCard = ({
             }}
           />
 
-          {/* YouTube logo watermark top-right */}
           <div className="absolute top-3 right-3 flex items-center gap-1.5 opacity-70">
             <div
               className="flex items-center justify-center rounded-lg px-2 py-1"
@@ -210,7 +192,6 @@ const YouTubeChannelCard = ({
             </div>
           </div>
 
-          {/* Refresh button top-left */}
           <button
             onClick={handleRefresh}
             disabled={isRefreshing || loading}
@@ -229,15 +210,10 @@ const YouTubeChannelCard = ({
           </button>
         </div>
 
-        {/* ═══════════════════════════════════════════════════════════
-            PROFILE ROW
-        ════════════════════════════════════════════════════════════ */}
         <div className="relative px-3 pb-4 sm:px-5 sm:pb-5">
 
-          {/* Avatar — positioned to overlap banner */}
           <div className="flex items-end justify-between" style={{ marginTop: "clamp(-28px, -8vw, -40px)" }}>
             <div className="relative flex-shrink-0">
-              {/* Avatar ring */}
               <div
                 className="rounded-full p-[3px]"
                 style={{
@@ -256,7 +232,6 @@ const YouTubeChannelCard = ({
                   ) : loading ? (
                     <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full yt-shimmer" />
                   ) : (
-                    /* Fallback avatar */
                     <div
                       className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-3xl font-black text-white"
                       style={{ background: "linear-gradient(135deg, #FF0000, #CC0000)" }}
@@ -267,7 +242,6 @@ const YouTubeChannelCard = ({
                 </div>
               </div>
 
-              {/* Verified badge */}
               <div
                 className="absolute -bottom-0.5 -right-0.5 yt-verified"
                 title="YouTube Creator"
@@ -281,7 +255,6 @@ const YouTubeChannelCard = ({
               </div>
             </div>
 
-            {/* Subscribe + Open buttons */}
             <div className="flex items-center gap-1.5 sm:gap-2 mb-1 flex-shrink-0">
               <a
                 href={CHANNEL_URL}
@@ -329,7 +302,6 @@ const YouTubeChannelCard = ({
             </div>
           </div>
 
-          {/* Channel name + handle */}
           <div className="mt-2 sm:mt-3 mb-4">
             {loading ? (
               <>
@@ -357,7 +329,6 @@ const YouTubeChannelCard = ({
               </>
             )}
 
-            {/* Error state */}
             {errorLabel && !loading && (
               <div className="mt-2 flex items-center gap-2">
                 <div
@@ -371,7 +342,6 @@ const YouTubeChannelCard = ({
             )}
           </div>
 
-          {/* ── Stats row ── */}
           <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 mb-4">
             <StatPill
               icon={<Users className="w-4 h-4" />}
@@ -399,7 +369,6 @@ const YouTubeChannelCard = ({
             />
           </div>
 
-          {/* ── Description snippet ── */}
           {!loading && stats?.description && (
             <p
               className="text-xs text-white/35 leading-relaxed line-clamp-2 mb-4 px-1"
@@ -415,7 +384,6 @@ const YouTubeChannelCard = ({
             </div>
           )}
 
-          {/* ── Footer: last updated ── */}
           <div
             className="flex items-center justify-between pt-3"
             style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
@@ -432,7 +400,6 @@ const YouTubeChannelCard = ({
           </div>
         </div>
 
-        {/* ── Red top accent line ── */}
         <div
           className="absolute top-0 left-0 right-0 h-[2px]"
           style={{

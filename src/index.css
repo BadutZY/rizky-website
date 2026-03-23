@@ -203,13 +203,11 @@
 ::-webkit-scrollbar-thumb { @apply bg-muted rounded-full; }
 ::-webkit-scrollbar-thumb:hover { @apply bg-muted-foreground; }
 
-/* Skeleton shimmer animation */
 @keyframes skeletonShimmer {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
 
-/* Cinematic theme transition */
 .theme-transitioning,
 .theme-transitioning *,
 .theme-transitioning *::before,
@@ -222,7 +220,6 @@
               stroke 0.7s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-/* ═══════════ FullPage Smooth Scroll ═══════════ */
 .fp-container {
   height: 100vh;
   height: 100dvh;
@@ -251,14 +248,12 @@
   }
 }
 
-/* Legacy class support */
 .fullpage-section {
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
 }
 
-/* Subtle separator between sections */
 .fp-section + .fp-section::before {
   content: '';
   position: absolute;
@@ -270,7 +265,6 @@
   z-index: 2;
 }
 
-/* Page transition */
 .page-transition-enter {
   opacity: 0;
   transform: translateY(30px) scale(0.98);

@@ -5,13 +5,13 @@ export interface YouTubeChannelStats {
   channelId:        string;
   title:            string;
   description:      string;
-  customUrl:        string;           // e.g. "@badutzy"
-  subscriberCount:  string;           // raw number string
-  videoCount:       string;           // raw number string
-  viewCount:        string;           // raw number string
-  thumbnailUrl:     string;           // profile picture (high res)
-  bannerUrl:        string | null;    // channel art / banner
-  publishedAt:      string;           // channel creation date ISO
+  customUrl:        string;
+  subscriberCount:  string;
+  videoCount:       string;
+  viewCount:        string;
+  thumbnailUrl:     string;
+  bannerUrl:        string | null;
+  publishedAt:      string;
 }
 
 export type ChannelStatsError =
@@ -21,9 +21,8 @@ export type ChannelStatsError =
   | "network_error"
   | "unknown";
 
-// ─── Cache ─────────────────────────────────────────────────────────────────────
 const CACHE_KEY_PREFIX  = "yt_ch_stats_v1_";
-const CACHE_TTL_MS      = 30 * 60 * 1_000; // 30 menit
+const CACHE_TTL_MS      = 30 * 60 * 1_000;
 
 interface CacheEntry { data: YouTubeChannelStats; savedAt: number; }
 
@@ -43,10 +42,9 @@ function writeCache(handle: string, data: YouTubeChannelStats): void {
       CACHE_KEY_PREFIX + handle,
       JSON.stringify({ data, savedAt: Date.now() })
     );
-  } catch { /* storage full, skip */ }
+  } catch { /**/ }
 }
 
-// ─── Format helpers ────────────────────────────────────────────────────────────
 export function formatSubscribers(raw: string): string {
   const n = parseInt(raw, 10);
   if (isNaN(n)) return raw;
@@ -71,7 +69,6 @@ export function formatTotalViews(raw: string): string {
   return n.toLocaleString("id-ID");
 }
 
-// ─── Resolve channelId dari handle ─────────────────────────────────────────────
 async function resolveChannelId(
   handle: string,
   apiKey: string,
@@ -79,9 +76,9 @@ async function resolveChannelId(
 ): Promise<string | null> {
   const ck = "cid_" + handle;
   try {
-    const cached = localStorage.getItem("yt_ch_v3_" + ck); // reuse cache dari hook lain
+    const cached = localStorage.getItem("yt_ch_v3_" + ck);
     if (cached) return cached;
-  } catch { /* skip */ }
+  } catch { /**/ }
 
   const url = new URL("https://www.googleapis.com/youtube/v3/channels");
   url.searchParams.set("part",      "id");
@@ -93,12 +90,11 @@ async function resolveChannelId(
   const json = await res.json();
   const id: string | undefined = json.items?.[0]?.id;
   if (id) {
-    try { localStorage.setItem("yt_ch_v3_" + ck, id); } catch { /* skip */ }
+    try { localStorage.setItem("yt_ch_v3_" + ck, id); } catch { /**/ }
   }
   return id ?? null;
 }
 
-// ─── Fetch channel stats + branding ────────────────────────────────────────────
 async function fetchChannelStats(
   handle: string,
   apiKey: string,
@@ -107,7 +103,6 @@ async function fetchChannelStats(
   const channelId = await resolveChannelId(handle, apiKey, signal);
   if (!channelId) return { result: null, error: "channel_not_found" };
 
-  // Fetch snippet + statistics + brandingSettings dalam satu request
   const url = new URL("https://www.googleapis.com/youtube/v3/channels");
   url.searchParams.set("part",  "snippet,statistics,brandingSettings");
   url.searchParams.set("id",    channelId);
@@ -134,16 +129,14 @@ async function fetchChannelStats(
   const branding  = item.brandingSettings ?? {};
   const thumbs    = snippet.thumbnails ?? {};
 
-  // Banner: coba dari brandingSettings.image, urutan priority
   const bannerUrl: string | null =
-    branding.image?.bannerExternalUrl          ??  // 2560×1440 original
-    branding.image?.bannerImageUrl             ??  // default web
-    branding.image?.bannerTvHighImageUrl       ??  // TV high
+    branding.image?.bannerExternalUrl          ??
+    branding.image?.bannerImageUrl             ??
+    branding.image?.bannerTvHighImageUrl       ??
     branding.image?.bannerTabletHdImageUrl     ??
     branding.image?.bannerMobileHdImageUrl     ??
     null;
 
-  // Profile picture — pilih yang paling besar
   const thumbnailUrl: string =
     thumbs.high?.url   ||
     thumbs.medium?.url ||
@@ -166,7 +159,6 @@ async function fetchChannelStats(
   return { result, error: null };
 }
 
-// ─── Hook ───────────────────────────────────────────────────────────────────────
 export function useYouTubeChannelStats(channelHandle: string) {
   const [stats,   setStats]   = useState<YouTubeChannelStats | null>(() => readCache(channelHandle));
   const [loading, setLoading] = useState<boolean>(() => !readCache(channelHandle));
@@ -204,7 +196,6 @@ export function useYouTubeChannelStats(channelHandle: string) {
 
   useEffect(() => {
     fetchStats(!readCache(channelHandle));
-    // Refresh setiap 30 menit
     intervalRef.current = setInterval(() => fetchStats(false), CACHE_TTL_MS);
     return () => {
       abortRef.current?.abort();

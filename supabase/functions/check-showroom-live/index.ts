@@ -22,7 +22,7 @@ serve(async (req) => {
     try {
       const body = await req.json();
       if (body?.room_url_key) roomUrlKey = body.room_url_key;
-    } catch { /* pakai default */ }
+    } catch { /**/ }
 
     const statusRes = await fetch(
       `${SHOWROOM_API}/room/status?room_url_key=${encodeURIComponent(roomUrlKey)}`,

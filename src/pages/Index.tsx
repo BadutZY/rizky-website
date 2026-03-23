@@ -153,7 +153,6 @@ const Index = () => {
       <ThemeToggle visible={true} />
       <Header />
 
-      {/* Section dots navigation */}
       <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-3" aria-label="Section navigation">
         {sectionIds.map((id, i) => (
           <button
@@ -170,7 +169,6 @@ const Index = () => {
       </nav>
 
       <main className="relative z-10">
-        {/* HERO Section */}
         <section id="hero" className="fp-section flex items-center justify-center overflow-hidden relative" role="banner">
           <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
             <div className="absolute top-[10%] right-[10%] w-96 h-96 rounded-full bg-gradient-to-bl from-primary/[0.08] to-transparent blur-3xl" />
@@ -223,7 +221,6 @@ const Index = () => {
           </motion.div>
         </section>
 
-        {/* About Section */}
         <section id="about" className="fp-section flex items-center overflow-hidden relative">
           <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
             <div className="absolute top-[15%] left-[8%] w-32 h-32 rounded-full border border-primary/10 animate-float" style={{ animationDelay: '0s' }} />
@@ -287,7 +284,6 @@ const Index = () => {
           <ScrollIndicator />
         </section>
 
-        {/* Skills Section */}
         <section id="skills" className="fp-section flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0">
             <div className="absolute inset-0 opacity-[0.03]" style={{
@@ -329,7 +325,6 @@ const Index = () => {
           <ScrollIndicator />
         </section>
 
-        {/* Projects Section */}
         <section id="projects" className="fp-section flex items-center overflow-hidden relative">
           <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
             <div className="absolute top-[10%] left-[5%] text-[120px] font-mono text-primary/[0.04] select-none leading-none">{'{'}</div>
@@ -389,7 +384,6 @@ const Index = () => {
           <ScrollIndicator />
         </section>
 
-        {/* Equipment Section */}
         <section id="equipment" className="fp-section flex items-center overflow-hidden">
           <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
             <div className="absolute inset-0 opacity-[0.02]" style={{
@@ -460,7 +454,6 @@ const Index = () => {
           <ScrollIndicator />
         </section>
 
-        {/* Wife Section */}
         <section id="wife" className="fp-section flex items-center overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <motion.div className="absolute inset-0" style={{ x: mousePos.x * -0.2, y: mousePos.y * -0.2 }}>
@@ -535,7 +528,6 @@ const Index = () => {
           <ScrollIndicator />
         </section>
 
-        {/* Contact Section */}
         <section id="contact" className="fp-section flex flex-col overflow-hidden relative">
           <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
             <div className="absolute top-[20%] right-[10%] w-64 h-64 rounded-full bg-gradient-to-bl from-primary/[0.06] to-transparent blur-3xl" />

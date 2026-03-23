@@ -212,7 +212,6 @@ const YTPlayerCard = ({ playlist, index, isVisible }: { playlist: YTPlaylist; in
       });
     });
     return () => { stopPoll(); ytRef.current?.destroy?.(); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     if (!apiReady) return;
@@ -361,7 +360,6 @@ const SPPlayerCard = ({ playlist, index, isVisible }: { playlist: SPPlaylist; in
       });
     });
     return () => { controllerRef.current?.destroy?.(); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     if (!apiReady || !controllerRef.current) return;

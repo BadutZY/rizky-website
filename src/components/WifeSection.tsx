@@ -193,8 +193,7 @@ const WifeSection = () => {
             </div>
           </div>
 
-          <div className={`fade-in delay-300 ${galleryVisible ? 'show' : ''}`}>
-            {/* Code Preview */}
+          <div className={`fade-in delay-300 ${galleryVisible ? 'show' : ''}`}>=
             <div ref={codeRef} className="bg-card rounded-xl border border-border overflow-hidden mb-4 transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/5">
               <button
                 onClick={() => { setCodeOpen(prev => !prev); if (!codeOpen) setCodeVisibleLines(0); }}
@@ -247,7 +246,6 @@ const WifeSection = () => {
               </div>
             </div>
 
-            {/* Gallery */}
             <div ref={galleryRef} className="relative rounded-2xl overflow-hidden border border-border/50 shadow-card mb-3 aspect-[4/5] max-h-[540px] mx-auto">
               {prevPhoto !== null && (
                 <img

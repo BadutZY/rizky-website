@@ -6,7 +6,7 @@ export interface ChannelVideo {
   title: string;
   thumbnail: string;
   publishedAt: string;
-  duration?: string; // ISO 8601 duration string, e.g. "PT1M30S"
+  duration?: string;
   viewCount?: string;
 }
 
@@ -20,10 +20,8 @@ export type ChannelVideoError =
   | "network_error"
   | "unknown";
 
-// ─── Cache ────────────────────────────────────────────────────────────────────
-
-const CACHE_PREFIX  = "yt_ch_v3_";        // v3 — bersihkan cache lama
-const POLL_INTERVAL = 6 * 60 * 60 * 1_000; // 6 jam
+const CACHE_PREFIX  = "yt_ch_v3_";
+const POLL_INTERVAL = 6 * 60 * 60 * 1_000;
 
 interface CacheEntry { data: ChannelVideo; savedAt: number; }
 
@@ -37,10 +35,9 @@ function readCache(key: string): ChannelVideo | null {
 
 function writeCache(key: string, data: ChannelVideo): void {
   try { localStorage.setItem(CACHE_PREFIX + key, JSON.stringify({ data, savedAt: Date.now() })); }
-  catch { /* full */ }
+  catch { /**/ }
 }
 
-// ─── Resolve channelId dari handle ───────────────────────────────────────────
 
 async function resolveChannelId(
   handle: string,
@@ -60,11 +57,9 @@ async function resolveChannelId(
   if (!res.ok) return null;
   const json = await res.json();
   const id: string | undefined = json.items?.[0]?.id;
-  if (id) { try { localStorage.setItem(CACHE_PREFIX + ck, id); } catch { /* skip */ } }
+  if (id) { try { localStorage.setItem(CACHE_PREFIX + ck, id); } catch { /**/ } }
   return id ?? null;
 }
-
-// ─── Parse ISO 8601 duration ke detik ────────────────────────────────────────
 
 function parseDurationSeconds(iso: string): number {
   const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
@@ -74,17 +69,6 @@ function parseDurationSeconds(iso: string): number {
          (parseInt(m[3] || "0"));
 }
 
-// ─── Fetch kandidat videos + enrichment via videos.list ──────────────────────
-//
-// Strategi yang AKURAT untuk membedakan video / short / stream:
-//
-//  VIDEO  : durasi > 60 detik, BUKAN livestream (liveStreamingDetails tidak ada)
-//  SHORT  : durasi <= 60 detik
-//  STREAM : liveStreamingDetails.actualEndTime ada (live yang sudah selesai)
-//
-// Kita ambil 10 kandidat terbaru, lalu enrich dengan videos.list (part=contentDetails,liveStreamingDetails)
-// untuk mendapatkan durasi dan status live, lalu filter sesuai type.
-
 async function fetchLatestOfType(
   channelId: string,
   type: VideoType,
@@ -93,7 +77,6 @@ async function fetchLatestOfType(
   maxCandidates = 10
 ): Promise<{ result: ChannelVideo | null; error: ChannelVideoError | null }> {
 
-  // Step 1: search — ambil kandidat terbaru
   const searchUrl = new URL("https://www.googleapis.com/youtube/v3/search");
   searchUrl.searchParams.set("part",      "snippet");
   searchUrl.searchParams.set("channelId", channelId);
@@ -102,8 +85,6 @@ async function fetchLatestOfType(
   searchUrl.searchParams.set("type",      "video");
   searchUrl.searchParams.set("key",       apiKey);
 
-  // Untuk stream: pakai eventType=completed agar API filter awal
-  // (walaupun tidak 100% reliable, ini mengurangi kandidat yang salah)
   if (type === "stream") {
     searchUrl.searchParams.set("eventType", "completed");
   }
@@ -130,7 +111,6 @@ async function fetchLatestOfType(
     .filter(Boolean)
     .join(",");
 
-  // Step 2: videos.list — enrich dengan durasi + livestream details
   const detailUrl = new URL("https://www.googleapis.com/youtube/v3/videos");
   detailUrl.searchParams.set("part",  "contentDetails,liveStreamingDetails,statistics,snippet");
   detailUrl.searchParams.set("id",    videoIds);
@@ -147,7 +127,6 @@ async function fetchLatestOfType(
   const detailJson = await detailRes.json();
   const details: any[] = detailJson.items ?? [];
 
-  // Step 3: filter kandidat sesuai type
   const matched = details.find((item: any) => {
     const durationSec = parseDurationSeconds(item.contentDetails?.duration ?? "PT0S");
     const hasLiveEnd  = !!item.liveStreamingDetails?.actualEndTime;
@@ -156,7 +135,6 @@ async function fetchLatestOfType(
 
     if (type === "stream") return isLive;
     if (type === "short")  return !isLive && durationSec <= 60;
-    // type === "video" — bukan live, bukan short
     return !isLive && durationSec > 60;
   });
 
@@ -182,8 +160,6 @@ async function fetchLatestOfType(
 
   return { result, error: null };
 }
-
-// ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export function useLatestChannelVideo(channelHandle: string, type: VideoType) {
   const cacheKey = `${channelHandle}_${type}`;
