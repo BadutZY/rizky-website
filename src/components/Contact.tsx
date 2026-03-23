@@ -1,6 +1,388 @@
-import { Youtube, Instagram, Github, ArrowUpRight, Play, Film } from 'lucide-react';
+import { Youtube, Instagram, Github, ArrowUpRight, Play, Film, RefreshCw, Clock, ExternalLink, Radio } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useState } from 'react';
+import { useLatestChannelVideo, type VideoType } from '@/hooks/useLatestChannelVideo';
+
+const BADUTZY_CHANNEL_HANDLE  = "badutzy";
+const BADUTZY_CHANNEL_URL     = "https://www.youtube.com/@badutzy";
+const BADUTZY_VIDEOS_URL      = "https://www.youtube.com/@badutzy/videos";
+const BADUTZY_SHORTS_URL      = "https://www.youtube.com/@badutzy/shorts";
+const BADUTZY_STREAMS_URL     = "https://www.youtube.com/@badutzy/streams";
+
+function formatRelativeTime(isoDate: string): string {
+  const diff    = Date.now() - new Date(isoDate).getTime();
+  const days    = Math.floor(diff / 86_400_000);
+  const hours   = Math.floor(diff / 3_600_000);
+  const minutes = Math.floor(diff / 60_000);
+  if (days > 30) return new Date(isoDate).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+  if (days >= 1)    return `${days}h lalu`;
+  if (hours >= 1)   return `${hours}j lalu`;
+  if (minutes >= 1) return `${minutes}m lalu`;
+  return "Baru saja";
+}
+
+function formatViewCount(count?: string): string {
+  if (!count) return "";
+  const n = parseInt(count);
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M views`;
+  if (n >= 1_000)     return `${(n / 1_000).toFixed(1)}K views`;
+  return `${n} views`;
+}
+
+const CARD_CONFIG = {
+  video: {
+    label:       "Video Terbaru",
+    badge:       "Latest Video",
+    accentColor: "#FF0000",
+    glowColor:   "rgba(255,0,0,0.25)",
+    borderColor: "rgba(255,50,50,0.2)",
+    bgGradient:  "linear-gradient(160deg, #1c0808 0%, #0f0f0f 60%, #0a0a0a 100%)",
+    playlistUrl: BADUTZY_VIDEOS_URL,
+    icon: () => (
+      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-white">
+        <polygon points="9.5,7.5 16.5,12 9.5,16.5" />
+      </svg>
+    ),
+  },
+  short: {
+    label:       "Shorts Terbaru",
+    badge:       "Latest Short",
+    accentColor: "#FF4500",
+    glowColor:   "rgba(255,69,0,0.25)",
+    borderColor: "rgba(255,80,0,0.2)",
+    bgGradient:  "linear-gradient(160deg, #1c0e06 0%, #0f0f0f 60%, #0a0a0a 100%)",
+    playlistUrl: BADUTZY_SHORTS_URL,
+    icon: () => (
+      <svg viewBox="0 0 24 24" fill="white" className="w-3 h-3">
+        <path d="M17.77 10.32l-1.2-.5L18 9.06a3.74 3.74 0 0 0-3.5-6.61L6.44 5.62A3.74 3.74 0 0 0 5.5 12l1.2.5L5.25 13.2A3.74 3.74 0 0 0 8.75 19.8l8.06-3.17a3.74 3.74 0 0 0 .96-6.31zM10 14.65V9.35L15 12l-5 2.65z" />
+      </svg>
+    ),
+  },
+  stream: {
+    label:       "Stream Replay",
+    badge:       "Stream Replay",
+    accentColor: "#FF3B5C",
+    glowColor:   "rgba(255,59,92,0.25)",
+    borderColor: "rgba(255,59,92,0.2)",
+    bgGradient:  "linear-gradient(160deg, #1c0810 0%, #0f0f0f 60%, #0a0a0a 100%)",
+    playlistUrl: BADUTZY_STREAMS_URL,
+    icon: () => <Radio className="w-3 h-3 text-white" />,
+  },
+} as const;
+
+const YouTubeCard = ({
+  type,
+  index,
+  isVisible,
+}: {
+  type:      VideoType;
+  index:     number;
+  isVisible: boolean;
+}) => {
+  const cfg = CARD_CONFIG[type];
+  const { video, loading, error, refresh } = useLatestChannelVideo(BADUTZY_CHANNEL_HANDLE, type);
+
+  const [active,       setActive]       = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [imgFailed,    setImgFailed]    = useState(false);
+  const [isHovered,    setIsHovered]    = useState(false);
+
+  const watchUrl = video ? `https://www.youtube.com/watch?v=${video.videoId}` : cfg.playlistUrl;
+  const embedSrc = video
+    ? `https://www.youtube.com/embed/${video.videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`
+    : "";
+
+  const handleRefresh = async () => {
+    setActive(false);
+    setImgFailed(false);
+    setIsRefreshing(true);
+    refresh();
+    await new Promise<void>((r) => setTimeout(r, 800));
+    setIsRefreshing(false);
+  };
+
+  const isShort = type === "short";
+
+  const mediaWrapperStyle: React.CSSProperties = isShort
+    ? { position: "relative", width: "100%", paddingTop: "177.78%" }
+    : { position: "relative", width: "100%", paddingTop: "56.25%" };
+
+  const errorMsg =
+    error === "no_api_key"        ? { title: "API Key belum diatur",    hint: "Tambahkan VITE_YOUTUBE_API_KEY di .env" } :
+    error === "quota_exceeded"    ? { title: "Quota API habis",         hint: "Coba lagi besok" } :
+    error === "channel_not_found" ? { title: "Channel tidak ditemukan", hint: "Cek BADUTZY_CHANNEL_HANDLE" } :
+    error === "no_video_found"    ? { title: "Belum ada video",         hint: "Belum ada konten di kategori ini" } :
+                                    { title: "Gagal memuat video",      hint: "Coba refresh" };
+
+  return (
+    <div
+      className="transition-all duration-700"
+      style={{
+        opacity:         isVisible ? 1 : 0,
+        transform:       isVisible ? "translateY(0)" : "translateY(32px)",
+        transitionDelay: isVisible ? `${index * 100}ms` : "0ms",
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div
+        className="relative rounded-2xl overflow-hidden transition-all duration-500"
+        style={{
+          background:  cfg.bgGradient,
+          border:      `1px solid ${isHovered ? cfg.accentColor + "40" : cfg.borderColor}`,
+          boxShadow:   isHovered
+            ? `0 0 0 1px ${cfg.accentColor}20, 0 8px 40px ${cfg.glowColor}, 0 2px 8px rgba(0,0,0,0.6)`
+            : "0 4px 24px rgba(0,0,0,0.5)",
+          transform:   isHovered ? "translateY(-4px)" : "translateY(0)",
+        }}
+      >
+        {/* Top accent glow line */}
+        <div
+          className="absolute top-0 inset-x-0 h-[2px] transition-opacity duration-500"
+          style={{
+            background: `linear-gradient(90deg, transparent, ${cfg.accentColor}, transparent)`,
+            opacity: isHovered ? 1 : 0.4,
+          }}
+        />
+
+        {/* ── Header ── */}
+        <div
+          className="flex items-center justify-between px-4 py-3"
+          style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+        >
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300"
+              style={{
+                background: isHovered
+                  ? `linear-gradient(135deg, ${cfg.accentColor}, ${cfg.accentColor}aa)`
+                  : cfg.accentColor,
+                boxShadow: isHovered ? `0 0 12px ${cfg.glowColor}` : "none",
+              }}
+            >
+              <cfg.icon />
+            </div>
+            <div>
+              <p className="text-[9px] uppercase tracking-[0.15em] text-white/35 font-semibold leading-none mb-0.5">
+                @badutzy
+              </p>
+              <p
+                className="text-[11px] font-bold leading-none tracking-wide"
+                style={{ color: cfg.accentColor }}
+              >
+                {cfg.label}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1">
+            {/* Refresh */}
+            <button
+              onClick={handleRefresh}
+              disabled={loading || isRefreshing}
+              className="w-7 h-7 flex items-center justify-center rounded-lg text-white/30 hover:text-white/70 hover:bg-white/5 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+              title="Refresh"
+            >
+              <RefreshCw className={`w-3 h-3 ${isRefreshing ? "animate-spin" : ""}`} />
+            </button>
+            {/* Open in YouTube */}
+            {video && !loading && (
+              <a
+                href={watchUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-7 h-7 flex items-center justify-center rounded-lg text-white/30 hover:text-red-400 hover:bg-white/5 transition-all duration-200"
+                title="Buka di YouTube"
+              >
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
+          </div>
+        </div>
+
+        {/* ── Media area ── */}
+        <div style={mediaWrapperStyle}>
+          {/* Inner absolute container — sama untuk semua type */}
+          <div className="absolute inset-0 overflow-hidden">
+
+          {/* LOADING */}
+          {loading && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4" style={{ background: "rgba(10,10,10,0.95)" }}>
+              <div className="relative w-12 h-12">
+                <div className="absolute inset-0 rounded-full border-2 animate-ping" style={{ borderColor: cfg.accentColor + "20", animationDuration: "1.6s" }} />
+                <div className="absolute inset-0 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: cfg.accentColor + "50", borderTopColor: cfg.accentColor }} />
+              </div>
+              <p className="text-white/25 text-[11px] tracking-wide">Memuat {cfg.label.toLowerCase()}…</p>
+            </div>
+          )}
+
+          {/* ERROR */}
+          {!loading && error && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center" style={{ background: "rgba(10,10,10,0.95)" }}>
+              <div
+                className="w-12 h-12 rounded-full flex items-center justify-center"
+                style={{ background: cfg.accentColor + "15", border: `1px solid ${cfg.accentColor}30` }}
+              >
+                <Youtube className="w-5 h-5" style={{ color: cfg.accentColor + "80" }} />
+              </div>
+              <div>
+                <p className="text-white/60 text-xs font-semibold">{errorMsg.title}</p>
+                <p className="text-white/25 text-[10px] mt-1">{errorMsg.hint}</p>
+              </div>
+              {error !== "no_api_key" && (
+                <button
+                  onClick={handleRefresh}
+                  className="flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1.5 rounded-lg transition-all duration-200 hover:opacity-80 active:scale-95"
+                  style={{ background: cfg.accentColor + "18", color: cfg.accentColor }}
+                >
+                  <RefreshCw className="w-3 h-3" />
+                  Coba Lagi
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* SUCCESS */}
+          {!loading && !error && video && (
+            !active ? (
+              <button
+                onClick={() => setActive(true)}
+                className="absolute inset-0 w-full h-full group/play"
+                aria-label={`Play ${video.title}`}
+              >
+                {/* Thumbnail — object-cover fills the portrait frame perfectly */}
+                {!imgFailed ? (
+                  <img
+                    src={
+                      isShort
+                        ? `https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`
+                        : video.thumbnail
+                    }
+                    alt={video.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover/play:scale-105"
+                    style={{ filter: "brightness(0.55)" }}
+                    onError={() => setImgFailed(true)}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center" style={{ background: "#111" }}>
+                    <Youtube className="w-12 h-12 text-white/10" />
+                  </div>
+                )}
+
+                {/* Gradient overlay */}
+                <div
+                  className="absolute inset-0"
+                  style={{ background: `linear-gradient(to top, ${cfg.accentColor}40 0%, transparent 50%)` }}
+                />
+                <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, transparent 35%)" }} />
+
+                {/* Play button */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div
+                    className="flex items-center justify-center transition-all duration-300 group-hover/play:scale-110"
+                    style={{
+                      width: "64px", height: "64px",
+                      borderRadius: "50%",
+                      background: cfg.accentColor,
+                      boxShadow: `0 0 0 10px ${cfg.accentColor}20, 0 4px 28px ${cfg.glowColor}`,
+                    }}
+                  >
+                    <Play className="text-white ml-0.5 w-7 h-7" fill="white" />
+                  </div>
+                </div>
+
+                {/* Hover hint */}
+                <div className="absolute bottom-3 left-0 right-0 flex justify-center pointer-events-none opacity-0 group-hover/play:opacity-100 transition-opacity duration-200">
+                  <span className="bg-black/75 text-white/90 text-[10px] font-semibold px-3 py-1 rounded-full backdrop-blur-sm tracking-wide">
+                    Klik untuk putar
+                  </span>
+                </div>
+              </button>
+            ) : (
+              <div className="absolute inset-0 bg-black">
+                {isShort ? (
+                  <iframe
+                    src={embedSrc}
+                    title={video.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                    style={{ border: "none" }}
+                  />
+                ) : (
+                  <iframe
+                    src={embedSrc}
+                    title={video.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 w-full h-full"
+                    style={{ border: "none" }}
+                  />
+                )}
+                {/* Close button */}
+                <button
+                  onClick={() => setActive(false)}
+                  className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-black/70 hover:bg-black text-white/70 hover:text-white transition-all duration-200 backdrop-blur-sm z-10"
+                  title="Tutup"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3.5 h-3.5">
+                    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+            )
+          )}
+
+          </div>{/* end absolute inner */}
+        </div>
+
+        {/* ── Footer ── */}
+        <div className="px-4 py-3.5">
+          {loading ? (
+            <div className="space-y-2">
+              <div className="h-3 bg-white/8 rounded-full animate-pulse w-4/5" />
+              <div className="h-2.5 bg-white/8 rounded-full animate-pulse w-3/5" />
+            </div>
+          ) : video ? (
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <p className="text-white font-semibold text-[13px] leading-snug line-clamp-2" title={video.title}>
+                  {video.title}
+                </p>
+                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                  <span
+                    className="text-[9px] font-black px-2 py-0.5 rounded-full tracking-wider uppercase"
+                    style={{ background: cfg.accentColor + "20", color: cfg.accentColor, border: `1px solid ${cfg.accentColor}35` }}
+                  >
+                    {cfg.badge}
+                  </span>
+                  <div className="flex items-center gap-1 text-white/30">
+                    <Clock className="w-2.5 h-2.5" />
+                    <span className="text-[10px]">{formatRelativeTime(video.publishedAt)}</span>
+                  </div>
+                  {video.viewCount && (
+                    <span className="text-[10px] text-white/25">{formatViewCount(video.viewCount)}</span>
+                  )}
+                </div>
+              </div>
+              {/* Channel badge */}
+              <a
+                href={cfg.playlistUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-110"
+                style={{ background: cfg.accentColor + "15" }}
+                title={`Lihat ${cfg.label}`}
+              >
+                <ArrowUpRight className="w-3.5 h-3.5" style={{ color: cfg.accentColor }} />
+              </a>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const TikTokIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className || "w-5 h-5"} aria-hidden="true">
@@ -43,20 +425,6 @@ const githubLink = {
   color: 'hover:bg-purple-500/10 hover:text-purple-500 hover:border-purple-500/30',
 };
 
-const youtubeVideos = [
-  {
-    id: 'eIxj1ing7_E',
-    title: 'Kerandoman para lanang',
-    subtitle: 'VALORANT × CS2',
-    href: 'https://youtu.be/eIxj1ing7_E?si=78OY6d6JZvJzgIM_',
-  },
-  {
-    id: '4Ntn6hOPlzA',
-    title: 'Random Moment',
-    subtitle: 'VALORANT',
-    href: 'https://youtu.be/4Ntn6hOPlzA?si=ImoP4B1hOH999Eae',
-  },
-];
 
 const instagramReels = [
   { shortcode: 'DVT03rLicSo', href: 'https://www.instagram.com/reel/DVT03rLicSo/' },
@@ -107,131 +475,6 @@ const SocialCard = ({
   );
 };
 
-const YouTubeCard = ({
-  video,
-  index,
-  isVisible,
-}: {
-  video: typeof youtubeVideos[0];
-  index: number;
-  isVisible: boolean;
-}) => {
-  const [active, setActive] = useState(false);
-
-  return (
-    <div
-      className="transition-all duration-700"
-      style={{
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? 'translateY(0)' : 'translateY(24px)',
-        transitionDelay: isVisible ? `${index * 120}ms` : '0ms',
-      }}
-    >
-      {/* Card shell — YouTube red-dark theme */}
-      <div
-        className="relative rounded-2xl overflow-hidden"
-        style={{
-          background: 'linear-gradient(160deg, #1a0a0a 0%, #0f0f0f 100%)',
-          border: '1px solid rgba(255,50,50,0.15)',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
-        }}
-      >
-        {/* Header bar */}
-        <div
-          className="flex items-center justify-between px-4 py-3"
-          style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
-        >
-          <div className="flex items-center gap-2">
-            {/* YT logo */}
-            <div className="w-6 h-6 rounded-md bg-[#FF0000] flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-white">
-                <polygon points="9.5,7.5 16.5,12 9.5,16.5" />
-              </svg>
-            </div>
-            <span className="text-[11px] font-bold tracking-widest uppercase text-white/60">
-              YouTube
-            </span>
-          </div>
-          <a
-            href={video.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-[10px] text-white/35 hover:text-red-400 transition-colors"
-          >
-            <ArrowUpRight className="w-3 h-3" />
-            <span>Open</span>
-          </a>
-        </div>
-
-        {/* Embed area */}
-        <div className="relative" style={{ aspectRatio: '16/9' }}>
-          {!active ? (
-            /* Thumbnail + play overlay */
-            <button
-              onClick={() => setActive(true)}
-              className="absolute inset-0 w-full h-full group"
-              aria-label={`Play ${video.title}`}
-            >
-              <img
-                src={`https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`}
-                alt={video.title}
-                className="w-full h-full object-cover"
-                style={{ filter: 'brightness(0.6)' }}
-              />
-              {/* Red gradient bottom */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    'linear-gradient(to top, rgba(180,0,0,0.35) 0%, transparent 50%)',
-                }}
-              />
-              {/* Play button */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div
-                  className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
-                  style={{
-                    background: 'rgba(255,0,0,0.9)',
-                    boxShadow: '0 0 30px rgba(255,0,0,0.5)',
-                  }}
-                >
-                  <Play className="w-7 h-7 text-white ml-1" fill="currentColor" />
-                </div>
-              </div>
-            </button>
-          ) : (
-            <iframe
-              src={`https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1`}
-              title={video.title}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="absolute inset-0 w-full h-full"
-              style={{ border: 'none' }}
-            />
-          )}
-        </div>
-
-        {/* Footer info */}
-        <div className="px-4 py-3">
-          <p className="text-white font-bold text-[13px] leading-snug truncate">{video.title}</p>
-          <div className="flex items-center gap-2 mt-1">
-            <span
-              className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-              style={{
-                background: 'rgba(255,0,0,0.15)',
-                color: 'rgba(255,100,100,0.9)',
-                border: '1px solid rgba(255,0,0,0.2)',
-              }}
-            >
-              {video.subtitle}
-            </span>
-            <span className="text-[10px] text-white/30">@badutzy</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const IG_GRADIENT = 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)';
 
@@ -288,12 +531,12 @@ const InstagramCard = ({
           </a>
         </div>
 
-        {/* Embed — slightly larger than before */}
+        {/* Embed — portrait 9:16, sama tinggi dengan Shorts card */}
         <div
           style={{
             position: 'relative',
             width: '100%',
-            paddingBottom: '195%',
+            paddingBottom: '177.78%',
           }}
         >
           <iframe
@@ -398,20 +641,34 @@ const Contact = () => {
           }`}
           style={{ transitionDelay: '60ms' }}
         >
-          <div className="flex items-center gap-2 mb-5">
-            <div className="w-5 h-5 rounded bg-[#FF0000] flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-3 h-3 fill-white">
-                <polygon points="9.5,7.5 16.5,12 9.5,16.5" />
-              </svg>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2.5">
+              <div className="w-6 h-6 rounded-lg bg-[#FF0000] flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-white">
+                  <polygon points="9.5,7.5 16.5,12 9.5,16.5" />
+                </svg>
+              </div>
+              <span className="text-sm font-bold text-foreground tracking-wide">YouTube</span>
             </div>
-            <span className="text-sm font-bold text-foreground">YouTube</span>
+            <a
+              href={BADUTZY_CHANNEL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 group"
+            >
+              <span>@badutzy</span>
+              <ExternalLink className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
+            </a>
           </div>
         </div>
 
-        <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5 mb-14">
-          {youtubeVideos.map((v, i) => (
-            <YouTubeCard key={v.id} video={v} index={i} isVisible={contentVisible} />
-          ))}
+        {/* Layout: Video dan Stream pakai 1.78fr, Shorts 1fr
+            Karena Shorts 9:16 dan Video 16:9 dengan lebar yang berbeda,
+            tingginya akan setara secara visual di semua card */}
+        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-[1.78fr_1fr_1.78fr] gap-5 md:gap-6 mb-14 items-start">
+          <YouTubeCard type="video"  index={0} isVisible={contentVisible} />
+          <YouTubeCard type="short"  index={1} isVisible={contentVisible} />
+          <YouTubeCard type="stream" index={2} isVisible={contentVisible} />
         </div>
 
         {/* ── Instagram Row ── */}
@@ -435,7 +692,7 @@ const Contact = () => {
           </div>
         </div>
 
-        <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-5 pb-8">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-6 pb-8">
           {instagramReels.map((r, i) => (
             <InstagramCard key={r.shortcode} reel={r} index={i} isVisible={contentVisible} />
           ))}

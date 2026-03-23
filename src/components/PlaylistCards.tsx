@@ -16,10 +16,10 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 
-import raavfyCover from '@/assets/playlist/raavfy-songs.jpg';
-import englishCover from '@/assets/playlist/english-songs.jpg';
-import jkt48Cover from '@/assets/playlist/jkt48-songs.jpg';
-import indonesiaCover from '@/assets/playlist/indonesia-songs.jpg';
+import raavfyCover from '@/assets/playlist/yt-music/Rv.jpg';
+import englishCover from '@/assets/playlist/yt-music/Hendem.jpg';
+import jkt48Cover from '@/assets/playlist/yt-music/Jkt.jpg';
+import indonesiaCover from '@/assets/playlist/yt-music/Indos.jpg';
 
 interface Track {
   title: string;

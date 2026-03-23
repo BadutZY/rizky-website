@@ -27,15 +27,15 @@ function formatRelativeTime(isoDate: string): string {
   const hours   = Math.floor(diff / 3_600_000);
   const minutes = Math.floor(diff / 60_000);
   if (days > 30)
-    return new Date(isoDate).toLocaleDateString("id-ID", {
+    return new Date(isoDate).toLocaleDateString("en-US", {
       day: "numeric",
       month: "short",
       year: "numeric",
     });
-  if (days >= 1)    return `${days} hari yang lalu`;
-  if (hours >= 1)   return `${hours} jam yang lalu`;
-  if (minutes >= 1) return `${minutes} menit yang lalu`;
-  return "Baru saja";
+  if (days >= 1)    return `${days} days ago`;
+  if (hours >= 1)   return `${hours} hours ago`;
+  if (minutes >= 1) return `${minutes} minutes ago`;
+  return "Just now";
 }
 
 function embedUrl(videoId: string): string {
@@ -74,13 +74,13 @@ const ERROR_INFO: Record<
   ReplayError,
   { Icon: React.ElementType; title: string; desc: string }
 > = {
-  no_api_key:       { Icon: KeyRound,    title: "API Key Belum Diatur",  desc: "Tambahkan VITE_YOUTUBE_API_KEY di file .env" },
-  quota_exceeded:   { Icon: AlertCircle, title: "Quota API Habis",       desc: "YouTube API quota harian sudah habis. Coba lagi besok." },
-  invalid_playlist: { Icon: AlertCircle, title: "Playlist Tidak Valid",  desc: "Cek kembali Playlist ID di youtubeConfig.ts" },
-  empty_playlist:   { Icon: Youtube,     title: "Playlist Kosong",       desc: "Belum ada video replay tersedia." },
-  timeout:          { Icon: Wifi,        title: "Koneksi Timeout",       desc: "Tidak bisa menghubungi YouTube API. Cek koneksi." },
-  network_error:    { Icon: Wifi,        title: "Gagal Memuat",          desc: "Kesalahan jaringan. Coba refresh." },
-  unknown:          { Icon: AlertCircle, title: "Terjadi Kesalahan",     desc: "Tidak dapat memuat video. Coba lagi." },
+  no_api_key:       { Icon: KeyRound,    title: "API Key Not Set",  desc: "Add VITE_YOUTUBE_API_KEY in your .env file" },
+  quota_exceeded:   { Icon: AlertCircle, title: "API Quota Exceeded",       desc: "Daily YouTube API quota exceeded. Try again tomorrow." },
+  invalid_playlist: { Icon: AlertCircle, title: "Invalid Playlist",  desc: "Check the Playlist ID in youtubeConfig.ts" },
+  empty_playlist:   { Icon: Youtube,     title: "Empty Playlist",       desc: "No replay videos available yet." },
+  timeout:          { Icon: Wifi,        title: "Connection Timeout",       desc: "Could not reach YouTube API. Check your connection." },
+  network_error:    { Icon: Wifi,        title: "Failed to Load",          desc: "Network error. Try refreshing." },
+  unknown:          { Icon: AlertCircle, title: "An Error Occurred",     desc: "Unable to load video. Please try again." },
 };
 
 function PlayIcon() {
@@ -157,13 +157,13 @@ function EmbedModal({ video, platform, onClose }: EmbedModalProps) {
                 rel="noopener noreferrer"
                 className="hidden sm:inline-flex items-center gap-1.5 text-xs text-white/50 hover:text-white border border-white/10 hover:border-white/25 px-3 py-1.5 rounded-full transition-all duration-200"
               >
-                Buka di YouTube
+                Open on YouTube
                 <ExternalLink size={10} />
               </a>
               <button
                 onClick={onClose}
                 className="w-8 h-8 flex items-center justify-center rounded-full text-white/60 hover:text-white border border-white/10 hover:border-white/30 hover:bg-white/10 transition-all duration-200"
-                aria-label="Tutup"
+                aria-label="Close"
               >
                 <X size={14} />
               </button>
@@ -196,7 +196,7 @@ function EmbedModal({ video, platform, onClose }: EmbedModalProps) {
                       transition={{ repeat: Infinity, duration: 0.85, ease: "linear" }}
                     />
                   </div>
-                  <p className="text-white/40 text-xs">Memuat video…</p>
+                  <p className="text-white/40 text-xs">Loading video…</p>
                 </div>
               </div>
             )}
@@ -212,11 +212,11 @@ function EmbedModal({ video, platform, onClose }: EmbedModalProps) {
           </div>
 
           <p className="text-center text-white/20 text-[11px] mt-2.5">
-            Tekan{" "}
+            Press{" "}
             <kbd className="px-1.5 py-0.5 rounded bg-white/8 text-white/30 text-[10px] font-mono">
               ESC
             </kbd>{" "}
-            atau klik di luar untuk tutup
+            or click outside to close
           </p>
         </motion.div>
       </motion.div>
@@ -269,14 +269,14 @@ function InlineEmbed({ video, accentColor, onExpand, onClose }: InlineEmbedProps
         <button
           onClick={onExpand}
           className="w-7 h-7 flex items-center justify-center rounded-lg bg-black/60 hover:bg-black/80 text-white/70 hover:text-white transition-all duration-200 backdrop-blur-sm"
-          title="Perbesar"
+          title="Expand"
         >
           <Maximize2 size={12} />
         </button>
         <button
           onClick={onClose}
           className="w-7 h-7 flex items-center justify-center rounded-lg bg-black/60 hover:bg-black/80 text-white/70 hover:text-white transition-all duration-200 backdrop-blur-sm"
-          title="Tutup player"
+          title="Close player"
         >
           <X size={12} />
         </button>
@@ -368,7 +368,7 @@ function ReplayCard({ platform, delay = 0 }: ReplayCardProps) {
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-semibold leading-none mb-0.5">
-                Replay Terbaru
+                Latest Replay
               </p>
               <p
                 className="text-sm font-bold leading-none"
@@ -380,13 +380,13 @@ function ReplayCard({ platform, delay = 0 }: ReplayCardProps) {
           </div>
 
           <div className="flex items-center gap-1">
-            {/* Tombol ke playlist */}
+            {/* Playlist button */}
             <a
               href={cfg.playlistUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-white/8 transition-all duration-200"
-              title={`Lihat semua playlist ${cfg.label}`}
+              title={`View all ${cfg.label} playlist`}
             >
               <svg
                 viewBox="0 0 24 24"
@@ -409,7 +409,7 @@ function ReplayCard({ platform, delay = 0 }: ReplayCardProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-white/8 transition-all duration-200"
-                title="Buka di YouTube"
+                title="Open on YouTube"
               >
                 <ExternalLink size={13} />
               </a>
@@ -463,7 +463,7 @@ function ReplayCard({ platform, delay = 0 }: ReplayCardProps) {
                 style={{ backgroundColor: cfg.accentColor + "18", color: cfg.accentColor }}
               >
                 <RefreshCw size={11} />
-                Coba Lagi
+                Try Again
               </button>
             </div>
           )}
@@ -491,7 +491,7 @@ function ReplayCard({ platform, delay = 0 }: ReplayCardProps) {
                     onClick={handlePlayClick}
                     role="button"
                     tabIndex={0}
-                    aria-label={`Putar: ${video.title}`}
+                    aria-label={`Play: ${video.title}`}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") handlePlayClick();
                     }}
@@ -539,7 +539,7 @@ function ReplayCard({ platform, delay = 0 }: ReplayCardProps) {
                       className="absolute bottom-2 left-0 right-0 flex justify-center pointer-events-none"
                     >
                       <span className="bg-black/70 text-white/90 text-[10px] font-medium px-2.5 py-1 rounded-full backdrop-blur-sm">
-                        Klik untuk putar
+                        Click to play
                       </span>
                     </motion.div>
                   </motion.div>
@@ -596,11 +596,11 @@ function LiveReplay() {
           </div>
 
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            Tonton Ulang{" "}
+            Watch Replay{" "}
             <span className="text-gradient">Kimmy Live</span>
           </h2>
           <p className="text-muted-foreground text-sm md:text-base max-w-md mx-auto">
-            Replay live terbaru Kimmy dari IDN Live dan Showroom{" "}
+            Latest Kimmy live replays from IDN Live and Showroom{" "}
             <a
               href={YOUTUBE_CONFIG.channelUrl}
               target="_blank"
@@ -624,14 +624,14 @@ function LiveReplay() {
           transition={{ delay: 0.5 }}
           className="text-center text-[11px] text-muted-foreground/40 mt-5"
         >
-          Video akan diperbarui otomatis saat ada video replay live baru di playlist ·{" "}
+          Video updates automatically when a new live replay is added to the playlist ·{" "}
           <a
             href={YOUTUBE_CONFIG.channelUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-muted-foreground/70 transition-colors duration-200"
           >
-            Lihat semua di YouTube ↗
+            View all on YouTube ↗
           </a>
         </motion.p>
 
