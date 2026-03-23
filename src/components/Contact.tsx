@@ -2,6 +2,7 @@ import { Youtube, Instagram, Github, ArrowUpRight, Play, Film, RefreshCw, Clock,
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useState } from 'react';
 import { useLatestChannelVideo, type VideoType } from '@/hooks/useLatestChannelVideo';
+import YouTubeChannelCard from '@/components/YouTubeChannelCard';
 
 // ─── Config channel @badutzy ──────────────────────────────────────────────────
 const BADUTZY_CHANNEL_HANDLE  = "badutzy";
@@ -589,7 +590,8 @@ const InstagramCard = ({
 
 const Contact = () => {
   const { ref: sectionRef, isVisible: sectionVisible } = useScrollAnimation(0.1, true);
-  const { ref: socialRef, isVisible: socialVisible } = useScrollAnimation(0.1, true);
+  const { ref: socialRef,  isVisible: socialVisible  } = useScrollAnimation(0.1, true);
+  const { ref: ytCardRef,  isVisible: ytCardVisible  } = useScrollAnimation(0.1, true);
   const { ref: contentRef, isVisible: contentVisible } = useScrollAnimation(0.05, true);
 
   return (
@@ -626,6 +628,41 @@ const Contact = () => {
           <div className="w-full sm:w-[calc(50%-0.5rem)]">
             <SocialCard link={githubLink} index={gridSocialLinks.length} isVisible={socialVisible} />
           </div>
+        </div>
+      </div>
+
+      {/* ── YouTube Channel Card ── */}
+      <div ref={ytCardRef} className="container mx-auto px-6 md:px-10 lg:px-20 mt-10 md:mt-14">
+        <div className="max-w-2xl mx-auto">
+          {/* Section label */}
+          <div
+            className="flex items-center gap-4 mb-6"
+            style={{
+              opacity:    ytCardVisible ? 1 : 0,
+              transform:  ytCardVisible ? "translateY(0)" : "translateY(12px)",
+              transition: "opacity 0.5s ease, transform 0.5s ease",
+            }}
+          >
+            <div className="flex-1 h-px bg-border/30" />
+            <div
+              className="flex items-center gap-2 px-4 py-1.5 rounded-full"
+              style={{
+                background:  "rgba(255,0,0,0.06)",
+                border:      "1px solid rgba(255,0,0,0.15)",
+              }}
+            >
+              <div
+                className="w-2 h-2 rounded-full"
+                style={{ background: "#FF0000", boxShadow: "0 0 8px #FF0000" }}
+              />
+              <span className="text-xs font-bold uppercase tracking-widest text-red-400/80">
+                YouTube Channel
+              </span>
+            </div>
+            <div className="flex-1 h-px bg-border/30" />
+          </div>
+
+          <YouTubeChannelCard isVisible={ytCardVisible} />
         </div>
       </div>
 

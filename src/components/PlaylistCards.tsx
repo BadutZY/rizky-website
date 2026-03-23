@@ -27,7 +27,7 @@ const ytPlaylists: YTPlaylist[] = [
   { id: 'yt-raavfy', name: 'Raavfy Songs', cover: ytRaavfyCover, accentColor: '#7c3aed', textColor: '#ede9fe',
     url: 'https://music.youtube.com/playlist?list=PLlusqwJxX40nnZWNJp_R00Oh0YjojKFR9&si=tjbz3mVDX63s1N8Y',
     tracks: [
-      { title: 'Kau Pilih Dia', artist: 'Raavfy, Mas Jordan, Malikoendang', duration: '4:01', videoId: 'nYefp88ahug' },
+      { title: 'Kau Pilih Dia', artist: 'Raavfy, Mas Jordan, Malikoendang', duration: '4:02', videoId: 'nYefp88ahug' },
       { title: 'Persetan', artist: 'Raavfy', duration: '4:19', videoId: '2oQULwdi27I' },
       { title: 'Berubah', artist: 'Raavfy', duration: '3:53', videoId: 'BsBx8TmO0sI' },
     ],

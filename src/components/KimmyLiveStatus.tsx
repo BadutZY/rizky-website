@@ -6,12 +6,29 @@ import kimmy1 from "@/assets/wife/kimmy-1.jpg";
 import idnLogo from "@/assets/icons/idn-logo.png";
 import showroomLogo from "@/assets/icons/showroom-logo.png";
 
-const IDN_USERNAME = "jkt48_kimmy";
-const SHOWROOM_KEY = "JKT48_Kimmy";
 
-const DISPLAY_NAME = "Victoria Kimberly";
-const FOLLOWERS    = "150.1K";
-const FOLLOWING    = "49";
+const DISPLAY_NAME_FALLBACK = "Victoria Kimberly";
+
+const IDN_USERNAME = "jkt48_kimmy";
+const FOLLOWERS_FALLBACK    = "-";
+const FOLLOWING_FALLBACK    = "-";
+
+const SHOWROOM_KEY = "JKT48_Kimmy";
+const SR_FOLLOWERS_FALLBACK = "-";
+const SR_LEVEL_FALLBACK     = "-";
+
+type ProfileStats = {
+  display_name: string;
+  followers: string;
+  following: string;
+  isLoading: boolean;
+};
+
+type ShowroomProfileStats = {
+  followers: string;
+  level:     string;
+  isLoading: boolean;
+};
 
 type PlatformStatus = {
   isLive:      boolean;
@@ -877,6 +894,17 @@ const KimmyLiveStatus = () => {
   const [showroom, setShowroom] = useState<PlatformStatus>({
     isLive: false, isChecking: true, lastChecked: null, liveUrl: null, streamUrl: null, slug: null,
   });
+  const [profile, setProfile] = useState<ProfileStats>({
+    display_name: DISPLAY_NAME_FALLBACK,
+    followers:    FOLLOWERS_FALLBACK,
+    following:    FOLLOWING_FALLBACK,
+    isLoading:    true,
+  });
+  const [srProfile, setSrProfile] = useState<ShowroomProfileStats>({
+    followers: SR_FOLLOWERS_FALLBACK,
+    level:     SR_LEVEL_FALLBACK,
+    isLoading: true,
+  });
 
   const [activePlayer,       setActivePlayer]       = useState<null | "idn" | "showroom">(null);
   const [activeStreamUrl,    setActiveStreamUrl]    = useState<string>("");
@@ -936,6 +964,52 @@ const KimmyLiveStatus = () => {
   }, []);
 
   useEffect(() => { checkIdnStatus(); checkShowroomStatus(); }, [checkIdnStatus, checkShowroomStatus]);
+
+  const fetchProfile = useCallback(async () => {
+    setProfile(p => ({ ...p, isLoading: true }));
+    try {
+      const { data, error } = await supabase.functions.invoke("get-idn-profile", {
+        body: { username: IDN_USERNAME },
+      });
+      if (error) throw error;
+      setProfile({
+        display_name: data?.display_name ?? DISPLAY_NAME_FALLBACK,
+        followers:    data?.followers_formatted ?? FOLLOWERS_FALLBACK,
+        following:    data?.following_formatted ?? FOLLOWING_FALLBACK,
+        isLoading:    false,
+      });
+    } catch (err) {
+      console.error("Profile fetch failed:", err);
+      setProfile({
+        display_name: DISPLAY_NAME_FALLBACK,
+        followers:    FOLLOWERS_FALLBACK,
+        following:    FOLLOWING_FALLBACK,
+        isLoading:    false,
+      });
+    }
+  }, []);
+
+  useEffect(() => { fetchProfile(); }, [fetchProfile]);
+
+  const fetchShowroomProfile = useCallback(async () => {
+    setSrProfile(p => ({ ...p, isLoading: true }));
+    try {
+      const { data, error } = await supabase.functions.invoke("get-showroom-profile", {
+        body: { room_id: 510073 },
+      });
+      if (error) throw error;
+      setSrProfile({
+        followers: data?.followers_formatted ?? SR_FOLLOWERS_FALLBACK,
+        level:     data?.level_formatted     ?? data?.level ?? SR_LEVEL_FALLBACK,
+        isLoading: false,
+      });
+    } catch (err) {
+      console.error("Showroom profile fetch failed:", err);
+      setSrProfile({ followers: SR_FOLLOWERS_FALLBACK, level: SR_LEVEL_FALLBACK, isLoading: false });
+    }
+  }, []);
+
+  useEffect(() => { fetchShowroomProfile(); }, [fetchShowroomProfile]);
 
   const handleWatchIDN = useCallback(async () => {
     const profileUrl = `https://www.idn.app/${IDN_USERNAME}`;
@@ -1123,7 +1197,7 @@ const KimmyLiveStatus = () => {
           <div className="relative flex flex-col sm:flex-row items-center sm:items-stretch gap-0 p-0">
             {/* Photo */}
             <div className="relative flex-shrink-0 w-full sm:w-48 h-48 sm:h-auto overflow-hidden rounded-t-3xl sm:rounded-l-3xl sm:rounded-tr-none">
-              <img src={kimmy1} alt={DISPLAY_NAME} className="w-full h-full object-cover object-top" />
+              <img src={kimmy1} alt={profile.display_name} className="w-full h-full object-cover object-top" />
               <div
                 className="absolute inset-0"
                 style={{ background: "linear-gradient(to bottom,transparent 40%,hsl(var(--card) / 0.6))" }}
@@ -1142,7 +1216,7 @@ const KimmyLiveStatus = () => {
             <div className="flex-1 flex flex-col justify-between p-6 gap-4">
               <div>
                 <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-1">JKT48 Member</p>
-                <h3 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">{DISPLAY_NAME}</h3>
+                <h3 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">{profile.display_name}</h3>
                 <p className="text-sm text-muted-foreground mt-1">
                   {isAnyLive
                     ? <span className="text-primary font-semibold">● Currently live!</span>
@@ -1150,28 +1224,101 @@ const KimmyLiveStatus = () => {
                 </p>
               </div>
 
-              <div className="flex items-center gap-6 flex-wrap">
-                <div>
-                  <p className="text-xl font-bold text-foreground">{FOLLOWING}</p>
-                  <p className="text-xs uppercase tracking-wider text-muted-foreground">Following</p>
-                </div>
-                <div className="w-px h-10 bg-border/50" />
-                <div>
-                  <p className="text-xl font-bold text-foreground">{FOLLOWERS}</p>
-                  <p className="text-xs uppercase tracking-wider text-muted-foreground">Followers</p>
-                </div>
-                <div className="w-px h-10 bg-border/50 hidden sm:block" />
-                <div className="hidden sm:block">
-                  <p className="text-xl font-bold text-foreground font-mono tabular-nums">{formatTime(currentTime)}</p>
-                  <p className="text-xs uppercase tracking-wider text-muted-foreground">{formatDate(currentTime)}</p>
-                </div>
-              </div>
+              {/* Dual-platform stats + clock */}
+              <div className="flex flex-col gap-2.5">
 
-              {/* Mobile clock */}
-              <div className="sm:hidden flex items-center gap-2 text-muted-foreground">
-                <span className="font-mono tabular-nums text-sm text-foreground/80">{formatTime(currentTime)}</span>
-                <span className="text-muted-foreground/50">·</span>
-                <span className="text-xs">{formatDate(currentTime)}</span>
+                {/* Platform stats — stack on mobile, side-by-side on sm+ */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+
+                  {/* IDN Live pill */}
+                  <div
+                    className="rounded-xl px-3 py-2.5 flex items-center gap-3 transition-all duration-300"
+                    style={{
+                      background: idn.isLive ? "hsl(var(--primary)/0.07)" : "hsl(var(--muted)/0.35)",
+                      border:     `1px solid ${idn.isLive ? "hsl(var(--primary)/0.25)" : "hsl(var(--border)/0.4)"}`,
+                    }}
+                  >
+                    {/* Logo + label */}
+                    <div className="flex items-center gap-1.5 w-[72px] flex-shrink-0">
+                      <img src={idnLogo} alt="IDN" className="w-4 h-4 rounded object-contain flex-shrink-0" />
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide leading-tight">IDN Live</span>
+                      {idn.isLive && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse flex-shrink-0" style={{ boxShadow: "0 0 4px #ef4444" }} />
+                      )}
+                    </div>
+
+                    <div className="w-px h-7 bg-border/40 flex-shrink-0" />
+
+                    {/* Stats */}
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="flex flex-col items-center min-w-0 flex-1">
+                        {profile.isLoading ? (
+                          <div className="h-4 w-8 rounded bg-muted/60 animate-pulse mb-0.5" />
+                        ) : (
+                          <p className="text-sm font-black text-foreground tabular-nums leading-none">{profile.followers}</p>
+                        )}
+                        <p className="text-[8px] uppercase tracking-wide text-muted-foreground mt-0.5">Followers</p>
+                      </div>
+                      <div className="w-px h-6 bg-border/30 flex-shrink-0" />
+                      <div className="flex flex-col items-center min-w-0 flex-1">
+                        {profile.isLoading ? (
+                          <div className="h-4 w-6 rounded bg-muted/60 animate-pulse mb-0.5" />
+                        ) : (
+                          <p className="text-sm font-black text-foreground tabular-nums leading-none">{profile.following}</p>
+                        )}
+                        <p className="text-[8px] uppercase tracking-wide text-muted-foreground mt-0.5">Following</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Showroom pill */}
+                  <div
+                    className="rounded-xl px-3 py-2.5 flex items-center gap-3 transition-all duration-300"
+                    style={{
+                      background: showroom.isLive ? "hsl(var(--primary)/0.07)" : "hsl(var(--muted)/0.35)",
+                      border:     `1px solid ${showroom.isLive ? "hsl(var(--primary)/0.25)" : "hsl(var(--border)/0.4)"}`,
+                    }}
+                  >
+                    {/* Logo + label */}
+                    <div className="flex items-center gap-1.5 w-[72px] flex-shrink-0">
+                      <img src={showroomLogo} alt="SR" className="w-4 h-4 rounded object-contain flex-shrink-0" />
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide leading-tight">Showroom</span>
+                      {showroom.isLive && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse flex-shrink-0" style={{ boxShadow: "0 0 4px #ef4444" }} />
+                      )}
+                    </div>
+
+                    <div className="w-px h-7 bg-border/40 flex-shrink-0" />
+
+                    {/* Stats */}
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="flex flex-col items-center min-w-0 flex-1">
+                        {srProfile.isLoading ? (
+                          <div className="h-4 w-8 rounded bg-muted/60 animate-pulse mb-0.5" />
+                        ) : (
+                          <p className="text-sm font-black text-foreground tabular-nums leading-none">{srProfile.followers}</p>
+                        )}
+                        <p className="text-[8px] uppercase tracking-wide text-muted-foreground mt-0.5">Followers</p>
+                      </div>
+                      <div className="w-px h-6 bg-border/30 flex-shrink-0" />
+                      <div className="flex flex-col items-center min-w-0 flex-1">
+                        {srProfile.isLoading ? (
+                          <div className="h-4 w-6 rounded bg-muted/60 animate-pulse mb-0.5" />
+                        ) : (
+                          <p className="text-sm font-black text-foreground tabular-nums leading-none">{srProfile.level}</p>
+                        )}
+                        <p className="text-[8px] uppercase tracking-wide text-muted-foreground mt-0.5">Room Level</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Clock */}
+                <div className="flex items-center gap-2 px-0.5">
+                  <p className="font-mono tabular-nums text-sm text-foreground/80">{formatTime(currentTime)}</p>
+                  <span className="text-muted-foreground/40">·</span>
+                  <p className="text-xs text-muted-foreground">{formatDate(currentTime)}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -1181,13 +1328,13 @@ const KimmyLiveStatus = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <PlatformCard
             status={idn} platform="idn" logo={idnLogo} label="IDN Live"
-            profileUrl={idnProfileUrl} displayName={DISPLAY_NAME}
+            profileUrl={idnProfileUrl} displayName={profile.display_name}
             onWatch={handleWatchIDN} isLoadingStream={isLoadingStream === "idn"}
             animDelay={0.25}
           />
           <PlatformCard
             status={showroom} platform="showroom" logo={showroomLogo} label="Showroom"
-            profileUrl={srProfileUrl} displayName={DISPLAY_NAME}
+            profileUrl={srProfileUrl} displayName={profile.display_name}
             onWatch={handleWatchShowroom} isLoadingStream={isLoadingStream === "showroom"}
             animDelay={0.4}
           />
