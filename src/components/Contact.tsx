@@ -4,14 +4,11 @@ import { useState } from 'react';
 import { useLatestChannelVideo, type VideoType } from '@/hooks/useLatestChannelVideo';
 import YouTubeChannelCard from '@/components/YouTubeChannelCard';
 
-// ─── Config channel @badutzy ──────────────────────────────────────────────────
 const BADUTZY_CHANNEL_HANDLE  = "badutzy";
 const BADUTZY_CHANNEL_URL     = "https://www.youtube.com/@badutzy";
 const BADUTZY_VIDEOS_URL      = "https://www.youtube.com/@badutzy/videos";
 const BADUTZY_SHORTS_URL      = "https://www.youtube.com/@badutzy/shorts";
 const BADUTZY_STREAMS_URL     = "https://www.youtube.com/@badutzy/streams";
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatRelativeTime(isoDate: string): string {
   const diff    = Date.now() - new Date(isoDate).getTime();
@@ -32,8 +29,6 @@ function formatViewCount(count?: string): string {
   if (n >= 1_000)     return `${(n / 1_000).toFixed(1)}K views`;
   return `${n} views`;
 }
-
-// ─── Card config per type ─────────────────────────────────────────────────────
 
 const CARD_CONFIG = {
   video: {
@@ -76,8 +71,6 @@ const CARD_CONFIG = {
   },
 } as const;
 
-// ─── YouTube Dynamic Card ─────────────────────────────────────────────────────
-
 const YouTubeCard = ({
   type,
   index,
@@ -109,13 +102,11 @@ const YouTubeCard = ({
     setIsRefreshing(false);
   };
 
-  // Shorts: card portrait 9:16 — TETAP tidak berubah
-  // Video & Stream: 16:9 — tetap landscape tapi card lebih besar (grid diperlebar)
   const isShort = type === "short";
 
   const mediaWrapperStyle: React.CSSProperties = isShort
-    ? { position: "relative", width: "100%", paddingTop: "177.78%" }  // 9:16 portrait
-    : { position: "relative", width: "100%", paddingTop: "56.25%" };  // 16:9 landscape
+    ? { position: "relative", width: "100%", paddingTop: "177.78%" }
+    : { position: "relative", width: "100%", paddingTop: "56.25%" };
 
   const errorMsg =
     error === "no_api_key"        ? { title: "API Key belum diatur",    hint: "Tambahkan VITE_YOUTUBE_API_KEY di .env" } :
@@ -146,7 +137,6 @@ const YouTubeCard = ({
           transform:   isHovered ? "translateY(-4px)" : "translateY(0)",
         }}
       >
-        {/* Top accent glow line */}
         <div
           className="absolute top-0 inset-x-0 h-[2px] transition-opacity duration-500"
           style={{
@@ -155,7 +145,6 @@ const YouTubeCard = ({
           }}
         />
 
-        {/* ── Header ── */}
         <div
           className="flex items-center justify-between px-4 py-3"
           style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
@@ -186,7 +175,6 @@ const YouTubeCard = ({
           </div>
 
           <div className="flex items-center gap-1">
-            {/* Refresh */}
             <button
               onClick={handleRefresh}
               disabled={loading || isRefreshing}
@@ -195,7 +183,6 @@ const YouTubeCard = ({
             >
               <RefreshCw className={`w-3 h-3 ${isRefreshing ? "animate-spin" : ""}`} />
             </button>
-            {/* Open in YouTube */}
             {video && !loading && (
               <a
                 href={watchUrl}
@@ -210,12 +197,9 @@ const YouTubeCard = ({
           </div>
         </div>
 
-        {/* ── Media area ── */}
         <div style={mediaWrapperStyle}>
-          {/* Inner absolute container — sama untuk semua type */}
           <div className="absolute inset-0 overflow-hidden">
 
-          {/* LOADING */}
           {loading && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-4" style={{ background: "rgba(10,10,10,0.95)" }}>
               <div className="relative w-12 h-12">
@@ -226,7 +210,6 @@ const YouTubeCard = ({
             </div>
           )}
 
-          {/* ERROR */}
           {!loading && error && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center" style={{ background: "rgba(10,10,10,0.95)" }}>
               <div
@@ -252,7 +235,6 @@ const YouTubeCard = ({
             </div>
           )}
 
-          {/* SUCCESS */}
           {!loading && !error && video && (
             !active ? (
               <button
@@ -260,12 +242,10 @@ const YouTubeCard = ({
                 className="absolute inset-0 w-full h-full group/play"
                 aria-label={`Play ${video.title}`}
               >
-                {/* Thumbnail — object-cover fills the portrait frame perfectly */}
                 {!imgFailed ? (
                   <img
                     src={
                       isShort
-                        // Shorts thumbnail: pakai mqdefault (portrait crop dari YouTube)
                         ? `https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`
                         : video.thumbnail
                     }
@@ -280,14 +260,12 @@ const YouTubeCard = ({
                   </div>
                 )}
 
-                {/* Gradient overlay */}
                 <div
                   className="absolute inset-0"
                   style={{ background: `linear-gradient(to top, ${cfg.accentColor}40 0%, transparent 50%)` }}
                 />
                 <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, transparent 35%)" }} />
 
-                {/* Play button */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div
                     className="flex items-center justify-center transition-all duration-300 group-hover/play:scale-110"
@@ -302,7 +280,6 @@ const YouTubeCard = ({
                   </div>
                 </div>
 
-                {/* Hover hint */}
                 <div className="absolute bottom-3 left-0 right-0 flex justify-center pointer-events-none opacity-0 group-hover/play:opacity-100 transition-opacity duration-200">
                   <span className="bg-black/75 text-white/90 text-[10px] font-semibold px-3 py-1 rounded-full backdrop-blur-sm tracking-wide">
                     Klik untuk putar
@@ -312,9 +289,6 @@ const YouTubeCard = ({
             ) : (
               <div className="absolute inset-0 bg-black">
                 {isShort ? (
-                  // Shorts embed: YouTube tidak punya dedicated shorts embed,
-                  // pakai embed biasa tapi dengan aspect ratio portrait.
-                  // Container sudah portrait 9:16, iframe fill 100%.
                   <iframe
                     src={embedSrc}
                     title={video.title}
@@ -333,7 +307,6 @@ const YouTubeCard = ({
                     style={{ border: "none" }}
                   />
                 )}
-                {/* Close button */}
                 <button
                   onClick={() => setActive(false)}
                   className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-black/70 hover:bg-black text-white/70 hover:text-white transition-all duration-200 backdrop-blur-sm z-10"
@@ -347,10 +320,9 @@ const YouTubeCard = ({
             )
           )}
 
-          </div>{/* end absolute inner */}
+          </div>
         </div>
 
-        {/* ── Footer ── */}
         <div className="px-4 py-3.5">
           {loading ? (
             <div className="space-y-2">
@@ -379,7 +351,6 @@ const YouTubeCard = ({
                   )}
                 </div>
               </div>
-              {/* Channel badge */}
               <a
                 href={cfg.playlistUrl}
                 target="_blank"
@@ -518,7 +489,6 @@ const InstagramCard = ({
           boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
         }}
       >
-        {/* Header bar */}
         <div
           className="flex items-center justify-between px-4 py-3"
           style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
@@ -545,7 +515,6 @@ const InstagramCard = ({
           </a>
         </div>
 
-        {/* Embed — portrait 9:16, sama tinggi dengan Shorts card */}
         <div
           style={{
             position: 'relative',
@@ -570,7 +539,6 @@ const InstagramCard = ({
           />
         </div>
 
-        {/* Footer label */}
         <div
           className="flex items-center gap-1.5 px-4 py-2.5"
           style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
@@ -596,7 +564,6 @@ const Contact = () => {
 
   return (
     <section id="contact" className="py-20 md:py-32 relative overflow-hidden">
-      {/* ── Section Banner ── */}
       <div className="container mx-auto px-6 md:px-10 lg:px-20 mb-16 md:mb-24">
         <div
           ref={sectionRef}
@@ -617,7 +584,6 @@ const Contact = () => {
         </div>
       </div>
 
-      {/* ── Social Grid ── */}
       <div ref={socialRef} className="container mx-auto px-6 md:px-10 lg:px-20">
         <div className="max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-4">
           {gridSocialLinks.map((link, i) => (
@@ -631,10 +597,8 @@ const Contact = () => {
         </div>
       </div>
 
-      {/* ── YouTube Channel Card ── */}
       <div ref={ytCardRef} className="container mx-auto px-6 md:px-10 lg:px-20 mt-10 md:mt-14">
         <div className="max-w-2xl mx-auto">
-          {/* Section label */}
           <div
             className="flex items-center gap-4 mb-6"
             style={{
@@ -666,9 +630,7 @@ const Contact = () => {
         </div>
       </div>
 
-      {/* ── Content Section ── */}
       <div ref={contentRef} className="container mx-auto px-6 md:px-10 lg:px-20 mt-20 md:mt-28">
-        {/* Divider with label */}
         <div
           className={`flex items-center gap-4 mb-10 transition-all duration-700 ${
             contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
@@ -684,7 +646,6 @@ const Contact = () => {
           <div className="flex-1 h-px bg-border/40" />
         </div>
 
-        {/* ── YouTube Row ── */}
         <div
           className={`mb-3 transition-all duration-500 ${
             contentVisible ? 'opacity-100' : 'opacity-0'
@@ -712,16 +673,12 @@ const Contact = () => {
           </div>
         </div>
 
-        {/* Layout: Video dan Stream pakai 1.78fr, Shorts 1fr
-            Karena Shorts 9:16 dan Video 16:9 dengan lebar yang berbeda,
-            tingginya akan setara secara visual di semua card */}
         <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-[1.78fr_1fr_1.78fr] gap-5 md:gap-6 mb-14 items-start">
           <YouTubeCard type="video"  index={0} isVisible={contentVisible} />
           <YouTubeCard type="short"  index={1} isVisible={contentVisible} />
           <YouTubeCard type="stream" index={2} isVisible={contentVisible} />
         </div>
 
-        {/* ── Instagram Row ── */}
         <div
           className={`mb-3 transition-all duration-500 ${
             contentVisible ? 'opacity-100' : 'opacity-0'

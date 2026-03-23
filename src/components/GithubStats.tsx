@@ -6,12 +6,9 @@ import {
 } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
-// ─── Config ───────────────────────────────────────────────────────────────────
-// Ganti GITHUB_USERNAME jika akun berubah
 const GITHUB_USERNAME    = 'BadutZY';
 const GITHUB_PROFILE_URL = `https://github.com/${GITHUB_USERNAME}`;
 
-// ─── Language colors ──────────────────────────────────────────────────────────
 const LANG_COLORS: Record<string, string> = {
   Java: '#b07219', TypeScript: '#3178c6', JavaScript: '#f1e05a',
   'C#': '#178600', CSS: '#563d7c', HTML: '#e34c26',
@@ -22,7 +19,6 @@ const LANG_COLORS: Record<string, string> = {
 };
 const getLangColor = (l: string) => LANG_COLORS[l] ?? '#8b949e';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 interface GitHubUser {
   name: string; login: string; bio: string;
   avatar_url: string; public_repos: number;
@@ -46,11 +42,9 @@ interface GitHubData {
   fetchedAt: number;
 }
 
-// ─── Fetch ────────────────────────────────────────────────────────────────────
 async function fetchGitHubData(): Promise<GitHubData> {
   const gh: HeadersInit = { Accept: 'application/vnd.github+json' };
 
-  // 1. User + repos (parallel)
   const [userRes, reposRes] = await Promise.all([
     fetch(`https://api.github.com/users/${GITHUB_USERNAME}`, { headers: gh }),
     fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated`, { headers: gh }),
@@ -59,11 +53,9 @@ async function fetchGitHubData(): Promise<GitHubData> {
   const user: GitHubUser = await userRes.json();
   const repos: GitHubRepo[] = reposRes.ok ? await reposRes.json() : [];
 
-  // Aggregate
   let totalStars = 0, totalForks = 0;
   repos.forEach(r => { totalStars += r.stargazers_count; totalForks += r.forks_count; });
 
-  // 2. Starred repos — show the 4 most recently starred repos
   let pinnedRepos: PinnedRepo[] = [];
   try {
     const starredRes = await fetch(
@@ -85,9 +77,8 @@ async function fetchGitHubData(): Promise<GitHubData> {
         }));
       }
     }
-  } catch { /* fallback below */ }
+  } catch { /**/ }
 
-  // Fallback: if starred fetch failed, use own top-starred repos
   if (pinnedRepos.length === 0) {
     pinnedRepos = [...repos]
       .sort((a, b) => b.stargazers_count - a.stargazers_count)
@@ -102,10 +93,8 @@ async function fetchGitHubData(): Promise<GitHubData> {
       }));
   }
 
-  // Exactly 4
   pinnedRepos = pinnedRepos.slice(0, 4);
 
-  // 3. Language bytes (up to 8 repos)
   const langBytes: Record<string, number> = {};
   await Promise.allSettled(
     repos.filter(r => r.language).slice(0, 8).map(async repo => {
@@ -130,7 +119,6 @@ async function fetchGitHubData(): Promise<GitHubData> {
   return data;
 }
 
-// ─── Animated counter ─────────────────────────────────────────────────────────
 function useAnimatedNumber(target: number, trigger: boolean, duration = 900) {
   const [val, setVal] = useState(0);
   const startRef = useRef<number | null>(null);
@@ -150,7 +138,6 @@ function useAnimatedNumber(target: number, trigger: boolean, duration = 900) {
   return val;
 }
 
-// ─── Stat card ────────────────────────────────────────────────────────────────
 function StatCard({ icon: Icon, label, value, delay, trigger, color }: {
   icon: React.ElementType; label: string; value: number;
   delay: number; trigger: boolean; color: string;
@@ -171,7 +158,6 @@ function StatCard({ icon: Icon, label, value, delay, trigger, color }: {
   );
 }
 
-// ─── Language bar ─────────────────────────────────────────────────────────────
 function LangBar({ langs, visible }: { langs: LangStats[]; visible: boolean }) {
   return (
     <div>
@@ -195,7 +181,6 @@ function LangBar({ langs, visible }: { langs: LangStats[]; visible: boolean }) {
   );
 }
 
-// ─── Pinned repo card ─────────────────────────────────────────────────────────
 function PinnedRepoCard({ repo, delay, visible }: { repo: PinnedRepo; delay: number; visible: boolean }) {
   return (
     <a href={repo.link} target="_blank" rel="noopener noreferrer"
@@ -239,14 +224,10 @@ function PinnedRepoCard({ repo, delay, visible }: { repo: PinnedRepo; delay: num
   );
 }
 
-// ─── Contribution graph (real, synced from GitHub) ────────────────────────────
-// ghchart.rshah.org fetches contribution data directly from GitHub and
-// returns an SVG that updates every time you commit — no token needed.
 function ContribChart({ username }: { username: string }) {
   const [loaded, setLoaded] = useState(false);
   const [error,  setError]  = useState(false);
 
-  // Cache-bust once per hour so the chart refreshes without a page reload
   const cacheBust = Math.floor(Date.now() / (60 * 60 * 1_000));
   const src = `https://ghchart.rshah.org/${username}?v=${cacheBust}`;
 
@@ -263,15 +244,12 @@ function ContribChart({ username }: { username: string }) {
           <span>Could not load contribution chart</span>
         </div>
       )}
-      {/* Use GitHub's own green palette — invert the SVG background to dark,
-          then apply a green tint that matches GitHub's contribution colors */}
       <img
         src={src}
         alt={`${username} GitHub contribution chart`}
         className="w-full min-w-[600px]"
         style={{
           display: loaded || error ? (error ? 'none' : 'block') : 'none',
-          // Invert to dark background, then shift hue to GitHub green (#39d353)
           filter: 'invert(1) hue-rotate(100deg) saturate(1.2) brightness(0.85)',
         }}
         onLoad={() => setLoaded(true)}
@@ -281,7 +259,6 @@ function ContribChart({ username }: { username: string }) {
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
 const GitHubStats = () => {
   const { ref: sectionRef, isVisible } = useScrollAnimation(0.05, true);
   const [data,          setData]          = useState<GitHubData | null>(null);
@@ -298,7 +275,6 @@ const GitHubStats = () => {
     finally { setLoading(false); }
   }, []);
 
-  // Fetch fresh setiap kali halaman dibuka
   useEffect(() => { load(); }, [load]);
 
   useEffect(() => {
@@ -316,7 +292,6 @@ const GitHubStats = () => {
 
   return (
     <section ref={sectionRef} className="py-16 md:py-24 relative overflow-hidden">
-      {/* Ambient glow */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full opacity-[0.04]"
           style={{ background: 'radial-gradient(ellipse, hsl(var(--primary)) 0%, transparent 70%)' }} />
@@ -324,7 +299,6 @@ const GitHubStats = () => {
 
       <div className="container max-w-5xl px-4 mx-auto">
 
-        {/* Header */}
         <div className={`text-center mb-10 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 mb-6">
             <Github className="w-4 h-4 text-primary" />
@@ -338,11 +312,9 @@ const GitHubStats = () => {
           </p>
         </div>
 
-        {/* Card shell */}
         <div className={`transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
           <div className="bg-card rounded-2xl border border-border/50 shadow-card overflow-hidden">
 
-            {/* Tab bar */}
             <div className="flex items-center justify-between bg-muted/50 border-b border-border px-1">
               <div className="flex items-center">
                 {(['overview', 'repos', 'langs'] as const).map(tab => {
@@ -375,7 +347,6 @@ const GitHubStats = () => {
               </div>
             </div>
 
-            {/* Loading */}
             {loading && !data && (
               <div className="flex flex-col items-center justify-center py-24 gap-4">
                 <div className="relative w-14 h-14">
@@ -387,7 +358,6 @@ const GitHubStats = () => {
               </div>
             )}
 
-            {/* Error */}
             {error && !data && (
               <div className="flex flex-col items-center justify-center py-20 gap-4 text-center px-6">
                 <div className="w-14 h-14 rounded-full bg-destructive/10 border border-destructive/20 flex items-center justify-center">
@@ -405,14 +375,11 @@ const GitHubStats = () => {
               </div>
             )}
 
-            {/* Data tabs */}
             {data && (
               <>
-                {/* ── OVERVIEW ── */}
                 {activeTab === 'overview' && (
                   <div className="p-5 md:p-7 space-y-7">
 
-                    {/* Profile strip */}
                     <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/30 border border-border/40">
                       <img src={data.user.avatar_url} alt={data.user.login}
                         className="w-14 h-14 rounded-full border-2 border-primary/30 flex-shrink-0" />
@@ -435,7 +402,6 @@ const GitHubStats = () => {
                       </a>
                     </div>
 
-                    {/* Stat cards */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       <StatCard icon={BookOpen} label="Repos"     value={data.user.public_repos} delay={0}   trigger={statsTriggered} color="hsl(var(--primary))" />
                       <StatCard icon={Star}      label="Stars"     value={data.totalStars}         delay={80}  trigger={statsTriggered} color="#f1e05a" />
@@ -443,7 +409,6 @@ const GitHubStats = () => {
                       <StatCard icon={Users}     label="Followers" value={data.user.followers}     delay={240} trigger={statsTriggered} color="#3fb950" />
                     </div>
 
-                    {/* ── REAL Contribution graph (synced to GitHub) ── */}
                     <div className="rounded-xl border border-border/40 bg-muted/20 p-4 md:p-5 overflow-hidden">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
@@ -459,11 +424,9 @@ const GitHubStats = () => {
                           View on GitHub
                         </a>
                       </div>
-                      {/* ghchart.rshah.org fetches real contribution data from GitHub */}
                       <ContribChart username={GITHUB_USERNAME} />
                     </div>
 
-                    {/* GitHub readme-stats embed (auto-updates on every push) */}
                     <div className="rounded-xl border border-border/40 bg-muted/20 p-4 md:p-5">
                       <div className="flex items-center gap-2 mb-4">
                         <Award className="w-4 h-4 text-primary" />
@@ -490,7 +453,6 @@ const GitHubStats = () => {
                   </div>
                 )}
 
-                {/* ── PINNED REPOS TAB ── */}
                 {activeTab === 'repos' && (
                   <div className="p-5 md:p-7">
                     <div className="flex items-center justify-between mb-5">
@@ -519,7 +481,6 @@ const GitHubStats = () => {
                   </div>
                 )}
 
-                {/* ── LANGS TAB ── */}
                 {activeTab === 'langs' && (
                   <div className="p-5 md:p-7">
                     <div className="flex items-center justify-between mb-6">
@@ -576,7 +537,6 @@ const GitHubStats = () => {
                   </div>
                 )}
 
-                {/* Status bar */}
                 <div className="flex items-center justify-between px-4 py-2 bg-muted/30 border-t border-border text-[10px] md:text-[11px] font-mono text-muted-foreground/50">
                   <div className="flex items-center gap-4">
                     <span className="flex items-center gap-1.5">

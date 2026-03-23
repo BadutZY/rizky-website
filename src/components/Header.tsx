@@ -60,7 +60,6 @@ const Header = () => {
         </button>
       </header>
 
-      {/* Side nav — top: 50% + translateY(-50%) = selalu tepat di tengah viewport */}
       <motion.nav
         initial={{ x: -20, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}

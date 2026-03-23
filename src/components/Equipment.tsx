@@ -9,8 +9,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import setupImg from '@/assets/setup.jpeg';
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
-
 interface SpecItem {
   icon: typeof Cpu;
   label: string;
@@ -43,8 +41,6 @@ const GROUPS = [
   { key: 'power',      label: 'Power',       icon: Zap     },
   { key: 'peripheral', label: 'Peripherals', icon: Monitor },
 ] as const;
-
-// ─── Terminal boot sequence ───────────────────────────────────────────────────
 
 const BOOT_LINES = [
   '$ sudo neofetch --hardware --verbose',
@@ -96,7 +92,6 @@ function TerminalBoot({ onDone }: { onDone: () => void }) {
 
   return (
     <div className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border/50 overflow-hidden shadow-2xl">
-      {/* Title bar */}
       <div className="flex items-center gap-2 px-4 py-3 bg-muted/60 border-b border-border/40">
         <div className="w-3 h-3 rounded-full bg-red-400/80" />
         <div className="w-3 h-3 rounded-full bg-yellow-400/80" />
@@ -109,7 +104,6 @@ function TerminalBoot({ onDone }: { onDone: () => void }) {
           <span className="text-[10px] font-mono text-primary/60">RUNNING</span>
         </div>
       </div>
-      {/* Output */}
       <div ref={ref} className="p-5 font-mono text-xs space-y-1 h-52 overflow-y-auto scrollbar-hide">
         {lines.map((line, i) => (
           <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.18 }}
@@ -127,8 +121,6 @@ function TerminalBoot({ onDone }: { onDone: () => void }) {
     </div>
   );
 }
-
-// ─── Neofetch panel ───────────────────────────────────────────────────────────
 
 function NeofetchPanel() {
   const rows = [
@@ -180,7 +172,6 @@ function NeofetchPanel() {
             </motion.span>
           </div>
         </div>
-        {/* Colour palette row */}
         <div className="flex gap-1.5 pt-2">
           {['200 100% 52%','120 100% 42%','270 100% 62%','0 100% 52%','30 100% 52%','50 100% 52%','180 100% 48%','290 70% 58%'].map(c => (
             <div key={c} className="w-5 h-5 rounded-sm flex-shrink-0"
@@ -192,8 +183,6 @@ function NeofetchPanel() {
   );
 }
 
-// ─── Spec card ────────────────────────────────────────────────────────────────
-
 function SpecCard({ spec, index }: { spec: SpecItem; index: number }) {
   const Icon = spec.icon;
   const [barW, setBarW] = useState(0);
@@ -203,21 +192,17 @@ function SpecCard({ spec, index }: { spec: SpecItem; index: number }) {
     return () => clearTimeout(t);
   }, [spec.perf, index]);
 
-  // All hover states handled purely by Framer Motion — no useState(hov) needed
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
       whileHover={{ y: -6 }}
-      // whileHover transition for the outer lift
-      // Using a spring so it feels physical, not linear
       style={{ cursor: 'default' }}
     >
       <motion.div
         className="relative rounded-2xl overflow-hidden"
         initial={false}
-        // Animate border/shadow/background via variants driven by whileHover
         variants={{
           rest: {
             boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
@@ -236,7 +221,6 @@ function SpecCard({ spec, index }: { spec: SpecItem; index: number }) {
           background: 'hsl(var(--card) / 0.7)',
         }}
       >
-        {/* Background gradient — fades in on hover */}
         <motion.div
           className="absolute inset-0 pointer-events-none"
           variants={{
@@ -249,7 +233,6 @@ function SpecCard({ spec, index }: { spec: SpecItem; index: number }) {
           }}
         />
 
-        {/* Top accent line */}
         <motion.div
           className="absolute top-0 inset-x-0 h-[2px] pointer-events-none"
           variants={{
@@ -263,7 +246,6 @@ function SpecCard({ spec, index }: { spec: SpecItem; index: number }) {
           }}
         />
 
-        {/* Corner brackets — animate in with scale */}
         {[
           { cls: 'top-2 left-2',    borderCls: 'border-l border-t' },
           { cls: 'top-2 right-2',   borderCls: 'border-r border-t' },
@@ -284,7 +266,6 @@ function SpecCard({ spec, index }: { spec: SpecItem; index: number }) {
 
         <div className="p-5 relative z-10 flex flex-col gap-3">
 
-          {/* Icon + label */}
           <div className="flex items-center gap-3">
             <motion.div
               className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -319,12 +300,10 @@ function SpecCard({ spec, index }: { spec: SpecItem; index: number }) {
             </div>
           </div>
 
-          {/* Detail text */}
           {spec.detail && (
             <p className="text-[11px] text-muted-foreground leading-relaxed">{spec.detail}</p>
           )}
 
-          {/* Performance bar */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-mono text-muted-foreground/45 uppercase tracking-wider">Rating</span>
@@ -345,7 +324,6 @@ function SpecCard({ spec, index }: { spec: SpecItem; index: number }) {
             </div>
           </div>
 
-          {/* Footer label */}
           <div className="flex items-center gap-1 text-[10px] font-mono">
             <motion.div
               variants={{
@@ -372,8 +350,6 @@ function SpecCard({ spec, index }: { spec: SpecItem; index: number }) {
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
-
 const Equipment = () => {
   const { ref: sectionRef, isVisible } = useScrollAnimation(0.02, true);
   const [booted,      setBooted]      = useState(false);
@@ -388,7 +364,6 @@ const Equipment = () => {
       role="region"
       aria-labelledby="equipment-title"
     >
-      {/* Background ambiance */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
         <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-[0.035]"
           style={{ background: 'radial-gradient(circle, hsl(var(--primary)), transparent 70%)' }} />
@@ -400,7 +375,6 @@ const Equipment = () => {
 
       <div className="container mx-auto px-5 sm:px-6 lg:px-20 relative z-10">
 
-        {/* ── Header ── */}
         <div
           ref={sectionRef}
           className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
@@ -417,17 +391,14 @@ const Equipment = () => {
           </p>
         </div>
 
-        {/* ── Terminal + Neofetch ── */}
         <div
           className={`grid lg:grid-cols-2 gap-6 mb-16 transition-all duration-700 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
         >
-          {/* Boot terminal or neofetch */}
           {!booted
             ? <TerminalBoot onDone={() => setBooted(true)} />
             : <NeofetchPanel />
           }
 
-          {/* Setup photo */}
           <div className={`relative rounded-2xl overflow-hidden border border-border/40 bg-card/40 shadow-2xl group transition-all duration-700 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}>
             <ImageWithSkeleton
               src={setupImg}
@@ -436,7 +407,6 @@ const Equipment = () => {
               skeletonClassName="rounded-none"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-background/10 to-transparent" />
-            {/* Corner overlays */}
             <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
               <div className="flex items-center gap-1.5 bg-card/80 backdrop-blur-sm rounded-lg px-2.5 py-1.5 border border-border/40">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
@@ -455,11 +425,9 @@ const Equipment = () => {
           </div>
         </div>
 
-        {/* ── Group filter + Specs grid ── */}
         {booted && (
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
 
-            {/* Filter tabs */}
             <div className="flex items-center gap-2 mb-8 flex-wrap">
               <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 mr-1">
                 <Terminal className="w-3.5 h-3.5 text-primary" />
@@ -492,7 +460,6 @@ const Equipment = () => {
               </div>
             </div>
 
-            {/* Specs grid */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeGroup}
@@ -508,7 +475,6 @@ const Equipment = () => {
               </motion.div>
             </AnimatePresence>
 
-            {/* ── System status bar ── */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

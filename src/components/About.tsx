@@ -40,7 +40,6 @@ const About = () => {
 
   return (
     <section id="about" className="py-20 md:py-32 overflow-x-hidden relative" role="region" aria-labelledby="about-title">
-      {/* Section Banner */}
       <div className="container mx-auto px-6 md:px-10 lg:px-20 mb-16 md:mb-24">
         <div className="grid lg:grid-cols-2 gap-0 items-stretch min-h-[60vh] rounded-3xl overflow-hidden border border-border/30">
           <motion.div
@@ -84,10 +83,8 @@ const About = () => {
         </div>
       </div>
 
-      {/* Content Section */}
       <div className="container mx-auto px-6 md:px-10 lg:px-20">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-          {/* Code block */}
           <motion.div
             ref={textRef}
             initial={{ opacity: 0, y: 30 }}
@@ -141,7 +138,6 @@ const About = () => {
             </p>
           </motion.div>
 
-          {/* Bio Cards */}
           <div ref={cardsRef} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {bioData.map((item, index) => {
               const Icon = item.icon;
@@ -178,7 +174,6 @@ const About = () => {
               );
             })}
 
-            {/* Birthday Card - hardcoded */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={cardsVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}

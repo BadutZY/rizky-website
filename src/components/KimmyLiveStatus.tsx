@@ -226,7 +226,7 @@ const HlsPlayer = ({
         try {
           const lat = (hls as any).latency;
           if (lat != null && isFinite(lat)) setLatency(Math.round(lat));
-        } catch { /* ignore */ }
+        } catch { /**/ }
       });
 
       hls.on(Hls.Events.ERROR, (_: any, data: any) => {
@@ -377,7 +377,6 @@ const HlsPlayer = ({
           className="flex flex-col items-center justify-center p-3 md:p-4"
           onTouchMove={(e) => e.preventDefault()}
         >
-          {/* Backdrop */}
           <motion.div
             className="absolute inset-0 cursor-pointer"
             style={{ background: "rgba(0,0,0,0.94)", backdropFilter: "blur(0px)" }}
@@ -387,7 +386,6 @@ const HlsPlayer = ({
             onClick={onClose}
           />
 
-          {/* Ambient glow */}
           <motion.div
             className="absolute pointer-events-none"
             style={{ width: 800, height: 450, background: "radial-gradient(ellipse at center,hsl(var(--primary)/0.14) 0%,transparent 70%)", filter: "blur(56px)" }}
@@ -397,7 +395,6 @@ const HlsPlayer = ({
             transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
           />
 
-          {/* TV container */}
           <motion.div
             key="hls-content"
             variants={tvVariants}
@@ -405,7 +402,6 @@ const HlsPlayer = ({
             className={`relative z-10 w-full ${maxW} transition-all duration-500`}
             style={{ transformOrigin: "center center" }}
           >
-            {/* Scan-line on open */}
             <motion.div
               className="absolute inset-0 rounded-2xl pointer-events-none z-20 overflow-hidden"
               initial={{ opacity: 1 }} animate={{ opacity: 0 }}
@@ -419,7 +415,6 @@ const HlsPlayer = ({
               />
             </motion.div>
 
-            {/* ── Top bar ── */}
             <motion.div
               variants={childVariants}
               className="flex items-center justify-between mb-2 px-1"
@@ -458,7 +453,6 @@ const HlsPlayer = ({
               </div>
             </motion.div>
 
-            {/* ── Video wrapper ── */}
             <motion.div
               ref={containerRef}
               variants={videoVariants}
@@ -469,7 +463,6 @@ const HlsPlayer = ({
               onMouseLeave={handleVideoMouseLeave}
               onClick={() => { setShowQuality(false); }}
             >
-              {/* Corner brackets */}
               {["top-0 left-0 border-t-2 border-l-2 rounded-tl-2xl","top-0 right-0 border-t-2 border-r-2 rounded-tr-2xl","bottom-0 left-0 border-b-2 border-l-2 rounded-bl-2xl","bottom-0 right-0 border-b-2 border-r-2 rounded-br-2xl"].map((cls, i) => (
                 <motion.div key={i} className={`absolute w-6 h-6 ${cls} pointer-events-none`}
                   style={{ borderColor: "hsl(var(--primary)/0.6)", zIndex: 10 }}
@@ -478,10 +471,8 @@ const HlsPlayer = ({
                 />
               ))}
 
-              {/* Video element — no native controls */}
               <video ref={videoRef} className="w-full h-full" autoPlay playsInline />
 
-              {/* ── Custom control bar ── */}
               <AnimatePresence>
                 {showControls && playerState === "playing" && (
                   <motion.div
@@ -497,13 +488,11 @@ const HlsPlayer = ({
                   >
                     <div className="flex items-center gap-2">
 
-                      {/* LIVE badge */}
                       <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-red-600/90 mr-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
                         <span className="text-white text-[10px] font-black tracking-widest">LIVE</span>
                       </div>
 
-                      {/* Volume */}
                       <div className="relative flex items-center gap-1"
                         onMouseEnter={() => { if (volTimerRef.current) clearTimeout(volTimerRef.current); setShowVolume(true); }}
                         onMouseLeave={() => { volTimerRef.current = setTimeout(() => setShowVolume(false), 500); }}
@@ -530,10 +519,8 @@ const HlsPlayer = ({
                         </AnimatePresence>
                       </div>
 
-                      {/* Spacer */}
                       <div className="flex-1" />
 
-                      {/* Resolution / Quality selector */}
                       {showQualityBtn && (
                         <div className="relative">
                           <button
@@ -561,7 +548,6 @@ const HlsPlayer = ({
                                   <p className="text-[10px] uppercase tracking-widest text-white/40 font-semibold">Quality</p>
                                 </div>
 
-                                {/* URL-based quality (Showroom) */}
                                 {hasUrlQualities && streamQualities.map((q) => (
                                   <button
                                     key={q.url}
@@ -577,7 +563,6 @@ const HlsPlayer = ({
                                   </button>
                                 ))}
 
-                                {/* hls.js adaptive quality (IDN Live) */}
                                 {hasHlsQualities && [
                                   { index: -1, label: "Auto", height: 9999 },
                                   ...hlsQualities,
@@ -601,7 +586,6 @@ const HlsPlayer = ({
                         </div>
                       )}
 
-                      {/* Refresh */}
                       <button
                         onClick={handleRefreshStream}
                         className="w-8 h-8 flex items-center justify-center rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-all duration-150"
@@ -610,7 +594,6 @@ const HlsPlayer = ({
                         <IconRefresh />
                       </button>
 
-                      {/* Theater mode */}
                       <button
                         onClick={() => setIsTheater(p => !p)}
                         className={`w-8 h-8 hidden sm:flex items-center justify-center rounded-lg transition-all duration-150 ${isTheater ? "text-primary bg-primary/15" : "text-white/70 hover:text-white hover:bg-white/10"}`}
@@ -619,7 +602,6 @@ const HlsPlayer = ({
                         <IconTheater />
                       </button>
 
-                      {/* Picture-in-Picture */}
                       {document.pictureInPictureEnabled && (
                         <button
                           onClick={togglePiP}
@@ -630,7 +612,6 @@ const HlsPlayer = ({
                         </button>
                       )}
 
-                      {/* Fullscreen */}
                       <button
                         onClick={toggleFullscreen}
                         className="w-8 h-8 flex items-center justify-center rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-all duration-150"
@@ -643,7 +624,6 @@ const HlsPlayer = ({
                 )}
               </AnimatePresence>
 
-              {/* Loading overlay */}
               {(playerState === "loading" || playerState === "refreshing") && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950/85 gap-5 z-10">
                   <div className="relative w-16 h-16">
@@ -661,7 +641,6 @@ const HlsPlayer = ({
                 </div>
               )}
 
-              {/* Error overlay */}
               {playerState === "error" && (
                 <motion.div
                   className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950/92 p-8 text-center gap-4 z-10"
@@ -687,7 +666,6 @@ const HlsPlayer = ({
               )}
             </motion.div>
 
-            {/* Footer */}
             <motion.div variants={footerVariants} className="flex items-center justify-between mt-2.5 px-1">
               <p className="text-white/20 text-xs">
                 Press <kbd className="px-1.5 py-0.5 rounded bg-white/8 text-white/35 text-[10px] font-mono">ESC</kbd> or click backdrop to close
@@ -758,7 +736,6 @@ const PlatformCard = ({
           : "0 4px 24px rgba(0,0,0,0.15)",
       }}
     >
-      {/* Top accent line */}
       <div
         className="absolute top-0 left-0 right-0 h-[2px] transition-all duration-500"
         style={{
@@ -770,7 +747,6 @@ const PlatformCard = ({
 
       <div className="p-6 flex flex-col gap-5 flex-1">
 
-        {/* Platform header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div
@@ -788,7 +764,6 @@ const PlatformCard = ({
             </div>
           </div>
 
-          {/* Status pill */}
           {isChecking ? (
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/40 border border-border/40">
               <div className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-pulse" />
@@ -807,10 +782,8 @@ const PlatformCard = ({
           )}
         </div>
 
-        {/* Divider */}
         <div className="h-px bg-border/30" />
 
-        {/* Card body */}
         <div className="flex-1 flex flex-col items-center justify-center text-center gap-4 py-2">
           {isChecking ? (
             <div className="flex flex-col items-center gap-3">
@@ -1128,7 +1101,6 @@ const KimmyLiveStatus = () => {
           onRefresh={handleRefresh}
         />
 
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1163,7 +1135,6 @@ const KimmyLiveStatus = () => {
           </p>
         </motion.div>
 
-        {/* Profile Banner */}
         <motion.div
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1177,7 +1148,6 @@ const KimmyLiveStatus = () => {
               : "0 4px 32px rgba(0,0,0,0.15)",
           }}
         >
-          {/* Top glow bar */}
           {isAnyLive && (
             <div
               className="absolute top-0 left-0 right-0 h-[2px]"
@@ -1185,7 +1155,6 @@ const KimmyLiveStatus = () => {
             />
           )}
 
-          {/* Dot grid pattern */}
           <div
             className="absolute inset-0 opacity-[0.03]"
             style={{
@@ -1195,7 +1164,6 @@ const KimmyLiveStatus = () => {
           />
 
           <div className="relative flex flex-col sm:flex-row items-center sm:items-stretch gap-0 p-0">
-            {/* Photo */}
             <div className="relative flex-shrink-0 w-full sm:w-48 h-48 sm:h-auto overflow-hidden rounded-t-3xl sm:rounded-l-3xl sm:rounded-tr-none">
               <img src={kimmy1} alt={profile.display_name} className="w-full h-full object-cover object-top" />
               <div
@@ -1212,7 +1180,6 @@ const KimmyLiveStatus = () => {
               )}
             </div>
 
-            {/* Info */}
             <div className="flex-1 flex flex-col justify-between p-6 gap-4">
               <div>
                 <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-1">JKT48 Member</p>
@@ -1224,13 +1191,10 @@ const KimmyLiveStatus = () => {
                 </p>
               </div>
 
-              {/* Dual-platform stats + clock */}
               <div className="flex flex-col gap-2.5">
 
-                {/* Platform stats — stack on mobile, side-by-side on sm+ */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
 
-                  {/* IDN Live pill */}
                   <div
                     className="rounded-xl px-3 py-2.5 flex items-center gap-3 transition-all duration-300"
                     style={{
@@ -1238,7 +1202,6 @@ const KimmyLiveStatus = () => {
                       border:     `1px solid ${idn.isLive ? "hsl(var(--primary)/0.25)" : "hsl(var(--border)/0.4)"}`,
                     }}
                   >
-                    {/* Logo + label */}
                     <div className="flex items-center gap-1.5 w-[72px] flex-shrink-0">
                       <img src={idnLogo} alt="IDN" className="w-4 h-4 rounded object-contain flex-shrink-0" />
                       <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide leading-tight">IDN Live</span>
@@ -1249,7 +1212,6 @@ const KimmyLiveStatus = () => {
 
                     <div className="w-px h-7 bg-border/40 flex-shrink-0" />
 
-                    {/* Stats */}
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div className="flex flex-col items-center min-w-0 flex-1">
                         {profile.isLoading ? (
@@ -1271,7 +1233,6 @@ const KimmyLiveStatus = () => {
                     </div>
                   </div>
 
-                  {/* Showroom pill */}
                   <div
                     className="rounded-xl px-3 py-2.5 flex items-center gap-3 transition-all duration-300"
                     style={{
@@ -1279,7 +1240,6 @@ const KimmyLiveStatus = () => {
                       border:     `1px solid ${showroom.isLive ? "hsl(var(--primary)/0.25)" : "hsl(var(--border)/0.4)"}`,
                     }}
                   >
-                    {/* Logo + label */}
                     <div className="flex items-center gap-1.5 w-[72px] flex-shrink-0">
                       <img src={showroomLogo} alt="SR" className="w-4 h-4 rounded object-contain flex-shrink-0" />
                       <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide leading-tight">Showroom</span>
@@ -1290,7 +1250,6 @@ const KimmyLiveStatus = () => {
 
                     <div className="w-px h-7 bg-border/40 flex-shrink-0" />
 
-                    {/* Stats */}
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div className="flex flex-col items-center min-w-0 flex-1">
                         {srProfile.isLoading ? (
@@ -1313,7 +1272,6 @@ const KimmyLiveStatus = () => {
                   </div>
                 </div>
 
-                {/* Clock */}
                 <div className="flex items-center gap-2 px-0.5">
                   <p className="font-mono tabular-nums text-sm text-foreground/80">{formatTime(currentTime)}</p>
                   <span className="text-muted-foreground/40">·</span>
@@ -1324,7 +1282,6 @@ const KimmyLiveStatus = () => {
           </div>
         </motion.div>
 
-        {/* Platform Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <PlatformCard
             status={idn} platform="idn" logo={idnLogo} label="IDN Live"
