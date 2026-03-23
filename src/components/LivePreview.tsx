@@ -7,6 +7,7 @@ import {
 import { createPortal } from 'react-dom';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
+// ─── Config ───────────────────────────────────────────────────────────────────
 const PREVIEW_SITES = [
   {
     id:          1,
@@ -43,6 +44,7 @@ const VIEWPORT_CFG = {
   mobile:  { icon: Smartphone, label: 'Mobile',  iframeWidth: '390px',  aspect: 177.78 },
 } as const;
 
+// ─── Custom hook: deteksi apakah layar mobile (<768px) ────────────────────────
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth < 768 : false
@@ -57,6 +59,7 @@ function useIsMobile() {
   return isMobile;
 }
 
+// ─── Fullscreen modal ─────────────────────────────────────────────────────────
 function FullscreenModal({ url, title, onClose }: { url: string; title: string; onClose: () => void }) {
   useEffect(() => {
     const prev = document.documentElement.style.overflow;
@@ -99,6 +102,7 @@ function FullscreenModal({ url, title, onClose }: { url: string; title: string; 
   );
 }
 
+// ─── Phone mockup (mobile only) ───────────────────────────────────────────────
 function PhoneMockup({
   url, title, color, isLoading, refreshKey, direction, onLoad,
 }: {
@@ -207,6 +211,7 @@ function PhoneMockup({
   );
 }
 
+// ─── Main component ───────────────────────────────────────────────────────────
 const LivePreview = () => {
   const { ref: sectionRef, isVisible } = useScrollAnimation(0.05, true);
   const [shown,      setShown]      = useState(false);
@@ -216,7 +221,10 @@ const LivePreview = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [fullscreen, setFullscreen] = useState(false);
   const [direction,  setDirection]  = useState(0);
+
   const isMobile = useIsMobile();
+
+  // Di mobile, selalu paksa viewport = 'mobile' dan sembunyikan viewport switcher
   const effectiveViewport: Viewport = isMobile ? 'mobile' : viewport;
   const vpCfg = VIEWPORT_CFG[effectiveViewport];
 
@@ -243,6 +251,7 @@ const LivePreview = () => {
     switchSite(next.id, 1);
   }, [activeIndex, switchSite]);
 
+  // Keyboard nav
   useEffect(() => {
     if (!shown) return;
     const onKey = (e: KeyboardEvent) => {

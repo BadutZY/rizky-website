@@ -9,6 +9,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import setupImg from '@/assets/setup.jpeg';
 
+// ─── Data ─────────────────────────────────────────────────────────────────────
+
 interface SpecItem {
   icon: typeof Cpu;
   label: string;
@@ -41,6 +43,8 @@ const GROUPS = [
   { key: 'power',      label: 'Power',       icon: Zap     },
   { key: 'peripheral', label: 'Peripherals', icon: Monitor },
 ] as const;
+
+// ─── Terminal boot sequence ───────────────────────────────────────────────────
 
 const BOOT_LINES = [
   '$ sudo neofetch --hardware --verbose',
@@ -124,6 +128,8 @@ function TerminalBoot({ onDone }: { onDone: () => void }) {
   );
 }
 
+// ─── Neofetch panel ───────────────────────────────────────────────────────────
+
 function NeofetchPanel() {
   const rows = [
     { label: 'hostname', value: 'BadutZY-PC',     color: 'hsl(var(--primary))'  },
@@ -186,6 +192,8 @@ function NeofetchPanel() {
   );
 }
 
+// ─── Spec card ────────────────────────────────────────────────────────────────
+
 function SpecCard({ spec, index }: { spec: SpecItem; index: number }) {
   const Icon = spec.icon;
   const [barW, setBarW] = useState(0);
@@ -195,17 +203,21 @@ function SpecCard({ spec, index }: { spec: SpecItem; index: number }) {
     return () => clearTimeout(t);
   }, [spec.perf, index]);
 
+  // All hover states handled purely by Framer Motion — no useState(hov) needed
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
       whileHover={{ y: -6 }}
+      // whileHover transition for the outer lift
+      // Using a spring so it feels physical, not linear
       style={{ cursor: 'default' }}
     >
       <motion.div
         className="relative rounded-2xl overflow-hidden"
         initial={false}
+        // Animate border/shadow/background via variants driven by whileHover
         variants={{
           rest: {
             boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
@@ -359,6 +371,8 @@ function SpecCard({ spec, index }: { spec: SpecItem; index: number }) {
     </motion.div>
   );
 }
+
+// ─── Main component ───────────────────────────────────────────────────────────
 
 const Equipment = () => {
   const { ref: sectionRef, isVisible } = useScrollAnimation(0.02, true);

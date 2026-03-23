@@ -6,9 +6,12 @@ import {
 } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
+// ─── Config ───────────────────────────────────────────────────────────────────
+// Ganti GITHUB_USERNAME jika akun berubah
 const GITHUB_USERNAME    = 'BadutZY';
 const GITHUB_PROFILE_URL = `https://github.com/${GITHUB_USERNAME}`;
 
+// ─── Language colors ──────────────────────────────────────────────────────────
 const LANG_COLORS: Record<string, string> = {
   Java: '#b07219', TypeScript: '#3178c6', JavaScript: '#f1e05a',
   'C#': '#178600', CSS: '#563d7c', HTML: '#e34c26',
@@ -19,6 +22,7 @@ const LANG_COLORS: Record<string, string> = {
 };
 const getLangColor = (l: string) => LANG_COLORS[l] ?? '#8b949e';
 
+// ─── Types ────────────────────────────────────────────────────────────────────
 interface GitHubUser {
   name: string; login: string; bio: string;
   avatar_url: string; public_repos: number;
@@ -42,9 +46,11 @@ interface GitHubData {
   fetchedAt: number;
 }
 
+// ─── Fetch ────────────────────────────────────────────────────────────────────
 async function fetchGitHubData(): Promise<GitHubData> {
   const gh: HeadersInit = { Accept: 'application/vnd.github+json' };
 
+  // 1. User + repos (parallel)
   const [userRes, reposRes] = await Promise.all([
     fetch(`https://api.github.com/users/${GITHUB_USERNAME}`, { headers: gh }),
     fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated`, { headers: gh }),
@@ -53,31 +59,35 @@ async function fetchGitHubData(): Promise<GitHubData> {
   const user: GitHubUser = await userRes.json();
   const repos: GitHubRepo[] = reposRes.ok ? await reposRes.json() : [];
 
+  // Aggregate
   let totalStars = 0, totalForks = 0;
   repos.forEach(r => { totalStars += r.stargazers_count; totalForks += r.forks_count; });
 
+  // 2. Starred repos — show the 4 most recently starred repos
   let pinnedRepos: PinnedRepo[] = [];
   try {
-    const pinnedRes = await fetch(
-      `https://gh-pinned-repos.egoist.dev/api/user?username=${GITHUB_USERNAME}`
+    const starredRes = await fetch(
+      `https://api.github.com/users/${GITHUB_USERNAME}/starred?per_page=4&sort=created&direction=desc`,
+      { headers: gh }
     );
-    if (pinnedRes.ok) {
-      const raw = await pinnedRes.json();
+    if (starredRes.ok) {
+      const raw: any[] = await starredRes.json();
       if (Array.isArray(raw)) {
-        pinnedRepos = raw.map((r: any) => ({
-          owner:         r.owner   ?? GITHUB_USERNAME,
-          repo:          r.repo    ?? r.name ?? '',
+        pinnedRepos = raw.slice(0, 4).map(r => ({
+          owner:         r.owner?.login ?? r.full_name?.split('/')[0] ?? GITHUB_USERNAME,
+          repo:          r.name ?? '',
           description:   r.description ?? '',
           language:      r.language ?? '',
-          languageColor: r.languageColor ?? getLangColor(r.language ?? ''),
-          stars:         Number(r.stars ?? r.stargazers ?? 0),
-          forks:         Number(r.forks ?? 0),
-          link:          r.link ?? `https://github.com/${GITHUB_USERNAME}/${r.repo ?? r.name}`,
+          languageColor: getLangColor(r.language ?? ''),
+          stars:         Number(r.stargazers_count ?? 0),
+          forks:         Number(r.forks_count ?? 0),
+          link:          r.html_url ?? `https://github.com/${r.full_name}`,
         }));
       }
     }
   } catch { /* fallback below */ }
 
+  // Fallback: if starred fetch failed, use own top-starred repos
   if (pinnedRepos.length === 0) {
     pinnedRepos = [...repos]
       .sort((a, b) => b.stargazers_count - a.stargazers_count)
@@ -92,8 +102,10 @@ async function fetchGitHubData(): Promise<GitHubData> {
       }));
   }
 
+  // Exactly 4
   pinnedRepos = pinnedRepos.slice(0, 4);
 
+  // 3. Language bytes (up to 8 repos)
   const langBytes: Record<string, number> = {};
   await Promise.allSettled(
     repos.filter(r => r.language).slice(0, 8).map(async repo => {
@@ -118,6 +130,7 @@ async function fetchGitHubData(): Promise<GitHubData> {
   return data;
 }
 
+// ─── Animated counter ─────────────────────────────────────────────────────────
 function useAnimatedNumber(target: number, trigger: boolean, duration = 900) {
   const [val, setVal] = useState(0);
   const startRef = useRef<number | null>(null);
@@ -137,6 +150,7 @@ function useAnimatedNumber(target: number, trigger: boolean, duration = 900) {
   return val;
 }
 
+// ─── Stat card ────────────────────────────────────────────────────────────────
 function StatCard({ icon: Icon, label, value, delay, trigger, color }: {
   icon: React.ElementType; label: string; value: number;
   delay: number; trigger: boolean; color: string;
@@ -157,6 +171,7 @@ function StatCard({ icon: Icon, label, value, delay, trigger, color }: {
   );
 }
 
+// ─── Language bar ─────────────────────────────────────────────────────────────
 function LangBar({ langs, visible }: { langs: LangStats[]; visible: boolean }) {
   return (
     <div>
@@ -180,6 +195,7 @@ function LangBar({ langs, visible }: { langs: LangStats[]; visible: boolean }) {
   );
 }
 
+// ─── Pinned repo card ─────────────────────────────────────────────────────────
 function PinnedRepoCard({ repo, delay, visible }: { repo: PinnedRepo; delay: number; visible: boolean }) {
   return (
     <a href={repo.link} target="_blank" rel="noopener noreferrer"
@@ -223,10 +239,14 @@ function PinnedRepoCard({ repo, delay, visible }: { repo: PinnedRepo; delay: num
   );
 }
 
+// ─── Contribution graph (real, synced from GitHub) ────────────────────────────
+// ghchart.rshah.org fetches contribution data directly from GitHub and
+// returns an SVG that updates every time you commit — no token needed.
 function ContribChart({ username }: { username: string }) {
   const [loaded, setLoaded] = useState(false);
   const [error,  setError]  = useState(false);
 
+  // Cache-bust once per hour so the chart refreshes without a page reload
   const cacheBust = Math.floor(Date.now() / (60 * 60 * 1_000));
   const src = `https://ghchart.rshah.org/${username}?v=${cacheBust}`;
 
@@ -251,6 +271,7 @@ function ContribChart({ username }: { username: string }) {
         className="w-full min-w-[600px]"
         style={{
           display: loaded || error ? (error ? 'none' : 'block') : 'none',
+          // Invert to dark background, then shift hue to GitHub green (#39d353)
           filter: 'invert(1) hue-rotate(100deg) saturate(1.2) brightness(0.85)',
         }}
         onLoad={() => setLoaded(true)}
@@ -260,6 +281,7 @@ function ContribChart({ username }: { username: string }) {
   );
 }
 
+// ─── Main component ───────────────────────────────────────────────────────────
 const GitHubStats = () => {
   const { ref: sectionRef, isVisible } = useScrollAnimation(0.05, true);
   const [data,          setData]          = useState<GitHubData | null>(null);
@@ -276,6 +298,7 @@ const GitHubStats = () => {
     finally { setLoading(false); }
   }, []);
 
+  // Fetch fresh setiap kali halaman dibuka
   useEffect(() => { load(); }, [load]);
 
   useEffect(() => {
@@ -323,8 +346,8 @@ const GitHubStats = () => {
             <div className="flex items-center justify-between bg-muted/50 border-b border-border px-1">
               <div className="flex items-center">
                 {(['overview', 'repos', 'langs'] as const).map(tab => {
-                  const icons   = { overview: TrendingUp, repos: Pin, langs: Code2 };
-                  const labels  = { overview: 'overview.ts', repos: 'pinned.ts', langs: 'languages.ts' };
+                  const icons   = { overview: TrendingUp, repos: Star, langs: Code2 };
+                  const labels  = { overview: 'overview.ts', repos: 'starred.ts', langs: 'languages.ts' };
                   const Icon    = icons[tab];
                   return (
                     <button key={tab} onClick={() => setActiveTab(tab)}
@@ -474,17 +497,17 @@ const GitHubStats = () => {
                       <div>
                         <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                           <Pin className="w-3.5 h-3.5 text-primary" />
-                          Pinned Repositories
+                          Starred Repositories
                         </h3>
                         <p className="text-xs text-muted-foreground mt-0.5 ml-5">
                           {data.pinnedRepos.length > 0
-                            ? `${data.pinnedRepos.length} pinned repos from GitHub profile`
-                            : 'Showing top repos by stars (no pins found)'}
+                            ? `${data.pinnedRepos.length} starred repos from GitHub`
+                            : 'Showing top repos by stars (fallback)'}
                         </p>
                       </div>
-                      <a href={GITHUB_PROFILE_URL} target="_blank" rel="noopener noreferrer"
+                      <a href={`https://github.com/${GITHUB_USERNAME}?tab=stars`} target="_blank" rel="noopener noreferrer"
                         className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors duration-200">
-                        View profile
+                        View starred
                         <ExternalLink className="w-3 h-3" />
                       </a>
                     </div>

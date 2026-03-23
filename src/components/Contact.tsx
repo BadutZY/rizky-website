@@ -3,11 +3,14 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useState } from 'react';
 import { useLatestChannelVideo, type VideoType } from '@/hooks/useLatestChannelVideo';
 
+// ─── Config channel @badutzy ──────────────────────────────────────────────────
 const BADUTZY_CHANNEL_HANDLE  = "badutzy";
 const BADUTZY_CHANNEL_URL     = "https://www.youtube.com/@badutzy";
 const BADUTZY_VIDEOS_URL      = "https://www.youtube.com/@badutzy/videos";
 const BADUTZY_SHORTS_URL      = "https://www.youtube.com/@badutzy/shorts";
 const BADUTZY_STREAMS_URL     = "https://www.youtube.com/@badutzy/streams";
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatRelativeTime(isoDate: string): string {
   const diff    = Date.now() - new Date(isoDate).getTime();
@@ -28,6 +31,8 @@ function formatViewCount(count?: string): string {
   if (n >= 1_000)     return `${(n / 1_000).toFixed(1)}K views`;
   return `${n} views`;
 }
+
+// ─── Card config per type ─────────────────────────────────────────────────────
 
 const CARD_CONFIG = {
   video: {
@@ -70,6 +75,8 @@ const CARD_CONFIG = {
   },
 } as const;
 
+// ─── YouTube Dynamic Card ─────────────────────────────────────────────────────
+
 const YouTubeCard = ({
   type,
   index,
@@ -101,11 +108,13 @@ const YouTubeCard = ({
     setIsRefreshing(false);
   };
 
+  // Shorts: card portrait 9:16 — TETAP tidak berubah
+  // Video & Stream: 16:9 — tetap landscape tapi card lebih besar (grid diperlebar)
   const isShort = type === "short";
 
   const mediaWrapperStyle: React.CSSProperties = isShort
-    ? { position: "relative", width: "100%", paddingTop: "177.78%" }
-    : { position: "relative", width: "100%", paddingTop: "56.25%" };
+    ? { position: "relative", width: "100%", paddingTop: "177.78%" }  // 9:16 portrait
+    : { position: "relative", width: "100%", paddingTop: "56.25%" };  // 16:9 landscape
 
   const errorMsg =
     error === "no_api_key"        ? { title: "API Key belum diatur",    hint: "Tambahkan VITE_YOUTUBE_API_KEY di .env" } :
@@ -255,6 +264,7 @@ const YouTubeCard = ({
                   <img
                     src={
                       isShort
+                        // Shorts thumbnail: pakai mqdefault (portrait crop dari YouTube)
                         ? `https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`
                         : video.thumbnail
                     }
@@ -301,6 +311,9 @@ const YouTubeCard = ({
             ) : (
               <div className="absolute inset-0 bg-black">
                 {isShort ? (
+                  // Shorts embed: YouTube tidak punya dedicated shorts embed,
+                  // pakai embed biasa tapi dengan aspect ratio portrait.
+                  // Container sudah portrait 9:16, iframe fill 100%.
                   <iframe
                     src={embedSrc}
                     title={video.title}
