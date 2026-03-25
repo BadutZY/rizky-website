@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef } from 'react';
-import { ExternalLink, Filter, ArrowUpRight, Code2, Star, RefreshCw, AlertCircle, Loader2, Gamepad2 } from 'lucide-react';
+import { ExternalLink, Filter, ArrowUpRight, Code2, Star, RefreshCw, AlertCircle, Loader2, Gamepad2, GitFork } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import ProjectModal from './ProjectModal';
@@ -13,24 +13,25 @@ import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import { useModrinthProjects, timeAgo } from '@/hooks/useModrinthProjects';
 
 // ── Project images ──────────────────────────────────────
-import modImg from '@/assets/project/modrinth.png';
-import boxImg from '@/assets/project/box-siege-website.png';
-import eqnoxImg from '@/assets/project/eqnox-website.png';
-import jktImg from '@/assets/project/jkt48-website.png';
-import fritzyImg from '@/assets/project/fritzy-force-website.png';
-import taskImg from '@/assets/project/task-manager.png';
-import classImg from '@/assets/project/class-website.png';
-import portoImg from '@/assets/project/rizky-website.png';
-import fritzyF from '@/assets/project/fritzyforce-website.png';
-import SpawnAllIcon from '@/assets/mod/icon/icon.png';
+import modImg from '@/assets/project/website/modrinth.png';
+import boxImg from '@/assets/project/website/box-siege-website.png';
+import eqnoxImg from '@/assets/project/website/eqnox-website.png';
+import jktImg from '@/assets/project/website/jkt48-website.png';
+import fritzyImg from '@/assets/project/website/fritzy-force-website.png';
+import taskImg from '@/assets/project/website/task-manager.png';
+import classImg from '@/assets/project/website/class-website.png';
+import portoImg from '@/assets/project/website/rizky-website.png';
+import fritzyF from '@/assets/project/website/fritzyforce-website.png';
+import ChainedT from '@/assets/project/website/chained-together.png';
+import SpawnAllIcon from '@/assets/project/mod/icon.png';
 
 // ── Game assets ─────────────────────────────────────────
-import boxSiegeVideo from '@/assets/game/video/boxsiege.mp4';
+import boxSiegeVideo from '@/assets/project/game/boxsiege.mp4';
 import boxSiegeFile from '@/assets/game/file/BoxSiege.zip?url';
 
 // ── Mod assets ──────────────────────────────────────────
 import spawnAllJar from '@/assets/mod/file/spawn-all-1.0.0.jar?url';
-import spawnAllMd from '@/assets/markdown/spawnall.md?raw';
+import spawnAllMd from '@/assets/mod/markdown/spawnall.md?raw';
 
 // ──────────────────────────────────────────────
 // Types
@@ -46,6 +47,19 @@ interface RegularProject {
   fullDescription: string;
 }
 
+interface ContributionProject {
+  id: number;
+  title: string;
+  category: 'Website';
+  isContribution: true;
+  lang: string;
+  image: string;
+  link: string;
+  description: string;
+  fullDescription: string;
+  role?: string;
+}
+
 type AnyProject = RegularProject | ModProject | GameProject;
 
 // ──────────────────────────────────────────────
@@ -53,7 +67,7 @@ type AnyProject = RegularProject | ModProject | GameProject;
 // ──────────────────────────────────────────────
 const GAME_PROJECTS: GameProject[] = [
   {
-    id: 20,
+    id: 300,
     title: 'Box Siege',
     category: 'Game',
     lang: 'C# / Unity',
@@ -88,7 +102,7 @@ const GAME_PROJECTS: GameProject[] = [
 // ──────────────────────────────────────────────
 const STATIC_MOD_PROJECTS: ModProject[] = [
   {
-    id: 10,
+    id: 200,
     title: 'Spawn All MOD',
     category: 'Mod',
     lang: 'Java / Fabric',
@@ -119,19 +133,27 @@ const STATIC_MOD_PROJECTS: ModProject[] = [
 ];
 
 // ──────────────────────────────────────────────
+// Static data — Contribution Website projects
+// ──────────────────────────────────────────────
+const CONTRIBUTION_PROJECTS: ContributionProject[] = [
+  { id: 100, title: 'Equinox Interactive', category: 'Website', isContribution: true, lang: 'Vite / TypeScript / React / Tailwind', image: eqnoxImg, link: 'https://equinox-website-seven.vercel.app/', fullDescription: 'Website from the team that I created with my friend to make games.', description: 'Company Website', role: 'Game & Web Developer' },
+  { id: 101, title: 'Box Siege', category: 'Website', isContribution: true, lang: 'HTML / CSS / JS', image: boxImg, link: 'https://box-siege.vercel.app/', fullDescription: 'website to introduce games.', description: 'Game Website', role: 'Game & Web Developer' },
+  { id: 102, title: 'Chained Together', category: 'Website', isContribution: true, lang: 'Vite / TypeScript / React / Tailwind', image: ChainedT, link: 'https://chained-together.vercel.app/', fullDescription: 'website to introduce games.', description: 'E-Commerce website', role: 'Web Developer' },
+];
+
+// ──────────────────────────────────────────────
 // Static data — Website / other projects
 // ──────────────────────────────────────────────
 const REGULAR_PROJECTS: RegularProject[] = [
-  { id: 3, title: 'Equinox Interactive', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind', image: eqnoxImg, link: 'https://equinox-website-seven.vercel.app/', fullDescription: 'Website from the team that I created with my friend to make games.', description: 'Company website' },
-  { id: 4, title: 'JKT48 Remake', category: 'Website', lang: 'HTML / CSS / JS', image: jktImg, link: 'https://jkt48-website.vercel.app/', fullDescription: 'A fan-made website for JKT48 featuring member profiles, event schedules, news updates.', description: 'Fan site' },
-  { id: 5, title: 'Fritzy Force', category: 'Website', lang: 'HTML / CSS / JS', image: fritzyImg, link: 'https://fritzy-force-website.vercel.app/', fullDescription: 'This is a fan-made website created by me for a fanbase called fritzy force.', description: 'Fanbase website' },
-  { id: 6, title: 'Task Manager', category: 'Website', lang: 'HTML / CSS / JS / Local Storage', image: taskImg, link: 'https://task-web-snowy.vercel.app/', fullDescription: 'Website to remind me about unfinished tasks.', description: 'Task manager' },
-  { id: 7, title: 'Class Website', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind', image: classImg, link: 'https://xi-rpl-2.vercel.app/', fullDescription: 'Website for my class schedule and duty schedule.', description: 'Class website' },
-  { id: 8, title: 'Rizky Website', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind', image: portoImg, link: 'https://rizky-website.vercel.app/', fullDescription: 'Portfolio website to showcase projects.', description: 'Portfolio Website' },
-  { id: 9, title: 'Fanbase Website', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind / Supabase', image: fritzyF, link: 'https://fritzyforce.vercel.app/', fullDescription: 'Remake of Fritzy Force Website.', description: 'Fanbase Website' },
+  { id: 1, title: 'JKT48 Remake', category: 'Website', lang: 'HTML / CSS / JS', image: jktImg, link: 'https://jkt48-website.vercel.app/', fullDescription: 'A fan-made website for JKT48 featuring member profiles, event schedules, news updates.', description: 'Fan site' },
+  { id: 2, title: 'Fritzy Force', category: 'Website', lang: 'HTML / CSS / JS', image: fritzyImg, link: 'https://fritzy-force-website.vercel.app/', fullDescription: 'This is a fan-made website created by me for a fanbase called fritzy force.', description: 'Fanbase website' },
+  { id: 3, title: 'Task Manager', category: 'Website', lang: 'HTML / CSS / JS / Local Storage', image: taskImg, link: 'https://task-web-snowy.vercel.app/', fullDescription: 'Website to remind me about unfinished tasks.', description: 'Task manager' },
+  { id: 4, title: 'Class Website', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind', image: classImg, link: 'https://xi-rpl-2.vercel.app/', fullDescription: 'Website for my class schedule and duty schedule.', description: 'Class website' },
+  { id: 5, title: 'Rizky Website', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind / Supabase', image: portoImg, link: 'https://rizky-website.vercel.app/', fullDescription: 'Portfolio website to showcase projects.', description: 'Portfolio Website' },
+  { id: 6, title: 'Fritzy Force Website', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind / Supabase', image: fritzyF, link: 'https://fritzyforce.vercel.app/', fullDescription: 'Remake of Fritzy Force Website.', description: 'Fanbase Website' },
 ];
 
-const FEATURED_ID = 9;
+const FEATURED_ID = 6;
 
 const categories = [
   { key: 'all',     label: 'All Projects' },
@@ -239,7 +261,7 @@ const Projects = () => {
   // All projects merged for filter count
   // Order in "all" view: Website → Mod → Game
   const allProjects: AnyProject[] = useMemo(
-    () => [...REGULAR_PROJECTS, ...allModProjects, ...GAME_PROJECTS],
+    () => [...REGULAR_PROJECTS, ...(CONTRIBUTION_PROJECTS as unknown as RegularProject[]), ...allModProjects, ...GAME_PROJECTS],
     [allModProjects]
   );
 
@@ -261,7 +283,8 @@ const Projects = () => {
 
   const modProjects   = filteredProjects.filter(isMod);
   const gameProjects  = filteredProjects.filter(isGame);
-  const regularProjects = filteredProjects.filter((p) => !isMod(p) && !isGame(p));
+  const regularProjects = filteredProjects.filter((p) => !isMod(p) && !isGame(p) && !(p as unknown as ContributionProject).isContribution);
+  const contributionProjects = (activeFilter === 'all' || activeFilter === 'Website') ? CONTRIBUTION_PROJECTS : [];
 
   const countFor = (key: string) =>
     key === 'all'
@@ -505,6 +528,105 @@ const Projects = () => {
                         <span className="text-xs text-muted-foreground">{project.category}</span>
                         <a
                           href={(project as RegularProject).link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Visit <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* ── CONTRIBUTION WEBSITE section ──────────────────── */}
+          {contributionProjects.length > 0 && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={gridShown ? { opacity: 1 } : {}}
+                className="flex items-center gap-2 mb-6"
+              >
+                <GitFork className="w-3.5 h-3.5 text-primary/70" />
+                <span className="text-xs font-semibold text-muted-foreground/70 tracking-widest uppercase">Contribution Websites</span>
+                <div className="flex-1 h-px bg-border/30" />
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-primary/10 text-primary border border-primary/20">
+                  {contributionProjects.length} collab
+                </span>
+              </motion.div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-10">
+                {contributionProjects.map((project, index) => (
+                  <motion.div
+                    key={project.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      delay: gridShown ? index * 0.08 : 0,
+                      duration: 0.5,
+                      ease: [0.25, 0.46, 0.45, 0.94],
+                    }}
+                    className="group relative aspect-video rounded-2xl overflow-hidden border border-primary/20 cursor-pointer hover:border-primary/50 hover:-translate-y-1"
+                    style={{ transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.6s, box-shadow 0.6s' }}
+                    onClick={() => setSelectedRegularProject(project as unknown as RegularProject)}
+                  >
+                    {/* Contribution badge */}
+                    <div className="absolute top-2.5 left-2.5 z-10">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-primary/90 text-primary-foreground backdrop-blur-sm">
+                        <GitFork className="w-2.5 h-2.5" />
+                        Contribution
+                      </span>
+                    </div>
+
+                    <ImageWithSkeleton
+                      src={project.image}
+                      alt={project.title}
+                      className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105"
+                    />
+
+                    {/* Subtle tinted overlay to differentiate from regular cards */}
+                    <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent" style={{ transition: 'background 0.7s' }} />
+
+                    <div
+                      className="absolute inset-0 bg-background/75 backdrop-blur-sm flex flex-col items-center justify-center text-center p-5 group-hover:opacity-0 group-hover:backdrop-blur-0"
+                      style={{ transition: 'opacity 0.7s, backdrop-filter 0.7s' }}
+                    >
+                      <div className="flex flex-wrap justify-center gap-1.5 mb-3">
+                        {project.lang.split(' / ').map((tech) => (
+                          <span key={tech} className="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-primary/10 text-primary border border-primary/20">
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                      <h4 className="text-base font-bold text-foreground mb-1">{project.title}</h4>
+                      <p className="text-xs text-muted-foreground leading-relaxed max-w-[80%]">
+                        {project.description}
+                      </p>
+                      {project.role && (
+                        <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-medium text-primary/80">
+                          <GitFork className="w-3 h-3" /> {project.role}
+                        </span>
+                      )}
+                    </div>
+
+                    <div
+                      className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100"
+                      style={{ transition: 'opacity 0.7s' }}
+                    />
+                    <div
+                      className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0"
+                      style={{ transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)' }}
+                    >
+                      <h4 className="text-sm font-bold text-foreground mb-1">{project.title}</h4>
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs text-primary/70 flex items-center gap-1">
+                          <GitFork className="w-3 h-3" />{project.role ?? 'Contributor'}
+                        </span>
+                        <a
+                          href={project.link}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 text-xs text-primary hover:underline"

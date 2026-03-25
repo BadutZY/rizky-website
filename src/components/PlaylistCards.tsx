@@ -37,7 +37,7 @@ const ytPlaylists: YTPlaylist[] = [
     tracks: [
       { title: 'Those Eyes', artist: 'New West', duration: '3:40', videoId: 'YPeHGoGhHxg' },
       { title: 'Cut My Fingers Off', artist: 'Ethan Bortnick', duration: '2:19', videoId: 'MX4PW0bHM2w' },
-      { title: 'From The Start', artist: 'Laufey', duration: '2:49', videoId: 'GtVxI5E0JHE' },
+      { title: 'From The Start', artist: 'Laufey', duration: '2:49', videoId: 'h8DeZSB2o-c' },
     ],
   },
   { id: 'yt-jkt48', name: 'JKT48 Songs', cover: ytJkt48Cover, accentColor: '#e11d48', textColor: '#fce7f3',

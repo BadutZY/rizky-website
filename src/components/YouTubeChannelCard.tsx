@@ -388,12 +388,6 @@ const YouTubeChannelCard = ({
             className="flex items-center justify-between pt-3"
             style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
           >
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#FF0000", boxShadow: "0 0 6px #FF0000" }} />
-              <span className="text-[10px] uppercase tracking-widest text-white/25 font-semibold">
-                Live Stats
-              </span>
-            </div>
             <span className="text-[10px] text-white/20 font-mono">
               {CHANNEL_HANDLE_STR}
             </span>

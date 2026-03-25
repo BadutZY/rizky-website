@@ -32,7 +32,7 @@ function formatViewCount(count?: string): string {
 
 const CARD_CONFIG = {
   video: {
-    label:       "Video Terbaru",
+    label:       "Latest Video",
     badge:       "Latest Video",
     accentColor: "#FF0000",
     glowColor:   "rgba(255,0,0,0.25)",
@@ -46,7 +46,7 @@ const CARD_CONFIG = {
     ),
   },
   short: {
-    label:       "Shorts Terbaru",
+    label:       "Latest Short",
     badge:       "Latest Short",
     accentColor: "#FF4500",
     glowColor:   "rgba(255,69,0,0.25)",
