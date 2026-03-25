@@ -1,11 +1,37 @@
 import { motion } from 'framer-motion';
-import { Download, Monitor, Gamepad2, ExternalLink, Zap } from 'lucide-react';
+import { Download, Monitor, Gamepad2, ExternalLink, Zap, GitFork } from 'lucide-react';
 
 // ── Types ─────────────────────────────────────────────────────────────
+// ── Social media link type ────────────────────────────────────────────
+export interface SocialLink {
+  platform: 'youtube' | 'tiktok' | 'instagram' | 'github' | 'website';
+  url: string;
+  label?: string; // optional display label e.g. channel name
+}
+
+// ── Team member type ──────────────────────────────────────────────────
+export interface TeamMember {
+  name: string;
+  role?: string;
+  avatar?: string;
+  socials?: SocialLink[];
+}
+
+// ── Developer team type ───────────────────────────────────────────────
+export interface DeveloperTeam {
+  name: string;
+  logo?: string;
+  website?: string;
+  members?: TeamMember[];
+}
+
 export interface GameProject {
   id: number;
   title: string;
   category: 'Game';
+  isContribution?: true;
+  role?: string;
+  developerTeam?: DeveloperTeam;
   lang: string;
   image: string;
   video?: string;
@@ -126,13 +152,19 @@ const GameCard = ({ project, index, isVisible, onClick }: GameCardProps) => {
           )}
         </div>
 
-        {/* Top-left GAME badge */}
-        <div className="absolute top-3 left-3 z-10">
+        {/* Top-left GAME / CONTRIBUTION badge */}
+        <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold
             bg-primary/20 backdrop-blur-md border border-primary/40 text-primary tracking-wider uppercase">
             <Gamepad2 className="w-3 h-3" />
             Game
           </span>
+          {project.isContribution && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-primary/90 text-primary-foreground backdrop-blur-sm">
+              <GitFork className="w-2.5 h-2.5" />
+              Contribution
+            </span>
+          )}
         </div>
 
         {/* Corner brackets */}

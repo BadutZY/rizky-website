@@ -25,6 +25,11 @@ import fritzyF from '@/assets/project/website/fritzyforce-website.png';
 import ChainedT from '@/assets/project/website/chained-together.png';
 import SpawnAllIcon from '@/assets/project/mod/icon.png';
 
+import equinoxLogo from '@/assets/game/logo-member/eqnox.jpg';
+import badutZy from '@/assets/game/logo-member/BadutZY.jpg';
+import ariAja from '@/assets/game/logo-member/Ari.jpg';
+import swimmingFox from '@/assets/game/logo-member/SwimmingFOX.jpg';
+
 // ── Game assets ─────────────────────────────────────────
 import boxSiegeVideo from '@/assets/project/game/boxsiege.mp4';
 import boxSiegeFile from '@/assets/game/file/BoxSiege.zip?url';
@@ -63,13 +68,58 @@ interface ContributionProject {
 type AnyProject = RegularProject | ModProject | GameProject;
 
 // ──────────────────────────────────────────────
-// Static data — Game projects
+// Static data — Game projects (original / owned)
 // ──────────────────────────────────────────────
 const GAME_PROJECTS: GameProject[] = [
+  // Add your own game projects here
+];
+
+// ──────────────────────────────────────────────
+// Static data — Contribution Game projects
+// ──────────────────────────────────────────────
+const CONTRIBUTION_GAME_PROJECTS: GameProject[] = [
   {
     id: 300,
     title: 'Box Siege',
     category: 'Game',
+    isContribution: true,
+    role: 'Game Developer',
+    developerTeam: {
+      name: 'Equinox Interactive',
+      logo: equinoxLogo,
+      website: 'https://equinox-website-seven.vercel.app/',
+      members: [
+        {
+          avatar: badutZy,
+          name: 'BadutZY',
+          role: 'Game & Web Developer',
+          socials: [
+            { platform: 'github', url: 'https://github.com/BadutZY' },
+            { platform: 'instagram', url: 'https://www.instagram.com/rzky.mp_36/' },
+            { platform: 'website', url: 'https://rizky-website.vercel.app/' },
+          ],
+        },
+        {
+          avatar: ariAja,
+          name: 'Ari8Bit',
+          role: 'Role',
+          socials: [
+            { platform: 'github', url: 'https://github.com/AriAja17' },
+            { platform: 'youtube', url: 'https://www.youtube.com/@AriAja17' },
+            { platform: 'website', url: 'https://ariaja.pages.dev/' },
+          ],
+        },
+        {
+          avatar: swimmingFox,
+          name: 'SwimmingFox',
+          role: 'Role',
+          socials: [
+            { platform: 'github', url: 'https://github.com/Marrwertz' },
+            { platform: 'instagram', url: 'https://www.instagram.com/swimmingfoxx_/' },
+          ],
+        },
+      ],
+    },
     lang: 'C# / Unity',
     image: boxImg,
     video: boxSiegeVideo,
@@ -261,7 +311,7 @@ const Projects = () => {
   // All projects merged for filter count
   // Order in "all" view: Website → Mod → Game
   const allProjects: AnyProject[] = useMemo(
-    () => [...REGULAR_PROJECTS, ...(CONTRIBUTION_PROJECTS as unknown as RegularProject[]), ...allModProjects, ...GAME_PROJECTS],
+    () => [...REGULAR_PROJECTS, ...(CONTRIBUTION_PROJECTS as unknown as RegularProject[]), ...allModProjects, ...GAME_PROJECTS, ...CONTRIBUTION_GAME_PROJECTS],
     [allModProjects]
   );
 
@@ -282,7 +332,8 @@ const Projects = () => {
   }
 
   const modProjects   = filteredProjects.filter(isMod);
-  const gameProjects  = filteredProjects.filter(isGame);
+  const gameProjects  = filteredProjects.filter((p) => isGame(p) && !(p as GameProject).isContribution);
+  const contributionGameProjects = filteredProjects.filter((p) => isGame(p) && !!(p as GameProject).isContribution);
   const regularProjects = filteredProjects.filter((p) => !isMod(p) && !isGame(p) && !(p as unknown as ContributionProject).isContribution);
   const contributionProjects = (activeFilter === 'all' || activeFilter === 'Website') ? CONTRIBUTION_PROJECTS : [];
 
@@ -694,35 +745,70 @@ const Projects = () => {
           )}
 
           {/* ── GAME section (third in "all" view) ───────────── */}
-          {gameProjects.length > 0 && (activeFilter === 'all' || activeFilter === 'Game') && (
+          {(gameProjects.length > 0 || contributionGameProjects.length > 0) && (activeFilter === 'all' || activeFilter === 'Game') && (
             <div className="mb-10">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={gridShown ? { opacity: 1 } : {}}
-                className="flex items-center gap-2 mb-5"
-              >
-                <div className="flex items-center gap-2">
-                  <Gamepad2 className="w-3.5 h-3.5 text-primary" />
-                  <span className="text-xs font-bold text-primary tracking-widest uppercase">Games</span>
-                </div>
-                <div className="flex-1 h-px bg-border/30" />
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold
-                  bg-primary/10 text-primary border border-primary/20">
-                  {gameProjects.length} {gameProjects.length === 1 ? 'game' : 'games'}
-                </span>
-              </motion.div>
+              {/* Regular Games */}
+              {gameProjects.length > 0 && (
+                <>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={gridShown ? { opacity: 1 } : {}}
+                    className="flex items-center gap-2 mb-5"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Gamepad2 className="w-3.5 h-3.5 text-primary" />
+                      <span className="text-xs font-bold text-primary tracking-widest uppercase">Games</span>
+                    </div>
+                    <div className="flex-1 h-px bg-border/30" />
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold
+                      bg-primary/10 text-primary border border-primary/20">
+                      {gameProjects.length} {gameProjects.length === 1 ? 'game' : 'games'}
+                    </span>
+                  </motion.div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-                {gameProjects.map((project, index) => (
-                  <GameCard
-                    key={project.id}
-                    project={project as GameProject}
-                    index={index}
-                    isVisible={gridShown}
-                    onClick={() => handleProjectClick(project)}
-                  />
-                ))}
-              </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-10">
+                    {gameProjects.map((project, index) => (
+                      <GameCard
+                        key={project.id}
+                        project={project as GameProject}
+                        index={index}
+                        isVisible={gridShown}
+                        onClick={() => handleProjectClick(project)}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {/* Contribution Games */}
+              {contributionGameProjects.length > 0 && (
+                <>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={gridShown ? { opacity: 1 } : {}}
+                    className="flex items-center gap-2 mb-5"
+                  >
+                    <GitFork className="w-3.5 h-3.5 text-primary/70" />
+                    <span className="text-xs font-semibold text-muted-foreground/70 tracking-widest uppercase">Contribution Games</span>
+                    <div className="flex-1 h-px bg-border/30" />
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-primary/10 text-primary border border-primary/20">
+                      {contributionGameProjects.length} collab
+                    </span>
+                  </motion.div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                    {contributionGameProjects.map((project, index) => (
+                      <GameCard
+                        key={project.id}
+                        project={project as GameProject}
+                        index={index}
+                        isVisible={gridShown}
+                        onClick={() => handleProjectClick(project)}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
