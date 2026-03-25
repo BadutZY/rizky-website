@@ -108,7 +108,7 @@ const STATIC_MOD_PROJECTS: ModProject[] = [
     lang: 'Java / Fabric',
     image: SpawnAllIcon,
     modIcon: SpawnAllIcon,
-    link: 'https://www.curseforge.com/members/badutzy/projects',
+    link: 'https://github.com/BadutZY/spawn-all-mod-template',
     description: 'All spawn eggs can be spawn in the spawner.',
     modDescription: 'All spawn eggs can be spawn in the spawner.',
     fullDescription: 'All spawn eggs can be spawn in the spawner.',

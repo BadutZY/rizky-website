@@ -56,6 +56,7 @@ function formatDownloads(n: number): string {
 function getSiteName(url: string): string {
   if (url.includes('modrinth')) return 'Modrinth';
   if (url.includes('curseforge')) return 'CurseForge';
+  if (url.includes('github')) return 'GitHub';
   return 'View Site';
 }
 
