@@ -92,7 +92,7 @@ const CONTRIBUTION_GAME_PROJECTS: GameProject[] = [
         {
           avatar: badutZy,
           name: 'BadutZY',
-          role: 'Game & Web Developer',
+          role: 'Game Programmer',
           socials: [
             { platform: 'github', url: 'https://github.com/BadutZY' },
             { platform: 'instagram', url: 'https://www.instagram.com/rzky.mp_36/' },
@@ -102,7 +102,7 @@ const CONTRIBUTION_GAME_PROJECTS: GameProject[] = [
         {
           avatar: ariAja,
           name: 'Ari8Bit',
-          role: 'Role',
+          role: 'Sound Designer',
           socials: [
             { platform: 'github', url: 'https://github.com/AriAja17' },
             { platform: 'youtube', url: 'https://www.youtube.com/@AriAja17' },
@@ -112,7 +112,7 @@ const CONTRIBUTION_GAME_PROJECTS: GameProject[] = [
         {
           avatar: swimmingFox,
           name: 'SwimmingFox',
-          role: 'Role',
+          role: 'Sprite Artist',
           socials: [
             { platform: 'github', url: 'https://github.com/Marrwertz' },
             { platform: 'instagram', url: 'https://www.instagram.com/swimmingfoxx_/' },
