@@ -102,10 +102,10 @@ const Header = () => {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ clipPath: 'circle(0% at calc(100% - 2.5rem) 2.5rem)' }}
-            animate={{ clipPath: 'circle(150% at calc(100% - 2.5rem) 2.5rem)' }}
-            exit={{ clipPath: 'circle(0% at calc(100% - 2.5rem) 2.5rem)' }}
-            transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="fixed inset-0 z-[60] bg-background/98 backdrop-blur-2xl flex items-center justify-center"
           >
             <nav className="flex flex-col items-center gap-2">
