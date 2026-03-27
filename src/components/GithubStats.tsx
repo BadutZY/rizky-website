@@ -414,9 +414,6 @@ const GitHubStats = () => {
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-primary" />
                           <span className="text-sm font-semibold text-foreground">Contribution Activity</span>
-                          <span className="text-[10px] text-muted-foreground/50 border border-border/40 px-1.5 py-0.5 rounded-full">
-                            Synced with GitHub
-                          </span>
                         </div>
                         <a href={GITHUB_PROFILE_URL} target="_blank" rel="noopener noreferrer"
                           className="flex items-center gap-1 text-[10px] text-muted-foreground/50 hover:text-primary transition-colors duration-200">
@@ -431,22 +428,93 @@ const GitHubStats = () => {
                       <div className="flex items-center gap-2 mb-4">
                         <Award className="w-4 h-4 text-primary" />
                         <span className="text-sm font-semibold text-foreground">GitHub Stats Cards</span>
-                        <span className="text-[10px] text-muted-foreground/50 border border-border/40 px-1.5 py-0.5 rounded-full ml-1">
-                          Auto-updates on commit
-                        </span>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div className="rounded-lg overflow-hidden border border-border/30 bg-card/40">
-                          <img
-                            src={`https://github-readme-stats.vercel.app/api?username=${GITHUB_USERNAME}&hide_title=false&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&theme=transparent&locale=en&hide_border=true&text_color=888888&icon_color=888888&title_color=cccccc`}
-                            alt="GitHub Stats" className="w-full h-auto" loading="lazy"
-                          />
+                        {/* Stats Card — native, no external image needed */}
+                        <div className="rounded-lg border border-border/30 bg-card/40 p-4 flex flex-col gap-3">
+                          <div className="flex items-center gap-2">
+                            <Github className="w-4 h-4 text-muted-foreground/60" />
+                            <span className="text-xs font-semibold text-foreground/80 font-mono">
+                              {data.user.name || data.user.login}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            {[
+                              { label: 'Total Stars',   value: data.totalStars,        color: '#f1e05a' },
+                              { label: 'Total Forks',   value: data.totalForks,        color: '#58a6ff' },
+                              { label: 'Repositories',  value: data.user.public_repos, color: 'hsl(var(--primary))' },
+                              { label: 'Followers',     value: data.user.followers,    color: '#3fb950' },
+                            ].map(({ label, value, color }) => (
+                              <div key={label} className="flex flex-col gap-0.5 p-2.5 rounded-lg bg-muted/40 border border-border/20">
+                                <span className="text-lg font-black font-mono tabular-nums leading-none" style={{ color }}>
+                                  {value.toLocaleString()}
+                                </span>
+                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground/50 mt-0.5">
+                                  {label}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                          <a href={GITHUB_PROFILE_URL} target="_blank" rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-1.5 mt-1 py-1.5 rounded-lg border border-border/30 text-[10px] text-muted-foreground/50 hover:text-primary hover:border-primary/30 transition-all duration-200">
+                            <ExternalLink className="w-2.5 h-2.5" />
+                            View full profile on GitHub
+                          </a>
                         </div>
-                        <div className="rounded-lg overflow-hidden border border-border/30 bg-card/40">
-                          <img
-                            src={`https://streak-stats.demolab.com?user=${GITHUB_USERNAME}&locale=en&mode=daily&theme=transparent&hide_border=true&border_radius=0&background=00000000&ring=888888&fire=ff6b35&currStreakLabel=888888&sideLabels=888888&dates=888888&currStreakNum=cccccc&sideNums=cccccc`}
-                            alt="GitHub Streak" className="w-full h-auto" loading="lazy"
-                          />
+
+                        {/* Streak Card — native, no external image needed */}
+                        <div className="rounded-lg border border-border/30 bg-card/40 p-4 flex flex-col items-center justify-center gap-3 text-center">
+                          <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground/60">
+                            <TrendingUp className="w-3.5 h-3.5 text-primary" />
+                            <span>Contribution Activity</span>
+                          </div>
+                          <div className="flex items-center gap-6">
+                            {/* Total commits proxy: repos updated this year */}
+                            <div className="flex flex-col items-center gap-1">
+                              <span className="text-2xl font-black font-mono tabular-nums text-foreground">
+                                {data.repos.filter(r =>
+                                  new Date(r.updated_at).getFullYear() === new Date().getFullYear()
+                                ).length}
+                              </span>
+                              <span className="text-[10px] uppercase tracking-widest text-muted-foreground/50">
+                                Active Repos
+                              </span>
+                              <span className="text-[9px] text-muted-foreground/30">this year</span>
+                            </div>
+                            <div className="w-px h-10 bg-border/40" />
+                            {/* Most used language */}
+                            <div className="flex flex-col items-center gap-1">
+                              <div className="flex items-center gap-1.5">
+                                <span className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                                  style={{ backgroundColor: data.langs[0] ? getLangColor(data.langs[0].name) : '#8b949e' }} />
+                                <span className="text-sm font-black text-foreground">
+                                  {data.langs[0]?.name ?? '—'}
+                                </span>
+                              </div>
+                              <span className="text-[10px] uppercase tracking-widest text-muted-foreground/50">
+                                Top Language
+                              </span>
+                              <span className="text-[9px] text-muted-foreground/30">
+                                {data.langs[0] ? `${data.langs[0].percentage}% of code` : ''}
+                              </span>
+                            </div>
+                            <div className="w-px h-10 bg-border/40" />
+                            {/* Total repos */}
+                            <div className="flex flex-col items-center gap-1">
+                              <span className="text-2xl font-black font-mono tabular-nums text-foreground">
+                                {data.user.public_repos}
+                              </span>
+                              <span className="text-[10px] uppercase tracking-widest text-muted-foreground/50">
+                                Public Repos
+                              </span>
+                              <span className="text-[9px] text-muted-foreground/30">on GitHub</span>
+                            </div>
+                          </div>
+                          <div className="w-full pt-1 border-t border-border/20">
+                            <span className="text-[9px] text-muted-foreground/30 font-mono">
+                              Member since {data.user.created_at ? new Date(data.user.created_at).getFullYear() : '—'}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
