@@ -551,20 +551,28 @@ const Projects = () => {
                       className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105"
                     />
                     <div
-                      className="absolute inset-0 bg-background/75 backdrop-blur-sm flex flex-col items-center justify-center text-center p-5 group-hover:opacity-0 group-hover:backdrop-blur-0"
-                      style={{ transition: 'opacity 0.7s, backdrop-filter 0.7s' }}
+                      className="absolute inset-0 bg-background/75 backdrop-blur-sm flex flex-col justify-between text-center group-hover:opacity-0 group-hover:backdrop-blur-0"
+                      style={{ transition: 'opacity 0.7s, backdrop-filter 0.7s', padding: '10px 12px 16px' }}
                     >
-                      <div className="flex flex-wrap justify-center gap-1.5 mb-3">
+                      {/* Top spacer */}
+                      <div />
+
+                      {/* Middle: title + description */}
+                      <div className="flex flex-col items-center gap-1 px-1">
+                        <h4 className="text-sm font-bold text-foreground leading-tight">{project.title}</h4>
+                        <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">
+                          {(project as RegularProject).description}
+                        </p>
+                      </div>
+
+                      {/* Bottom: lang badges */}
+                      <div className="flex flex-wrap justify-center gap-1.5">
                         {(project as RegularProject).lang.split(' / ').map((tech) => (
-                          <span key={tech} className="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-primary/10 text-primary border border-primary/20">
+                          <span key={tech} className="px-2 py-0.5 rounded-md text-[11px] font-mono font-medium bg-primary/10 text-primary border border-primary/20 leading-tight">
                             {tech}
                           </span>
                         ))}
                       </div>
-                      <h4 className="text-base font-bold text-foreground mb-1">{project.title}</h4>
-                      <p className="text-xs text-muted-foreground leading-relaxed max-w-[80%]">
-                        {(project as RegularProject).description}
-                      </p>
                     </div>
                     <div
                       className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100"
@@ -624,14 +632,6 @@ const Projects = () => {
                     style={{ transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.6s, box-shadow 0.6s' }}
                     onClick={() => setSelectedRegularProject(project as unknown as RegularProject)}
                   >
-                    {/* Contribution badge */}
-                    <div className="absolute top-2.5 left-2.5 z-10">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-primary/90 text-primary-foreground backdrop-blur-sm">
-                        <GitFork className="w-2.5 h-2.5" />
-                        Contribution
-                      </span>
-                    </div>
-
                     <ImageWithSkeleton
                       src={project.image}
                       alt={project.title}
@@ -641,26 +641,40 @@ const Projects = () => {
                     {/* Subtle tinted overlay to differentiate from regular cards */}
                     <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent" style={{ transition: 'background 0.7s' }} />
 
+                    {/* Static info overlay — visible by default, fades on hover */}
                     <div
-                      className="absolute inset-0 bg-background/75 backdrop-blur-sm flex flex-col items-center justify-center text-center p-5 group-hover:opacity-0 group-hover:backdrop-blur-0"
-                      style={{ transition: 'opacity 0.7s, backdrop-filter 0.7s' }}
+                      className="absolute inset-0 bg-background/75 backdrop-blur-sm flex flex-col justify-between text-center group-hover:opacity-0 group-hover:backdrop-blur-0"
+                      style={{ transition: 'opacity 0.7s, backdrop-filter 0.7s', padding: '10px 12px 16px' }}
                     >
-                      <div className="flex flex-wrap justify-center gap-1.5 mb-3">
+                      {/* Top: Contribution badge — stays at top so it never covers tech badges */}
+                      <div className="flex justify-start">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-primary/90 text-primary-foreground backdrop-blur-sm">
+                          <GitFork className="w-2.5 h-2.5" />
+                          Contribution
+                        </span>
+                      </div>
+
+                      {/* Middle: title + description */}
+                      <div className="flex flex-col items-center gap-1 px-1">
+                        <h4 className="text-sm font-bold text-foreground leading-tight">{project.title}</h4>
+                        <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">
+                          {project.description}
+                        </p>
+                        {project.role && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-medium text-primary/80 mt-0.5">
+                            <GitFork className="w-2.5 h-2.5" /> {project.role}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Bottom: lang badges */}
+                      <div className="flex flex-wrap justify-center gap-1.5">
                         {project.lang.split(' / ').map((tech) => (
-                          <span key={tech} className="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-primary/10 text-primary border border-primary/20">
+                          <span key={tech} className="px-2 py-0.5 rounded-md text-[11px] font-mono font-medium bg-primary/10 text-primary border border-primary/20 leading-tight">
                             {tech}
                           </span>
                         ))}
                       </div>
-                      <h4 className="text-base font-bold text-foreground mb-1">{project.title}</h4>
-                      <p className="text-xs text-muted-foreground leading-relaxed max-w-[80%]">
-                        {project.description}
-                      </p>
-                      {project.role && (
-                        <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-medium text-primary/80">
-                          <GitFork className="w-3 h-3" /> {project.role}
-                        </span>
-                      )}
                     </div>
 
                     <div
