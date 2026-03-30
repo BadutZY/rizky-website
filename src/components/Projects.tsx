@@ -177,6 +177,7 @@ const STATIC_MOD_PROJECTS: ModProject[] = [
         loaders: ['Fabric'],
         filename: 'spawn-all-1.0.0.jar',
         filePath: spawnAllJar,
+        release_type: 'beta',
       },  
     ],
   } as ModProject,

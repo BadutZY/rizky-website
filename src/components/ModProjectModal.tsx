@@ -8,8 +8,8 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import ImageWithSkeleton from "@/components/ImageWithSkeleton";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
-import type { ModProject, StaticDownloadEntry } from "./ModCard";
-import { STATUS_CONFIG } from "./ModCard";
+import type { ModProject, StaticDownloadEntry, ReleaseType } from "./ModCard";
+import { STATUS_CONFIG, RELEASE_TYPE_CONFIG } from "./ModCard";
 import type { ModStatus } from "./ModCard";
 import fabricIcon from '@/assets/loader/fabric.png';
 import forgeIcon from '@/assets/loader/forge.png';
@@ -60,11 +60,25 @@ function getSiteName(url: string): string {
   return 'View Site';
 }
 
+// ── Release type badge ────────────────────────────────────────────────
+const ReleaseTypeBadge = ({ type }: { type: ReleaseType }) => {
+  const cfg = RELEASE_TYPE_CONFIG[type];
+  return (
+    <span
+      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold border tracking-wide ${cfg.className}`}
+    >
+      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${cfg.dotColor}`} />
+      {cfg.label}
+    </span>
+  );
+};
+
 // ── Modrinth version types ────────────────────────────────────────────
 interface ModrinthVersion {
   id: string;
   name: string;
   version_number: string;
+  version_type: 'alpha' | 'beta' | 'release';
   game_versions: string[];
   loaders: string[];
   date_published: string;
@@ -269,9 +283,13 @@ const StaticVersionsTab = ({ downloads }: { downloads: StaticDownloadEntry[] }) 
       </div>
 
       <div className="divide-y divide-border/30">
-        <div className="hidden sm:grid items-center gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60"
-          style={{ gridTemplateColumns: '1fr auto auto auto' }}>
+        {/* Desktop header */}
+        <div
+          className="hidden sm:grid items-center gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60"
+          style={{ gridTemplateColumns: '1fr auto auto auto auto' }}
+        >
           <span>Name</span>
+          <span>Status</span>
           <span>Game Version</span>
           <span>Loader</span>
           <span></span>
@@ -280,74 +298,88 @@ const StaticVersionsTab = ({ downloads }: { downloads: StaticDownloadEntry[] }) 
         {filtered.length === 0 ? (
           <p className="py-8 text-center text-sm text-muted-foreground">No versions match the current filter.</p>
         ) : (
-          filtered.map((entry, idx) => (
-            <div key={idx} className="hover:bg-muted/20 transition-colors duration-150 rounded-lg group/row">
-              {/* Mobile */}
-              <div className="flex sm:hidden items-center gap-3 px-3 py-3">
-                <div className="flex flex-col gap-1 flex-1 min-w-0">
-                  <span className="text-sm font-semibold text-foreground truncate">{entry.name}</span>
-                  <div className="flex flex-wrap gap-1 text-[10px] text-muted-foreground">
-                    <span>{entry.game_versions.slice(0, 2).join(', ')}</span>
-                    <span>·</span>
-                    <span>{entry.loaders.join(', ')}</span>
+          filtered.map((entry, idx) => {
+            const releaseType: ReleaseType = entry.release_type ?? 'release';
+            return (
+              <div key={idx} className="hover:bg-muted/20 transition-colors duration-150 rounded-lg group/row">
+                {/* Mobile */}
+                <div className="flex sm:hidden items-center gap-3 px-3 py-3">
+                  <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-semibold text-foreground truncate">{entry.name}</span>
+                      <ReleaseTypeBadge type={releaseType} />
+                    </div>
+                    <div className="flex flex-wrap gap-1 text-[10px] text-muted-foreground">
+                      <span>{entry.game_versions.slice(0, 2).join(', ')}</span>
+                      <span>·</span>
+                      <span>{entry.loaders.join(', ')}</span>
+                    </div>
                   </div>
+                  <button
+                    onClick={() => handleDownload(entry)}
+                    className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg
+                      bg-primary/10 border border-primary/30 text-primary
+                      hover:bg-primary hover:text-primary-foreground hover:border-primary
+                      transition-all duration-200"
+                    title={`Download ${entry.filename}`}
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => handleDownload(entry)}
-                  className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg
-                    bg-primary/10 border border-primary/30 text-primary
-                    hover:bg-primary hover:text-primary-foreground hover:border-primary
-                    transition-all duration-200"
-                  title={`Download ${entry.filename}`}
+
+                {/* Desktop */}
+                <div
+                  className="hidden sm:grid items-center gap-3 px-3 py-3"
+                  style={{ gridTemplateColumns: '1fr auto auto auto auto' }}
                 >
-                  <Download className="w-3.5 h-3.5" />
-                </button>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="w-2 h-2 rounded-full bg-primary/60 flex-shrink-0" />
+                    <span className="text-sm font-semibold text-foreground truncate">{entry.name}</span>
+                    <span className="text-[10px] font-mono text-muted-foreground/60 hidden lg:inline">{entry.version_number}</span>
+                  </div>
+
+                  {/* Release type badge */}
+                  <div className="flex justify-end">
+                    <ReleaseTypeBadge type={releaseType} />
+                  </div>
+
+                  <div className="flex flex-wrap gap-1 justify-end">
+                    {entry.game_versions.slice(0, 2).map((gv) => (
+                      <span key={gv} className="px-1.5 py-0.5 rounded-md text-[10px] font-mono bg-muted/50 text-muted-foreground border border-border/50">{gv}</span>
+                    ))}
+                    {entry.game_versions.length > 2 && (
+                      <span className="px-1.5 py-0.5 rounded-md text-[10px] bg-muted/30 text-muted-foreground/60">+{entry.game_versions.length - 2}</span>
+                    )}
+                  </div>
+
+                  <div className="flex flex-wrap gap-1 justify-end">
+                    {entry.loaders.map((l) => {
+                      const icon = LOADER_ICONS[l];
+                      return (
+                        <span key={l}
+                          className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-semibold border
+                            ${LOADER_COLORS[l] || 'bg-muted/60 text-muted-foreground border-border/60'}`}>
+                          {icon && <img src={icon} alt={l} className="w-3 h-3 object-contain" />}
+                          {l}
+                        </span>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    onClick={() => handleDownload(entry)}
+                    className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg
+                      bg-primary/10 border border-primary/30 text-primary
+                      hover:bg-primary hover:text-primary-foreground hover:border-primary
+                      transition-all duration-200"
+                    title={`Download ${entry.filename}`}
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
-
-              {/* Desktop */}
-              <div className="hidden sm:grid items-center gap-3 px-3 py-3" style={{ gridTemplateColumns: '1fr auto auto auto' }}>
-                <div className="flex items-center gap-2 min-w-0">
-                  <div className="w-2 h-2 rounded-full bg-primary/60 flex-shrink-0" />
-                  <span className="text-sm font-semibold text-foreground truncate">{entry.name}</span>
-                  <span className="text-[10px] font-mono text-muted-foreground/60 hidden lg:inline">{entry.version_number}</span>
-                </div>
-
-                <div className="flex flex-wrap gap-1 justify-end">
-                  {entry.game_versions.slice(0, 2).map((gv) => (
-                    <span key={gv} className="px-1.5 py-0.5 rounded-md text-[10px] font-mono bg-muted/50 text-muted-foreground border border-border/50">{gv}</span>
-                  ))}
-                  {entry.game_versions.length > 2 && (
-                    <span className="px-1.5 py-0.5 rounded-md text-[10px] bg-muted/30 text-muted-foreground/60">+{entry.game_versions.length - 2}</span>
-                  )}
-                </div>
-
-                <div className="flex flex-wrap gap-1 justify-end">
-                  {entry.loaders.map((l) => {
-                    const icon = LOADER_ICONS[l];
-                    return (
-                      <span key={l}
-                        className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-semibold border
-                          ${LOADER_COLORS[l] || 'bg-muted/60 text-muted-foreground border-border/60'}`}>
-                        {icon && <img src={icon} alt={l} className="w-3 h-3 object-contain" />}
-                        {l}
-                      </span>
-                    );
-                  })}
-                </div>
-
-                <button
-                  onClick={() => handleDownload(entry)}
-                  className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg
-                    bg-primary/10 border border-primary/30 text-primary
-                    hover:bg-primary hover:text-primary-foreground hover:border-primary
-                    transition-all duration-200"
-                  title={`Download ${entry.filename}`}
-                >
-                  <Download className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
@@ -431,9 +463,13 @@ const VersionsTab = ({ slug }: { slug: string }) => {
       </div>
 
       <div className="divide-y divide-border/30">
-        <div className="hidden sm:grid items-center gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60"
-          style={{ gridTemplateColumns: '1fr auto auto auto auto auto' }}>
+        {/* Desktop header */}
+        <div
+          className="hidden sm:grid items-center gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60"
+          style={{ gridTemplateColumns: '1fr auto auto auto auto auto auto' }}
+        >
           <span>Name</span>
+          <span>Status</span>
           <span>Game Version</span>
           <span>Loader</span>
           <span>Published</span>
@@ -447,13 +483,17 @@ const VersionsTab = ({ slug }: { slug: string }) => {
           filteredVersions.map((v) => {
             const primaryFile = v.files.find((f) => f.primary) ?? v.files[0];
             const loaderDisplay = v.loaders.map((l) => l.charAt(0).toUpperCase() + l.slice(1)).join(', ');
+            const releaseType: ReleaseType = v.version_type ?? 'release';
 
             return (
               <div key={v.id} className="hover:bg-muted/20 transition-colors duration-150 rounded-lg group/row">
                 {/* Mobile */}
                 <div className="flex sm:hidden items-center gap-3 px-3 py-3">
-                  <div className="flex flex-col gap-1 flex-1 min-w-0">
-                    <span className="text-sm font-semibold text-foreground truncate">{v.name}</span>
+                  <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-semibold text-foreground truncate">{v.name}</span>
+                      <ReleaseTypeBadge type={releaseType} />
+                    </div>
                     <div className="flex flex-wrap gap-1 text-[10px] text-muted-foreground">
                       <span>{v.game_versions.slice(0, 2).join(', ')}{v.game_versions.length > 2 ? '…' : ''}</span>
                       <span>·</span>
@@ -475,11 +515,19 @@ const VersionsTab = ({ slug }: { slug: string }) => {
                 </div>
 
                 {/* Desktop */}
-                <div className="hidden sm:grid items-center gap-3 px-3 py-3" style={{ gridTemplateColumns: '1fr auto auto auto auto auto' }}>
+                <div
+                  className="hidden sm:grid items-center gap-3 px-3 py-3"
+                  style={{ gridTemplateColumns: '1fr auto auto auto auto auto auto' }}
+                >
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="w-2 h-2 rounded-full bg-primary/60 flex-shrink-0" />
                     <span className="text-sm font-semibold text-foreground truncate">{v.name}</span>
                     <span className="text-[10px] font-mono text-muted-foreground/60 hidden lg:inline">{v.version_number}</span>
+                  </div>
+
+                  {/* Release type badge */}
+                  <div className="flex justify-end">
+                    <ReleaseTypeBadge type={releaseType} />
                   </div>
 
                   <div className="flex flex-wrap gap-1 justify-end">

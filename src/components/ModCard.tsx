@@ -16,6 +16,15 @@ export const STATUS_CONFIG: Record<ModStatus, { label: string; className: string
   under_review: { label: 'Under Review', className: 'bg-sky-500/10 text-sky-400 border-sky-500/20' },
 };
 
+// ── Release type for download entries ────────────────────────────────
+export type ReleaseType = 'alpha' | 'beta' | 'release';
+
+export const RELEASE_TYPE_CONFIG: Record<ReleaseType, { label: string; className: string; dotColor: string }> = {
+  alpha:   { label: 'Alpha',   className: 'bg-orange-500/15 text-orange-400 border-orange-500/30',  dotColor: 'bg-orange-400' },
+  beta:    { label: 'Beta',    className: 'bg-sky-500/15 text-sky-400 border-sky-500/30',            dotColor: 'bg-sky-400' },
+  release: { label: 'Release', className: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30', dotColor: 'bg-emerald-400' },
+};
+
 export interface StaticDownloadEntry {
   name: string;
   version_number: string;
@@ -23,6 +32,7 @@ export interface StaticDownloadEntry {
   loaders: string[];
   filename: string;
   filePath: string;
+  release_type?: ReleaseType; // Alpha, Beta, or Release — manual entry
 }
 
 export interface ModProject {
