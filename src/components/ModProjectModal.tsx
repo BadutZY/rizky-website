@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import {
   X, ExternalLink, Download, Heart, Clock, Package,
@@ -226,6 +226,129 @@ const FilterDropdown = ({ label, options, selected, onChange }: FilterDropdownPr
   );
 };
 
+// ── Channel filter dropdown (Alpha / Beta / Release) ─────────────────
+interface ChannelFilterDropdownProps {
+  options: ReleaseType[];
+  selected: string[];
+  onChange: (val: string[]) => void;
+}
+
+const ChannelFilterDropdown = ({ options, selected, onChange }: ChannelFilterDropdownProps) => {
+  const [open, setOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number>(0);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+
+  useEffect(() => {
+    if (!open) return;
+
+    const track = () => {
+      if (buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        setPos((prev) => {
+          const newTop = rect.bottom + 6;
+          const newLeft = rect.left;
+          if (prev.top === newTop && prev.left === newLeft) return prev;
+          return { top: newTop, left: newLeft };
+        });
+      }
+      rafRef.current = requestAnimationFrame(track);
+    };
+    rafRef.current = requestAnimationFrame(track);
+
+    const handler = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (
+        buttonRef.current && !buttonRef.current.contains(target) &&
+        dropdownRef.current && !dropdownRef.current.contains(target)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      document.removeEventListener('mousedown', handler);
+    };
+  }, [open]);
+
+  const toggle = (opt: string) => {
+    onChange(selected.includes(opt) ? selected.filter((s) => s !== opt) : [...selected, opt]);
+  };
+
+  const isActive = selected.length > 0;
+
+  return (
+    <>
+      <button
+        ref={buttonRef}
+        onClick={() => setOpen((o) => !o)}
+        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200
+          ${isActive
+            ? 'bg-primary/15 border-primary/40 text-primary'
+            : 'bg-muted/40 border-border/50 text-muted-foreground hover:text-foreground hover:border-border'
+          }`}
+      >
+        <SlidersHorizontal className="w-3 h-3" />
+        Channel
+        {isActive && (
+          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold">
+            {selected.length}
+          </span>
+        )}
+        <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {createPortal(
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              ref={dropdownRef}
+              initial={{ opacity: 0, y: -4, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -4, scale: 0.95 }}
+              transition={{ duration: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="fixed z-[9999] min-w-[160px] rounded-xl border border-border/60 bg-card/95 backdrop-blur-md shadow-xl overflow-hidden"
+              style={{ top: pos.top, left: pos.left }}
+            >
+              <div className="flex items-center justify-between px-3 py-2 border-b border-border/40">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Channel</span>
+                {isActive && (
+                  <button onClick={() => onChange([])} className="text-[10px] text-primary hover:underline">Clear</button>
+                )}
+              </div>
+              <div className="py-1">
+                {options.map((opt) => {
+                  const checked = selected.includes(opt);
+                  const cfg = RELEASE_TYPE_CONFIG[opt];
+                  return (
+                    <button
+                      key={opt}
+                      onClick={() => toggle(opt)}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm transition-colors duration-150
+                        ${checked ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-muted/50'}`}
+                    >
+                      <span className={`flex-shrink-0 w-4 h-4 rounded border flex items-center justify-center transition-all
+                        ${checked ? 'bg-primary border-primary' : 'border-border/60'}`}>
+                        {checked && <Check className="w-2.5 h-2.5 text-primary-foreground" />}
+                      </span>
+                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${cfg.dotColor}`} />
+                      <span className="font-medium">{cfg.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+    </>
+  );
+};
+
 // ── Tab content animation variants ────────────────────────────────────
 const tabContentVariants = {
   initial: { opacity: 0, y: 12, filter: 'blur(4px)' },
@@ -237,6 +360,7 @@ const tabContentVariants = {
 const StaticVersionsTab = ({ downloads }: { downloads: StaticDownloadEntry[] }) => {
   const [selectedVersions, setSelectedVersions] = useState<string[]>([]);
   const [selectedLoaders, setSelectedLoaders] = useState<string[]>([]);
+  const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
 
   const availableGameVersions = useMemo(() => {
     const all = downloads.flatMap((d) => d.game_versions);
@@ -248,15 +372,22 @@ const StaticVersionsTab = ({ downloads }: { downloads: StaticDownloadEntry[] }) 
     return [...new Set(all)].sort();
   }, [downloads]);
 
+  const availableChannels = useMemo(() => {
+    const all = downloads.map((d) => d.release_type ?? 'release');
+    const order: ReleaseType[] = ['release', 'beta', 'alpha'];
+    return order.filter((c) => [...new Set(all)].includes(c));
+  }, [downloads]);
+
   const filtered = useMemo(() => {
     return downloads.filter((d) => {
       const matchV = selectedVersions.length === 0 || d.game_versions.some((gv) => selectedVersions.includes(gv));
       const matchL = selectedLoaders.length === 0 || d.loaders.some((l) => selectedLoaders.includes(l));
-      return matchV && matchL;
+      const matchC = selectedChannels.length === 0 || selectedChannels.includes(d.release_type ?? 'release');
+      return matchV && matchL && matchC;
     });
-  }, [downloads, selectedVersions, selectedLoaders]);
+  }, [downloads, selectedVersions, selectedLoaders, selectedChannels]);
 
-  const hasActiveFilters = selectedVersions.length > 0 || selectedLoaders.length > 0;
+  const hasActiveFilters = selectedVersions.length > 0 || selectedLoaders.length > 0 || selectedChannels.length > 0;
 
   const handleDownload = (entry: StaticDownloadEntry) => {
     const link = document.createElement('a');
@@ -272,8 +403,9 @@ const StaticVersionsTab = ({ downloads }: { downloads: StaticDownloadEntry[] }) 
       <div className="flex flex-wrap items-center gap-2">
         <FilterDropdown label="Loader" options={availableLoaders} selected={selectedLoaders} onChange={setSelectedLoaders} />
         <FilterDropdown label="Minecraft Version" options={availableGameVersions} selected={selectedVersions} onChange={setSelectedVersions} />
+        <ChannelFilterDropdown options={availableChannels} selected={selectedChannels} onChange={setSelectedChannels} />
         {hasActiveFilters && (
-          <button onClick={() => { setSelectedVersions([]); setSelectedLoaders([]); }} className="text-[11px] text-muted-foreground hover:text-foreground transition-colors">
+          <button onClick={() => { setSelectedVersions([]); setSelectedLoaders([]); setSelectedChannels([]); }} className="text-[11px] text-muted-foreground hover:text-foreground transition-colors">
             Clear all
           </button>
         )}
@@ -393,12 +525,14 @@ const VersionsTab = ({ slug }: { slug: string }) => {
   const [error, setError] = useState(false);
   const [selectedVersions, setSelectedVersions] = useState<string[]>([]);
   const [selectedLoaders, setSelectedLoaders] = useState<string[]>([]);
+  const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
 
   useEffect(() => {
     setLoading(true);
     setError(false);
     setSelectedVersions([]);
     setSelectedLoaders([]);
+    setSelectedChannels([]);
     fetch(`https://api.modrinth.com/v2/project/${slug}/version`, {
       headers: { 'User-Agent': 'portfolio-website/1.0' },
     })
@@ -419,15 +553,22 @@ const VersionsTab = ({ slug }: { slug: string }) => {
     return [...new Set(all)].sort();
   }, [versions]);
 
+  const availableChannels = useMemo(() => {
+    const all = versions.map((v) => v.version_type ?? 'release');
+    const order: ReleaseType[] = ['release', 'beta', 'alpha'];
+    return order.filter((c) => [...new Set(all)].includes(c));
+  }, [versions]);
+
   const filteredVersions = useMemo(() => {
     return versions.filter((v) => {
       const matchVersion = selectedVersions.length === 0 || v.game_versions.some((gv) => selectedVersions.includes(gv));
       const matchLoader = selectedLoaders.length === 0 || v.loaders.some((l) => selectedLoaders.includes(l.charAt(0).toUpperCase() + l.slice(1)));
-      return matchVersion && matchLoader;
+      const matchChannel = selectedChannels.length === 0 || selectedChannels.includes(v.version_type ?? 'release');
+      return matchVersion && matchLoader && matchChannel;
     });
-  }, [versions, selectedVersions, selectedLoaders]);
+  }, [versions, selectedVersions, selectedLoaders, selectedChannels]);
 
-  const hasActiveFilters = selectedVersions.length > 0 || selectedLoaders.length > 0;
+  const hasActiveFilters = selectedVersions.length > 0 || selectedLoaders.length > 0 || selectedChannels.length > 0;
 
   if (loading) return (
     <div className="flex items-center justify-center py-12 gap-2 text-muted-foreground">
@@ -452,8 +593,9 @@ const VersionsTab = ({ slug }: { slug: string }) => {
       <div className="flex flex-wrap items-center gap-2">
         <FilterDropdown label="Loader" options={availableLoaders} selected={selectedLoaders} onChange={setSelectedLoaders} />
         <FilterDropdown label="Minecraft Version" options={availableGameVersions} selected={selectedVersions} onChange={setSelectedVersions} />
+        <ChannelFilterDropdown options={availableChannels} selected={selectedChannels} onChange={setSelectedChannels} />
         {hasActiveFilters && (
-          <button onClick={() => { setSelectedVersions([]); setSelectedLoaders([]); }} className="text-[11px] text-muted-foreground hover:text-foreground transition-colors">
+          <button onClick={() => { setSelectedVersions([]); setSelectedLoaders([]); setSelectedChannels([]); }} className="text-[11px] text-muted-foreground hover:text-foreground transition-colors">
             Clear all
           </button>
         )}
