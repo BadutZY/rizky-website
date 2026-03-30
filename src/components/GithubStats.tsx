@@ -468,46 +468,47 @@ const GitHubStats = () => {
                             <TrendingUp className="w-3.5 h-3.5 text-primary" />
                             <span>Contribution Activity</span>
                           </div>
-                          <div className="flex items-center gap-6">
+                          {/* Mobile: grid 3 cols | Desktop: flex row */}
+                          <div className="grid grid-cols-3 gap-2 w-full sm:flex sm:items-center sm:gap-6 sm:w-auto">
                             {/* Total commits proxy: repos updated this year */}
-                            <div className="flex flex-col items-center gap-1">
-                              <span className="text-2xl font-black font-mono tabular-nums text-foreground">
+                            <div className="flex flex-col items-center gap-1 min-w-0">
+                              <span className="text-xl sm:text-2xl font-black font-mono tabular-nums text-foreground leading-tight">
                                 {data.repos.filter(r =>
                                   new Date(r.updated_at).getFullYear() === new Date().getFullYear()
                                 ).length}
                               </span>
-                              <span className="text-[10px] uppercase tracking-widest text-muted-foreground/50">
+                              <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground/50 leading-tight">
                                 Active Repos
                               </span>
-                              <span className="text-[9px] text-muted-foreground/30">this year</span>
+                              <span className="text-[8px] sm:text-[9px] text-muted-foreground/30">this year</span>
                             </div>
-                            <div className="w-px h-10 bg-border/40" />
+                            <div className="hidden sm:block w-px h-10 bg-border/40 flex-shrink-0" />
                             {/* Most used language */}
-                            <div className="flex flex-col items-center gap-1">
-                              <div className="flex items-center gap-1.5">
-                                <span className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                            <div className="flex flex-col items-center gap-1 min-w-0">
+                              <div className="flex items-center gap-1 flex-wrap justify-center">
+                                <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full flex-shrink-0"
                                   style={{ backgroundColor: data.langs[0] ? getLangColor(data.langs[0].name) : '#8b949e' }} />
-                                <span className="text-sm font-black text-foreground">
+                                <span className="text-xs sm:text-sm font-black text-foreground truncate max-w-[70px] sm:max-w-none">
                                   {data.langs[0]?.name ?? '—'}
                                 </span>
                               </div>
-                              <span className="text-[10px] uppercase tracking-widest text-muted-foreground/50">
+                              <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground/50 leading-tight">
                                 Top Language
                               </span>
-                              <span className="text-[9px] text-muted-foreground/30">
+                              <span className="text-[8px] sm:text-[9px] text-muted-foreground/30">
                                 {data.langs[0] ? `${data.langs[0].percentage}% of code` : ''}
                               </span>
                             </div>
-                            <div className="w-px h-10 bg-border/40" />
+                            <div className="hidden sm:block w-px h-10 bg-border/40 flex-shrink-0" />
                             {/* Total repos */}
-                            <div className="flex flex-col items-center gap-1">
-                              <span className="text-2xl font-black font-mono tabular-nums text-foreground">
+                            <div className="flex flex-col items-center gap-1 min-w-0">
+                              <span className="text-xl sm:text-2xl font-black font-mono tabular-nums text-foreground leading-tight">
                                 {data.user.public_repos}
                               </span>
-                              <span className="text-[10px] uppercase tracking-widest text-muted-foreground/50">
+                              <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground/50 leading-tight">
                                 Public Repos
                               </span>
-                              <span className="text-[9px] text-muted-foreground/30">on GitHub</span>
+                              <span className="text-[8px] sm:text-[9px] text-muted-foreground/30">on GitHub</span>
                             </div>
                           </div>
                           <div className="w-full pt-1 border-t border-border/20">
