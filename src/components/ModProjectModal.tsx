@@ -782,7 +782,7 @@ const ModProjectModal = ({ project, onClose }: ModProjectModalProps) => {
 
       {/* Modal */}
       <div
-        className={`relative w-full max-w-4xl flex flex-col bg-card border border-border/50 rounded-3xl shadow-2xl
+        className={`relative w-full max-w-4xl flex flex-col bg-card border border-border/50 rounded-3xl shadow-2xl overflow-hidden
           transition-all duration-500
           ${isVisible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-8"}`}
         style={{ maxHeight: 'min(92vh, 860px)' }}
