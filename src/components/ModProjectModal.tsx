@@ -60,15 +60,21 @@ function getSiteName(url: string): string {
   return 'View Site';
 }
 
-// ── Release type badge ────────────────────────────────────────────────
-const ReleaseTypeBadge = ({ type }: { type: ReleaseType }) => {
-  const cfg = RELEASE_TYPE_CONFIG[type];
+// ── Release type dot (Modrinth-style: colored circle with initial) ────
+const RELEASE_TYPE_DOT_CONFIG: Record<ReleaseType, { initial: string; className: string; title: string }> = {
+  alpha:   { initial: 'A', className: 'bg-rose-500/20 text-rose-400',    title: 'Alpha' },
+  beta:    { initial: 'B', className: 'bg-orange-500/20 text-orange-400', title: 'Beta' },
+  release: { initial: 'R', className: 'bg-emerald-500/20 text-emerald-400', title: 'Release' },
+};
+
+const ReleaseTypeDot = ({ type }: { type: ReleaseType }) => {
+  const cfg = RELEASE_TYPE_DOT_CONFIG[type];
   return (
     <span
-      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold border tracking-wide ${cfg.className}`}
+      title={cfg.title}
+      className={`inline-flex items-center justify-center flex-shrink-0 w-7 h-7 rounded-full ${cfg.className} text-[11px] font-bold leading-none select-none`}
     >
-      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${cfg.dotColor}`} />
-      {cfg.label}
+      {cfg.initial}
     </span>
   );
 };
@@ -322,7 +328,8 @@ const ChannelFilterDropdown = ({ options, selected, onChange }: ChannelFilterDro
               <div className="py-1">
                 {options.map((opt) => {
                   const checked = selected.includes(opt);
-                  const cfg = RELEASE_TYPE_CONFIG[opt];
+                  const dotColor = opt === 'release' ? 'bg-emerald-400' : opt === 'beta' ? 'bg-orange-400' : 'bg-rose-400';
+                  const label = opt === 'release' ? 'Release' : opt === 'beta' ? 'Beta' : 'Alpha';
                   return (
                     <button
                       key={opt}
@@ -334,8 +341,8 @@ const ChannelFilterDropdown = ({ options, selected, onChange }: ChannelFilterDro
                         ${checked ? 'bg-primary border-primary' : 'border-border/60'}`}>
                         {checked && <Check className="w-2.5 h-2.5 text-primary-foreground" />}
                       </span>
-                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${cfg.dotColor}`} />
-                      <span className="font-medium">{cfg.label}</span>
+                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${dotColor}`} />
+                      <span className="font-medium">{label}</span>
                     </button>
                   );
                 })}
@@ -418,10 +425,9 @@ const StaticVersionsTab = ({ downloads }: { downloads: StaticDownloadEntry[] }) 
         {/* Desktop header */}
         <div
           className="hidden sm:grid items-center gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60"
-          style={{ gridTemplateColumns: '1fr auto auto auto auto' }}
+          style={{ gridTemplateColumns: '1fr auto auto auto' }}
         >
           <span>Name</span>
-          <span>Status</span>
           <span>Game Version</span>
           <span>Loader</span>
           <span></span>
@@ -436,11 +442,9 @@ const StaticVersionsTab = ({ downloads }: { downloads: StaticDownloadEntry[] }) 
               <div key={idx} className="hover:bg-muted/20 transition-colors duration-150 rounded-lg group/row">
                 {/* Mobile */}
                 <div className="flex sm:hidden items-center gap-3 px-3 py-3">
+                  <ReleaseTypeDot type={releaseType} />
                   <div className="flex flex-col gap-1.5 flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-sm font-semibold text-foreground truncate">{entry.name}</span>
-                      <ReleaseTypeBadge type={releaseType} />
-                    </div>
+                    <span className="text-sm font-semibold text-foreground truncate">{entry.name}</span>
                     <div className="flex flex-wrap gap-1 text-[10px] text-muted-foreground">
                       <span>{entry.game_versions.slice(0, 2).join(', ')}</span>
                       <span>·</span>
@@ -462,17 +466,12 @@ const StaticVersionsTab = ({ downloads }: { downloads: StaticDownloadEntry[] }) 
                 {/* Desktop */}
                 <div
                   className="hidden sm:grid items-center gap-3 px-3 py-3"
-                  style={{ gridTemplateColumns: '1fr auto auto auto auto' }}
+                  style={{ gridTemplateColumns: '1fr auto auto auto' }}
                 >
                   <div className="flex items-center gap-2 min-w-0">
-                    <div className="w-2 h-2 rounded-full bg-primary/60 flex-shrink-0" />
+                    <ReleaseTypeDot type={releaseType} />
                     <span className="text-sm font-semibold text-foreground truncate">{entry.name}</span>
                     <span className="text-[10px] font-mono text-muted-foreground/60 hidden lg:inline">{entry.version_number}</span>
-                  </div>
-
-                  {/* Release type badge */}
-                  <div className="flex justify-end">
-                    <ReleaseTypeBadge type={releaseType} />
                   </div>
 
                   <div className="flex flex-wrap gap-1 justify-end">
@@ -608,10 +607,9 @@ const VersionsTab = ({ slug }: { slug: string }) => {
         {/* Desktop header */}
         <div
           className="hidden sm:grid items-center gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60"
-          style={{ gridTemplateColumns: '1fr auto auto auto auto auto auto' }}
+          style={{ gridTemplateColumns: '1fr auto auto auto auto auto' }}
         >
           <span>Name</span>
-          <span>Status</span>
           <span>Game Version</span>
           <span>Loader</span>
           <span>Published</span>
@@ -631,11 +629,9 @@ const VersionsTab = ({ slug }: { slug: string }) => {
               <div key={v.id} className="hover:bg-muted/20 transition-colors duration-150 rounded-lg group/row">
                 {/* Mobile */}
                 <div className="flex sm:hidden items-center gap-3 px-3 py-3">
+                  <ReleaseTypeDot type={releaseType} />
                   <div className="flex flex-col gap-1.5 flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-sm font-semibold text-foreground truncate">{v.name}</span>
-                      <ReleaseTypeBadge type={releaseType} />
-                    </div>
+                    <span className="text-sm font-semibold text-foreground truncate">{v.name}</span>
                     <div className="flex flex-wrap gap-1 text-[10px] text-muted-foreground">
                       <span>{v.game_versions.slice(0, 2).join(', ')}{v.game_versions.length > 2 ? '…' : ''}</span>
                       <span>·</span>
@@ -659,17 +655,12 @@ const VersionsTab = ({ slug }: { slug: string }) => {
                 {/* Desktop */}
                 <div
                   className="hidden sm:grid items-center gap-3 px-3 py-3"
-                  style={{ gridTemplateColumns: '1fr auto auto auto auto auto auto' }}
+                  style={{ gridTemplateColumns: '1fr auto auto auto auto auto' }}
                 >
                   <div className="flex items-center gap-2 min-w-0">
-                    <div className="w-2 h-2 rounded-full bg-primary/60 flex-shrink-0" />
+                    <ReleaseTypeDot type={releaseType} />
                     <span className="text-sm font-semibold text-foreground truncate">{v.name}</span>
                     <span className="text-[10px] font-mono text-muted-foreground/60 hidden lg:inline">{v.version_number}</span>
-                  </div>
-
-                  {/* Release type badge */}
-                  <div className="flex justify-end">
-                    <ReleaseTypeBadge type={releaseType} />
                   </div>
 
                   <div className="flex flex-wrap gap-1 justify-end">
