@@ -71,7 +71,7 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
             ? "opacity-100 scale-100 translate-y-0"
             : "opacity-0 scale-95 translate-y-8"
         }`}
-        style={{ maxHeight: 'min(90vh, 820px)' }}
+        style={{ maxHeight: 'min(91vh, 860px)' }}
       >
         <button
           onClick={handleClose}
@@ -82,7 +82,7 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
 
         {/* Fixed image header */}
         {project.image && (
-          <div className="relative flex-shrink-0 overflow-hidden bg-muted" style={{ aspectRatio: '16/6' }}>
+          <div className="relative flex-shrink-0 overflow-hidden bg-muted" style={{ aspectRatio: '16/8' }}>
             <img
               src={project.image}
               alt={project.title}
