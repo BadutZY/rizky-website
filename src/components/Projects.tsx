@@ -23,6 +23,7 @@ import classImg from '@/assets/project/website/class-website.png';
 import portoImg from '@/assets/project/website/rizky-website.png';
 import fritzyF from '@/assets/project/website/fritzyforce-website.png';
 import ChainedT from '@/assets/project/website/chained-together.png';
+import valoGuess from '@/assets/project/website/valo-guess-who.png';
 import SpawnAllIcon from '@/assets/project/mod/icon.png';
 
 import equinoxLogo from '@/assets/game/logo-member/eqnox.jpg';
@@ -202,6 +203,7 @@ const REGULAR_PROJECTS: RegularProject[] = [
   { id: 4, title: 'Class Website', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind', image: classImg, link: 'https://xi-rpl-2.vercel.app/', fullDescription: 'Website for my class schedule and duty schedule.', description: 'Class website' },
   { id: 5, title: 'Rizky Website', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind / Supabase', image: portoImg, link: 'https://rizky-website.vercel.app/', fullDescription: 'Portfolio website to showcase projects.', description: 'Portfolio Website' },
   { id: 6, title: 'Fritzy Force Website', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind / Supabase', image: fritzyF, link: 'https://fritzyforce.vercel.app/', fullDescription: 'Remake of Fritzy Force Website.', description: 'Fanbase Website' },
+  { id: 7, title: 'Valorant Guess Who', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind / Supabase', image: valoGuess, link: 'https://valorantguesswho.vercel.app/', fullDescription: 'A fun guessing game based on Valorant agents, weapon, maps, and abilities.', description: 'Game Website' },
 ];
 
 const FEATURED_ID = 6;
