@@ -21,7 +21,7 @@ const PREVIEW_SITES = [
     title:       'Rizky Website',
     description: 'Personal portfolio website',
     url:         'https://rizky-website.vercel.app/',
-    color:       '#3B82F6',
+    color:       '#d8700e',
     badge:       'React · TypeScript · Vite',
   },
   {
@@ -29,7 +29,7 @@ const PREVIEW_SITES = [
     title:       'Box Siege',
     description: 'Game download website for Box Siege',
     url:         'https://box-siege.vercel.app/',
-    color:       '#10B981',
+    color:       '#eb1a1a',
     badge:       'Website · Game',
   },
 ] as const;

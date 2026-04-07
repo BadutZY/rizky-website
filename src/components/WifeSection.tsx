@@ -15,7 +15,7 @@ import showroomLogo from '@/assets/icons/showroom-logo.png';
 const photos = [kimmy1, kimmy2, kimmy3, kimmy4, kimmy5, kimmy6];
 
 const bioData = [
-  { icon: Heart, label: 'Name', value: 'Victoria Kimberly (Kimmy)' },
+  { icon: Heart, label: 'Name', value: 'Victoria Kimberly Lukitama (Kimmy)' },
   { icon: Calendar, label: 'Birthday', value: 'March 8, 2010 (16 Years)' },
   { icon: MapPin, label: 'Hometown', value: 'Jakarta, Indonesia' },
   { icon: Droplets, label: 'Blood Type', value: 'AB' },
