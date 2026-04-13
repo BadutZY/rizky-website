@@ -12,7 +12,7 @@ import type { GameProject } from './GameCard';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import { useModrinthProjects, timeAgo } from '@/hooks/useModrinthProjects';
 
-// ── Project images ──────────────────────────────────────
+// Project images
 import modImg from '@/assets/project/website/modrinth.png';
 import boxImg from '@/assets/project/website/box-siege-website.png';
 import eqnoxImg from '@/assets/project/website/eqnox-website.png';
@@ -32,17 +32,14 @@ import badutZy from '@/assets/game/logo-member/BadutZY.jpg';
 import ariAja from '@/assets/game/logo-member/Ari.jpg';
 import swimmingFox from '@/assets/game/logo-member/SwimmingFOX.jpg';
 
-// ── Game assets ─────────────────────────────────────────
+// Game assets
 import boxSiegeVideo from '@/assets/project/game/boxsiege.mp4';
 import boxSiegeFile from '@/assets/game/file/BoxSiege.zip?url';
 
-// ── Mod assets ──────────────────────────────────────────
+// Mod assets
 import spawnAllJar from '@/assets/mod/file/spawn-all-1.0.0.jar?url';
 import spawnAllMd from '@/assets/mod/markdown/spawnall.md?raw';
 
-// ──────────────────────────────────────────────
-// Types
-// ──────────────────────────────────────────────
 interface RegularProject {
   id: number;
   title: string;
@@ -69,16 +66,12 @@ interface ContributionProject {
 
 type AnyProject = RegularProject | ModProject | GameProject;
 
-// ──────────────────────────────────────────────
-// Static data — Game projects (original / owned)
-// ──────────────────────────────────────────────
+// Game projects
 const GAME_PROJECTS: GameProject[] = [
-  // Add your own game projects here
+  // My Game
 ];
 
-// ──────────────────────────────────────────────
-// Static data — Contribution Game projects
-// ──────────────────────────────────────────────
+// Contribution Game projects
 const CONTRIBUTION_GAME_PROJECTS: GameProject[] = [
   {
     id: 300,
@@ -149,9 +142,7 @@ const CONTRIBUTION_GAME_PROJECTS: GameProject[] = [
   },
 ];
 
-// ──────────────────────────────────────────────
-// Static data — Mod projects (non-Modrinth)
-// ──────────────────────────────────────────────
+// Mod projects
 const STATIC_MOD_PROJECTS: ModProject[] = [
   {
     id: 200,
@@ -185,18 +176,14 @@ const STATIC_MOD_PROJECTS: ModProject[] = [
   } as ModProject,
 ];
 
-// ──────────────────────────────────────────────
-// Static data — Contribution Website projects
-// ──────────────────────────────────────────────
+// Contribution Website projects
 const CONTRIBUTION_PROJECTS: ContributionProject[] = [
   { id: 100, title: 'Equinox Interactive', category: 'Website', isContribution: true, lang: 'Vite / TypeScript / React / Tailwind', image: eqnoxImg, link: 'https://equinox-website-seven.vercel.app/', fullDescription: 'Website from the team that I created with my friend to make games.', description: 'Company Website', role: 'Game & Web Developer' },
   { id: 101, title: 'Box Siege', category: 'Website', isContribution: true, lang: 'HTML / CSS / JS', image: boxImg, link: 'https://box-siege.vercel.app/', fullDescription: 'website to introduce games.', description: 'Game Website', role: 'Game & Web Developer' },
-  { id: 102, title: 'Chained Together', category: 'Website', isContribution: true, lang: 'Vite / TypeScript / React / Tailwind', image: ChainedT, link: 'https://chained-together.vercel.app/', fullDescription: 'website to introduce games.', description: 'E-Commerce website', role: 'Web Developer' },
+  { id: 102, title: 'Chained Together', category: 'Website', isContribution: true, lang: 'Vite / TypeScript / React / Tailwind', image: ChainedT, link: 'https://chained-together.vercel.app/', fullDescription: 'website for e-commerce.', description: 'E-Commerce website', role: 'Web Developer' },
 ];
 
-// ──────────────────────────────────────────────
-// Static data — Website / other projects
-// ──────────────────────────────────────────────
+// Website projects
 const REGULAR_PROJECTS: RegularProject[] = [
   { id: 1, title: 'JKT48 Remake', category: 'Website', lang: 'HTML / CSS / JS', image: jktImg, link: 'https://jkt48-website.vercel.app/', fullDescription: 'A fan-made website for JKT48 featuring member profiles, event schedules, news updates.', description: 'Fan site' },
   { id: 2, title: 'Fritzy Force', category: 'Website', lang: 'HTML / CSS / JS', image: fritzyImg, link: 'https://fritzy-force-website.vercel.app/', fullDescription: 'This is a fan-made website created by me for a fanbase called fritzy force.', description: 'Fanbase website' },
@@ -217,9 +204,6 @@ const categories = [
   { key: 'Game',    label: 'Game' },
 ];
 
-// ──────────────────────────────────────────────
-// Type guards
-// ──────────────────────────────────────────────
 function isMod(p: AnyProject): p is ModProject {
   return p.category === 'Mod';
 }
@@ -228,9 +212,6 @@ function isGame(p: AnyProject): p is GameProject {
   return p.category === 'Game';
 }
 
-// ──────────────────────────────────────────────
-// Skeleton loader for ModCard
-// ──────────────────────────────────────────────
 const ModCardSkeleton = () => (
   <div className="relative flex items-center gap-4 md:gap-5 w-full rounded-2xl border border-border/40 bg-card/60 p-4 md:p-5 animate-pulse">
     <div className="flex-shrink-0 w-[72px] h-[72px] md:w-20 md:h-20 rounded-xl bg-muted" />
@@ -246,9 +227,6 @@ const ModCardSkeleton = () => (
   </div>
 );
 
-// ──────────────────────────────────────────────
-// Main component
-// ──────────────────────────────────────────────
 const Projects = () => {
   const [selectedRegularProject, setSelectedRegularProject] = useState<RegularProject | null>(null);
   const [selectedModProject, setSelectedModProject] = useState<ModProject | null>(null);
@@ -277,7 +255,6 @@ const Projects = () => {
   // Modrinth live data
   const { data: modrinthData, isLoading, isError, refetch } = useModrinthProjects('BadutZY');
 
-  // Convert Modrinth API response → ModProject, sorted by downloads DESC
   const modrinthModProjects: ModProject[] = useMemo(() => {
     if (!modrinthData) return [];
     return modrinthData
@@ -300,21 +277,16 @@ const Projects = () => {
         tags: p.categories.map((c) => c.charAt(0).toUpperCase() + c.slice(1)),
         loaders: p.loaders,
         versions: p.game_versions,
-        // Modrinth mods are always public
         status: 'public' as const,
       } as ModProject))
-      // Sort by downloads descending
       .sort((a, b) => (b.downloads ?? 0) - (a.downloads ?? 0));
   }, [modrinthData]);
 
-  // Merge: live Modrinth mods (sorted) + static mods
   const allModProjects: ModProject[] = useMemo(() => {
     if (isLoading) return STATIC_MOD_PROJECTS;
     return [...modrinthModProjects, ...STATIC_MOD_PROJECTS];
   }, [modrinthModProjects, isLoading]);
 
-  // All projects merged for filter count
-  // Order in "all" view: Website → Mod → Game
   const allProjects: AnyProject[] = useMemo(
     () => [...REGULAR_PROJECTS, ...(CONTRIBUTION_PROJECTS as unknown as RegularProject[]), ...allModProjects, ...GAME_PROJECTS, ...CONTRIBUTION_GAME_PROJECTS],
     [allModProjects]
@@ -607,7 +579,6 @@ const Projects = () => {
             </>
           )}
 
-          {/* ── CONTRIBUTION WEBSITE section ──────────────────── */}
           {contributionProjects.length > 0 && (
             <>
               <motion.div
@@ -643,15 +614,12 @@ const Projects = () => {
                       className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105"
                     />
 
-                    {/* Subtle tinted overlay to differentiate from regular cards */}
                     <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent" style={{ transition: 'background 0.7s' }} />
 
-                    {/* Static info overlay — visible by default, fades on hover */}
                     <div
                       className="absolute inset-0 bg-background/75 backdrop-blur-sm flex flex-col justify-between text-center group-hover:opacity-0 group-hover:backdrop-blur-0"
                       style={{ transition: 'opacity 0.7s, backdrop-filter 0.7s', padding: '10px 12px 16px' }}
                     >
-                      {/* Top: Contribution badge — stays at top so it never covers tech badges */}
                       <div className="flex justify-start">
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-primary/90 text-primary-foreground backdrop-blur-sm">
                           <GitFork className="w-2.5 h-2.5" />
@@ -659,7 +627,6 @@ const Projects = () => {
                         </span>
                       </div>
 
-                      {/* Middle: title + description */}
                       <div className="flex flex-col items-center gap-1 px-1">
                         <h4 className="text-sm font-bold text-foreground leading-tight">{project.title}</h4>
                         <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">
@@ -672,7 +639,6 @@ const Projects = () => {
                         )}
                       </div>
 
-                      {/* Bottom: lang badges */}
                       <div className="flex flex-wrap justify-center gap-1.5">
                         {project.lang.split(' / ').map((tech) => (
                           <span key={tech} className="px-2 py-0.5 rounded-md text-[11px] font-mono font-medium bg-primary/10 text-primary border border-primary/20 leading-tight">
@@ -712,7 +678,6 @@ const Projects = () => {
             </>
           )}
 
-          {/* ── MOD section (second in "all" view) ────────────── */}
           {(modProjects.length > 0 || isLoading) && (activeFilter === 'all' || activeFilter === 'Mod') && (
             <div className="flex flex-col gap-3 mb-10">
               <motion.div
@@ -723,7 +688,6 @@ const Projects = () => {
                 <span className="text-xs font-semibold text-primary/70 tracking-widest uppercase">Mods</span>
                 <div className="flex-1 h-px bg-border/30" />
 
-                {/* Modrinth sync status badge */}
                 <div className="flex items-center gap-1.5">
                   {isLoading && (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-medium bg-primary/5 text-muted-foreground border border-border/40">
@@ -763,7 +727,6 @@ const Projects = () => {
             </div>
           )}
 
-          {/* ── GAME section (third in "all" view) ───────────── */}
           {(gameProjects.length > 0 || contributionGameProjects.length > 0) && (activeFilter === 'all' || activeFilter === 'Game') && (
             <div className="mb-10">
               {/* Regular Games */}
