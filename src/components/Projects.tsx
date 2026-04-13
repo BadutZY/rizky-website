@@ -22,7 +22,7 @@ import taskImg from '@/assets/project/website/task-manager.png';
 import classImg from '@/assets/project/website/class-website.png';
 import portoImg from '@/assets/project/website/rizky-website.png';
 import fritzyF from '@/assets/project/website/fritzyforce-website.png';
-import ChainedT from '@/assets/project/website/chained-together.png';
+import ChainedT from '@/assets/project/website/chained.png';
 import valoGuess from '@/assets/project/website/valo-guess-who.png';
 import jktGuess from '@/assets/project/website/jkt48guesswho.png';
 import SpawnAllIcon from '@/assets/project/mod/icon.png';
