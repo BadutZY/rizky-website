@@ -26,6 +26,7 @@ import ChainedT from '@/assets/project/website/chained.png';
 import valoGuess from '@/assets/project/website/valo-guess-who.png';
 import jktGuess from '@/assets/project/website/jkt48guesswho.png';
 import SpawnAllIcon from '@/assets/project/mod/icon.png';
+import jktStream from '@/assets/project/website/jkt48-stream.png';
 
 import equinoxLogo from '@/assets/game/logo-member/eqnox.jpg';
 import badutZy from '@/assets/game/logo-member/BadutZY.jpg';
@@ -178,24 +179,24 @@ const STATIC_MOD_PROJECTS: ModProject[] = [
 
 // Contribution Website projects
 const CONTRIBUTION_PROJECTS: ContributionProject[] = [
-  { id: 100, title: 'Equinox Interactive', category: 'Website', isContribution: true, lang: 'Vite / TypeScript / React / Tailwind', image: eqnoxImg, link: 'https://equinox-website-seven.vercel.app/', fullDescription: 'Website from the team that I created with my friend to make games.', description: 'Company Website', role: 'Game & Web Developer' },
+  { id: 100, title: 'Equinox Interactive', category: 'Website', isContribution: true, lang: 'TypeScript / React / Tailwind', image: eqnoxImg, link: 'https://equinox-website-seven.vercel.app/', fullDescription: 'Website from the team that I created with my friend to make games.', description: 'Company Website', role: 'Game & Web Developer' },
   { id: 101, title: 'Box Siege', category: 'Website', isContribution: true, lang: 'HTML / CSS / JS', image: boxImg, link: 'https://box-siege.vercel.app/', fullDescription: 'website to introduce games.', description: 'Game Website', role: 'Game & Web Developer' },
-  { id: 102, title: 'Chained Together', category: 'Website', isContribution: true, lang: 'Vite / TypeScript / React / Tailwind', image: ChainedT, link: 'https://chained-together.vercel.app/', fullDescription: 'website for e-commerce.', description: 'E-Commerce website', role: 'Web Developer' },
+  { id: 102, title: 'Chained Together', category: 'Website', isContribution: true, lang: 'TypeScript / React / Tailwind', image: ChainedT, link: 'https://chained-together.vercel.app/', fullDescription: 'website for e-commerce.', description: 'E-Commerce website', role: 'Web Developer' },
 ];
 
 // Website projects
 const REGULAR_PROJECTS: RegularProject[] = [
   { id: 1, title: 'JKT48 Remake', category: 'Website', lang: 'HTML / CSS / JS', image: jktImg, link: 'https://jkt48-website.vercel.app/', fullDescription: 'A fan-made website for JKT48 featuring member profiles, event schedules, news updates.', description: 'Fan site' },
-  { id: 2, title: 'Fritzy Force', category: 'Website', lang: 'HTML / CSS / JS', image: fritzyImg, link: 'https://fritzy-force-website.vercel.app/', fullDescription: 'This is a fan-made website created by me for a fanbase called fritzy force.', description: 'Fanbase website' },
+  { id: 2, title: 'JKT48 Stream', category: 'Website', lang: 'TypeScript / React / Tailwind / Supabase', image: jktStream, link: 'https://jkt48-stream.vercel.app', fullDescription: 'This is a fan-made website created for watch JKT48 Videos.', description: 'Fanbase website' },
   { id: 3, title: 'Task Manager', category: 'Website', lang: 'HTML / CSS / JS / Local Storage', image: taskImg, link: 'https://task-web-snowy.vercel.app/', fullDescription: 'Website to remind me about unfinished tasks.', description: 'Task manager' },
-  { id: 4, title: 'Class Website', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind', image: classImg, link: 'https://xi-rpl-2.vercel.app/', fullDescription: 'Website for my class schedule and duty schedule.', description: 'Class website' },
-  { id: 5, title: 'Rizky Website', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind / Supabase', image: portoImg, link: 'https://rizky-website.vercel.app/', fullDescription: 'Portfolio website to showcase projects.', description: 'Portfolio Website' },
-  { id: 6, title: 'Fritzy Force Website', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind / Supabase', image: fritzyF, link: 'https://fritzyforce.vercel.app/', fullDescription: 'Remake of Fritzy Force Website.', description: 'Fanbase Website' },
-  { id: 7, title: 'Valorant Guess Who', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind / Supabase', image: valoGuess, link: 'https://valorantguesswho.vercel.app/', fullDescription: 'A fun guessing game based on Valorant agents, weapon, maps, and abilities.', description: 'Game Website' },
-  { id: 8, title: 'JKT48 Member Guess Who', category: 'Website', lang: 'Vite / TypeScript / React / Tailwind / Supabase', image: jktGuess, link: 'https://jkt48guesswho.vercel.app/', fullDescription: 'A fun guessing game based on JKT48 members.', description: 'Game Website' },
+  { id: 4, title: 'Class Website', category: 'Website', lang: 'TypeScript / React / Tailwind', image: classImg, link: 'https://xi-rpl-2.vercel.app/', fullDescription: 'Website for my class schedule and duty schedule.', description: 'Class website' },
+  { id: 5, title: 'Rizky Website', category: 'Website', lang: 'TypeScript / React / Tailwind / Supabase', image: portoImg, link: 'https://rizky-website.vercel.app/', fullDescription: 'Portfolio website to showcase projects.', description: 'Portfolio Website' },
+  { id: 6, title: 'Fritzy Force Website', category: 'Website', lang: 'TypeScript / React / Tailwind / Supabase', image: fritzyF, link: 'https://fritzyforce.vercel.app/', fullDescription: 'Remake of Fritzy Force Website.', description: 'Fanbase Website' },
+  { id: 7, title: 'Valorant Guess Who', category: 'Website', lang: 'TypeScript / React / Tailwind / Supabase', image: valoGuess, link: 'https://valorantguesswho.vercel.app/', fullDescription: 'A fun guessing game based on Valorant agents, weapon, maps, and abilities.', description: 'Game Website' },
+  { id: 8, title: 'JKT48 Member Guess Who', category: 'Website', lang: 'TypeScript / React / Tailwind / Supabase', image: jktGuess, link: 'https://jkt48guesswho.vercel.app/', fullDescription: 'A fun guessing game based on JKT48 members.', description: 'Game Website' },
 ];
 
-const FEATURED_ID = 6;
+const FEATURED_ID = 2;
 
 const categories = [
   { key: 'all',     label: 'All Projects' },

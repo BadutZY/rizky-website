@@ -26,9 +26,9 @@ const PREVIEW_SITES = [
   },
   {
     id:          3,
-    title:       'Box Siege',
-    description: 'Game download website for Box Siege',
-    url:         'https://box-siege.vercel.app/',
+    title:       'JKT48 Stream',
+    description: 'Watch JKT48 videos',
+    url:         'https://jkt48-stream.vercel.app',
     color:       '#eb1a1a',
     badge:       'Website · Game',
   },
