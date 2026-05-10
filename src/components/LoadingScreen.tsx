@@ -37,7 +37,7 @@ const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
   const [currentSnippet, setCurrentSnippet] = useState(0);
   const [isExiting, setIsExiting] = useState(false);
   const [typedText, setTypedText] = useState('');
-  const titleText = '> RIZKY.DEV';
+  const titleText = 'BadutZY';
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

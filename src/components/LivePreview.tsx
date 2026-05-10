@@ -10,27 +10,29 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 const PREVIEW_SITES = [
   {
     id:          1,
-    title:       'Fritzy Force',
-    description: 'Fanbase website rebuild with React & Tailwind',
-    url:         'https://fritzyforce.vercel.app/',
-    color:       '#8B5CF6',
-    badge:       'React · Tailwind · Supabase',
-  },
-  {
-    id:          2,
-    title:       'Rizky Website',
-    description: 'Personal portfolio website',
-    url:         'https://rizky-website.vercel.app/',
-    color:       '#d8700e',
-    badge:       'React · TypeScript · Vite',
-  },
-  {
-    id:          3,
     title:       'JKT48 Stream',
     description: 'Watch JKT48 videos',
     url:         'https://jkt48-stream.vercel.app',
     color:       '#eb1a1a',
     badge:       'Website · Game',
+  },
+
+  {
+    id:          2,
+    title:       'BadutZY Website',
+    description: 'Personal portfolio website',
+    url:         'https://badutzy.vercel.app/',
+    color:       '#d8700e',
+    badge:       'React · TypeScript · Vite',
+  },
+
+  {
+    id:          3,
+    title:       'Fritzy Force',
+    description: 'Fanbase website rebuild with React & Tailwind',
+    url:         'https://fritzyforce.vercel.app/',
+    color:       '#8B5CF6',
+    badge:       'React · Tailwind · Supabase',
   },
 ] as const;
 

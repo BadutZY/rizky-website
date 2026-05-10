@@ -92,7 +92,7 @@ const CONTRIBUTION_GAME_PROJECTS: GameProject[] = [
           socials: [
             { platform: 'github', url: 'https://github.com/BadutZY' },
             { platform: 'instagram', url: 'https://www.instagram.com/rzky.mp_36/' },
-            { platform: 'website', url: 'https://rizky-website.vercel.app/' },
+            { platform: 'website', url: 'https://badutzy.vercel.app/' },
           ],
         },
         {
@@ -190,7 +190,7 @@ const REGULAR_PROJECTS: RegularProject[] = [
   { id: 2, title: 'JKT48 Stream', category: 'Website', lang: 'TypeScript / React / Tailwind / Supabase', image: jktStream, link: 'https://jkt48-stream.vercel.app', fullDescription: 'This is a fan-made website created for watch JKT48 Videos.', description: 'Fanbase website' },
   { id: 3, title: 'Task Manager', category: 'Website', lang: 'HTML / CSS / JS / Local Storage', image: taskImg, link: 'https://task-web-snowy.vercel.app/', fullDescription: 'Website to remind me about unfinished tasks.', description: 'Task manager' },
   { id: 4, title: 'Class Website', category: 'Website', lang: 'TypeScript / React / Tailwind', image: classImg, link: 'https://xi-rpl-2.vercel.app/', fullDescription: 'Website for my class schedule and duty schedule.', description: 'Class website' },
-  { id: 5, title: 'Rizky Website', category: 'Website', lang: 'TypeScript / React / Tailwind / Supabase', image: portoImg, link: 'https://rizky-website.vercel.app/', fullDescription: 'Portfolio website to showcase projects.', description: 'Portfolio Website' },
+  { id: 5, title: 'BadutZY Website', category: 'Website', lang: 'TypeScript / React / Tailwind / Supabase', image: portoImg, link: 'https://badutzy.vercel.app/', fullDescription: 'Portfolio website to showcase projects.', description: 'Portfolio Website' },
   { id: 6, title: 'Fritzy Force Website', category: 'Website', lang: 'TypeScript / React / Tailwind / Supabase', image: fritzyF, link: 'https://fritzyforce.vercel.app/', fullDescription: 'Remake of Fritzy Force Website.', description: 'Fanbase Website' },
   { id: 7, title: 'Valorant Guess Who', category: 'Website', lang: 'TypeScript / React / Tailwind / Supabase', image: valoGuess, link: 'https://valorantguesswho.vercel.app/', fullDescription: 'A fun guessing game based on Valorant agents, weapon, maps, and abilities.', description: 'Game Website' },
   { id: 8, title: 'JKT48 Member Guess Who', category: 'Website', lang: 'TypeScript / React / Tailwind / Supabase', image: jktGuess, link: 'https://jkt48guesswho.vercel.app/', fullDescription: 'A fun guessing game based on JKT48 members.', description: 'Game Website' },
