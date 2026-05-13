@@ -17,7 +17,6 @@ import modImg from '@/assets/project/website/modrinth.png';
 import boxImg from '@/assets/project/website/box-siege-website.png';
 import eqnoxImg from '@/assets/project/website/eqnox-website.png';
 import jktImg from '@/assets/project/website/jkt48-website.png';
-import fritzyImg from '@/assets/project/website/fritzy-force-website.png';
 import taskImg from '@/assets/project/website/task-manager.png';
 import classImg from '@/assets/project/website/class-website.png';
 import portoImg from '@/assets/project/website/rizky-website.png';
@@ -27,6 +26,7 @@ import valoGuess from '@/assets/project/website/valo-guess-who.png';
 import jktGuess from '@/assets/project/website/jkt48guesswho.png';
 import SpawnAllIcon from '@/assets/project/mod/icon.png';
 import jktStream from '@/assets/project/website/jkt48-stream.png';
+import werewolfCard from '@/assets/project/website/werewolf-card.png';
 
 import equinoxLogo from '@/assets/game/logo-member/eqnox.jpg';
 import badutZy from '@/assets/game/logo-member/BadutZY.jpg';
@@ -194,6 +194,7 @@ const REGULAR_PROJECTS: RegularProject[] = [
   { id: 6, title: 'Fritzy Force Website', category: 'Website', lang: 'TypeScript / React / Tailwind / Supabase', image: fritzyF, link: 'https://fritzyforce.vercel.app/', fullDescription: 'Remake of Fritzy Force Website.', description: 'Fanbase Website' },
   { id: 7, title: 'Valorant Guess Who', category: 'Website', lang: 'TypeScript / React / Tailwind / Supabase', image: valoGuess, link: 'https://valorantguesswho.vercel.app/', fullDescription: 'A fun guessing game based on Valorant agents, weapon, maps, and abilities.', description: 'Game Website' },
   { id: 8, title: 'JKT48 Member Guess Who', category: 'Website', lang: 'TypeScript / React / Tailwind / Supabase', image: jktGuess, link: 'https://jkt48guesswho.vercel.app/', fullDescription: 'A fun guessing game based on JKT48 members.', description: 'Game Website' },
+  { id: 9, title: 'Werewolf Card', category: 'Website', lang: 'TypeScript / React / Tailwind ', image: werewolfCard, link: 'https://card-werewolf.vercel.app/', fullDescription: 'website for werewolf card role selection.', description: 'Game Website' },
 ];
 
 const FEATURED_ID = 2;
