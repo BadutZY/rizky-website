@@ -29,18 +29,18 @@ const xPosts: SocialPost[] = [
   },
   {
     id: 'x-2',
-    url: 'https://x.com/Kimmy_JKT48/status/2017586942733684738',
-    tweetId: '2017586942733684738',
-    caption: 'HEHEHEH MAKASIH BANYAK TWT HARI INI UYYYY SERU BANGED',
-    date: 'January 31, 2026',
+    url: 'https://x.com/Kimmy_JKT48/status/2054836960494309540',
+    tweetId: '2054836960494309540',
+    caption: '🐈‍⬛',
+    date: 'May 14, 2026',
 
   },
   {
     id: 'x-3',
-    url: 'https://x.com/Kimmy_JKT48/status/1998794886540329339',
-    tweetId: '1998794886540329339',
-    caption: 'SEE U VC TAHUN DEPAAANN, makaci banyak vc tahun ini❤️❤️❤️❤️❤️❤️❤️❤️',
-    date: 'December 10, 2025',
+    url: 'https://x.com/Kimmy_JKT48/status/2048081653977993372',
+    tweetId: '2048081653977993372',
+    caption: 'Thank you so much for the offair todayyyyy at AEON MALL DELTAMAS!!!! 🔥🔥🔥',
+    date: 'April 25, 2026',
   },
 ];
 
@@ -54,17 +54,17 @@ const tiktokPosts: SocialPost[] = [
   },
   {
     id: 'tt-2',
-    url: 'https://www.tiktok.com/@jkt48.kimmy/video/7414498889635466502',
-    videoId: '7414498889635466502',
-    caption: '🧍🏻‍♀️ #jkt48.kimmy',
-    date: 'September 14, 2024',
+    url: 'https://www.tiktok.com/@jkt48.kimmy/video/7626635384474111253',
+    videoId: '7626635384474111253',
+    caption: '🫣',
+    date: 'April 9, 2026',
   },
   {
     id: 'tt-3',
-    url: 'https://www.tiktok.com/@jkt48.kimmy/video/7423422203821083910',
-    videoId: '7423422203821083910',
-    caption: 'capybara..! 🤏🏻 #KimmyJKT48 ',
-    date: 'October 8, 2024',
+    url: 'https://www.tiktok.com/@jkt48.kimmy/video/7597350784325389588',
+    videoId: '7597350784325389588',
+    caption: 'Okay, okay 🧸🫧 #ReallyLikeYou #BabyMonster @BABYMONSTER',
+    date: 'January 1, 2026',
   },
 ];
 
