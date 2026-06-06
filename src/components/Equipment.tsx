@@ -22,7 +22,7 @@ import caseImg     from '@/assets/equipment/case.jpeg';
 import coolingImg  from '@/assets/equipment/cooling.webp';
 import monitorImg  from '@/assets/equipment/monitor.png';
 import keyboardImg from '@/assets/equipment/keyboard.png';
-import mouseImg    from '@/assets/equipment/mouse.png';
+import mouseImg    from '@/assets/equipment/mouse.webp';
 import headsetImg  from '@/assets/equipment/headset.png';
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -112,11 +112,11 @@ const specs: SpecItem[] = [
     specLines: ['Layout: 60% Compact', 'Type: Mechanical Rapid Trigger', 'Connection: USB-C', 'Switch: Magnetic Switch', 'Backlight: RGB'],
   },
   {
-    icon: Mouse, label: 'MOUSE', value: 'MYNK GOZO E',
+    icon: Mouse, label: 'MOUSE', value: 'VORTEX IGNIX F3 PRO',
     detail: 'Gaming Mouse',
     color: '160 70% 48%', group: 'peripheral', perf: 85, image: mouseImg,
-    priceRp: 'Rp 300.000', priceUsd: '$18',
-    specLines: ['DPI: Up to 12.000', 'Buttons: 5 Programmable', 'Connection: Wireless', 'Sensor: PAW 3311'],
+    priceRp: 'Rp 500.000', priceUsd: '$28',
+    specLines: ['DPI: Up to 40.000', ' Polling Rate: 125/250/500/1000Hz', 'Connection: Wireless', 'Sensor: PAW 3395 PRO'],
   },
   {
     icon: Headphones, label: 'HEADSET', value: 'Rexus Vonix F29',
