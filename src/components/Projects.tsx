@@ -35,7 +35,6 @@ import swimmingFox from '@/assets/game/logo-member/SwimmingFOX.jpg';
 
 // Game assets
 import boxSiegeVideo from '@/assets/project/game/boxsiege.mp4';
-import boxSiegeFile from '@/assets/game/file/BoxSiege.zip?url';
 
 // Mod assets
 import spawnAllJar from '@/assets/mod/file/spawn-all-1.0.0.jar?url';
@@ -120,7 +119,7 @@ const CONTRIBUTION_GAME_PROJECTS: GameProject[] = [
     image: boxImg,
     video: boxSiegeVideo,
     link: 'https://box-siege.vercel.app/',
-    downloadFile: boxSiegeFile,
+    //downloadFile: ,
     description: 'PvP Co-op game',
     fullDescription:
       'Immerse yourself in the ultimate PvP co-op 2D experience with Box Siege, exclusively available for Windows PC.',

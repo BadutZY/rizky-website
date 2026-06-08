@@ -28,10 +28,10 @@ const PREVIEW_SITES = [
 
   {
     id:          3,
-    title:       'Fritzy Force',
-    description: 'Fanbase website rebuild with React & Tailwind',
-    url:         'https://fritzyforce.vercel.app/',
-    color:       '#8B5CF6',
+    title:       'Box Siege Website',
+    description: 'Game website',
+    url:         'https://box-siege.vercel.app/',
+    color:       '#0871c7',
     badge:       'React · Tailwind · Supabase',
   },
 ] as const;
