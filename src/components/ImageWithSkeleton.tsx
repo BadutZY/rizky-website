@@ -6,7 +6,15 @@ interface ImageWithSkeletonProps extends React.ImgHTMLAttributes<HTMLImageElemen
   skeletonClassName?: string;
 }
 
-const ImageWithSkeleton = ({ className, skeletonClassName, onLoad, style, ...props }: ImageWithSkeletonProps) => {
+const ImageWithSkeleton = ({
+  className,
+  skeletonClassName,
+  onLoad,
+  style,
+  loading = 'lazy',
+  decoding = 'async',
+  ...props
+}: ImageWithSkeletonProps) => {
   const [loaded, setLoaded] = useState(false);
 
   return (
@@ -16,6 +24,8 @@ const ImageWithSkeleton = ({ className, skeletonClassName, onLoad, style, ...pro
       )}
       <img
         {...props}
+        loading={loading}
+        decoding={decoding}
         className={cn(className, !loaded && 'opacity-0')}
         style={{
           ...style,

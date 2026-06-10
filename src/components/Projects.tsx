@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { ExternalLink, Filter, ArrowUpRight, Code2, Star, RefreshCw, AlertCircle, Loader2, Gamepad2, GitFork } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { motion, useScroll, useTransform } from 'framer-motion';
@@ -233,6 +233,27 @@ const Projects = () => {
   const [selectedModProject, setSelectedModProject] = useState<ModProject | null>(null);
   const [selectedGameProject, setSelectedGameProject] = useState<GameProject | null>(null);
   const [activeFilter, setActiveFilter] = useState('all');
+  // Mobile "tap-to-bloom": first tap reveals the hover state; second tap opens the modal.
+  const [bloomedId, setBloomedId] = useState<number | null>(null);
+  const [isTouch, setIsTouch] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mq = window.matchMedia('(hover: none)');
+    const update = () => setIsTouch(mq.matches);
+    update();
+    mq.addEventListener?.('change', update);
+    return () => mq.removeEventListener?.('change', update);
+  }, []);
+  useEffect(() => {
+    if (!isTouch || bloomedId === null) return;
+    const close = (e: PointerEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && target.closest('[data-bloom-card="true"]')) return;
+      setBloomedId(null);
+    };
+    document.addEventListener('pointerdown', close, { passive: true });
+    return () => document.removeEventListener('pointerdown', close);
+  }, [isTouch, bloomedId]);
 
   const { ref: titleRef, isVisible: titleVisible } = useScrollAnimation();
   const { ref: featuredRef, isVisible: featuredVisible } = useScrollAnimation();
@@ -519,17 +540,25 @@ const Projects = () => {
                       duration: 0.5,
                       ease: [0.25, 0.46, 0.45, 0.94],
                     }}
-                    className="group relative aspect-video rounded-2xl overflow-hidden border border-border/40 cursor-pointer hover:border-primary/30 hover:-translate-y-1"
+                    data-bloom-card="true"
+                    data-bloomed={bloomedId === project.id ? 'true' : 'false'}
+                    className="group relative aspect-video rounded-2xl overflow-hidden border border-border/40 cursor-pointer hover:border-primary/30 hover:-translate-y-1 data-[bloomed=true]:border-primary/30 data-[bloomed=true]:-translate-y-1"
                     style={{ transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.6s, box-shadow 0.6s' }}
-                    onClick={() => handleProjectClick(project)}
+                    onClick={() => {
+                      if (isTouch && bloomedId !== project.id) {
+                        setBloomedId(project.id);
+                        return;
+                      }
+                      handleProjectClick(project);
+                    }}
                   >
                     <ImageWithSkeleton
                       src={(project as RegularProject).image}
                       alt={project.title}
-                      className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105"
+                      className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 group-data-[bloomed=true]:grayscale-0 group-data-[bloomed=true]:scale-105"
                     />
                     <div
-                      className="absolute inset-0 bg-background/75 backdrop-blur-sm flex flex-col justify-between text-center group-hover:opacity-0 group-hover:backdrop-blur-0"
+                      className="absolute inset-0 bg-background/75 backdrop-blur-sm flex flex-col justify-between text-center group-hover:opacity-0 group-hover:backdrop-blur-0 group-data-[bloomed=true]:opacity-0 group-data-[bloomed=true]:backdrop-blur-0"
                       style={{ transition: 'opacity 0.7s, backdrop-filter 0.7s', padding: '10px 12px 16px' }}
                     >
                       {/* Top spacer */}
@@ -553,11 +582,11 @@ const Projects = () => {
                       </div>
                     </div>
                     <div
-                      className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100"
+                      className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-data-[bloomed=true]:opacity-100"
                       style={{ transition: 'opacity 0.7s' }}
                     />
                     <div
-                      className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0"
+                      className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 group-data-[bloomed=true]:translate-y-0"
                       style={{ transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)' }}
                     >
                       <h4 className="text-sm font-bold text-foreground mb-1">{project.title}</h4>
@@ -605,20 +634,28 @@ const Projects = () => {
                       duration: 0.5,
                       ease: [0.25, 0.46, 0.45, 0.94],
                     }}
-                    className="group relative aspect-video rounded-2xl overflow-hidden border border-primary/20 cursor-pointer hover:border-primary/50 hover:-translate-y-1"
+                    data-bloom-card="true"
+                    data-bloomed={bloomedId === project.id ? 'true' : 'false'}
+                    className="group relative aspect-video rounded-2xl overflow-hidden border border-primary/20 cursor-pointer hover:border-primary/50 hover:-translate-y-1 data-[bloomed=true]:border-primary/50 data-[bloomed=true]:-translate-y-1"
                     style={{ transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.6s, box-shadow 0.6s' }}
-                    onClick={() => setSelectedRegularProject(project as unknown as RegularProject)}
+                    onClick={() => {
+                      if (isTouch && bloomedId !== project.id) {
+                        setBloomedId(project.id);
+                        return;
+                      }
+                      setSelectedRegularProject(project as unknown as RegularProject);
+                    }}
                   >
                     <ImageWithSkeleton
                       src={project.image}
                       alt={project.title}
-                      className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105"
+                      className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 group-data-[bloomed=true]:grayscale-0 group-data-[bloomed=true]:scale-105"
                     />
 
-                    <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent" style={{ transition: 'background 0.7s' }} />
+                    <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent group-data-[bloomed=true]:bg-transparent" style={{ transition: 'background 0.7s' }} />
 
                     <div
-                      className="absolute inset-0 bg-background/75 backdrop-blur-sm flex flex-col justify-between text-center group-hover:opacity-0 group-hover:backdrop-blur-0"
+                      className="absolute inset-0 bg-background/75 backdrop-blur-sm flex flex-col justify-between text-center group-hover:opacity-0 group-hover:backdrop-blur-0 group-data-[bloomed=true]:opacity-0 group-data-[bloomed=true]:backdrop-blur-0"
                       style={{ transition: 'opacity 0.7s, backdrop-filter 0.7s', padding: '10px 12px 16px' }}
                     >
                       <div className="flex justify-start">
@@ -650,11 +687,11 @@ const Projects = () => {
                     </div>
 
                     <div
-                      className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100"
+                      className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-data-[bloomed=true]:opacity-100"
                       style={{ transition: 'opacity 0.7s' }}
                     />
                     <div
-                      className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0"
+                      className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 group-data-[bloomed=true]:translate-y-0"
                       style={{ transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)' }}
                     >
                       <h4 className="text-sm font-bold text-foreground mb-1">{project.title}</h4>

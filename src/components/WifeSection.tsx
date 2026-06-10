@@ -81,6 +81,29 @@ const WifeSection = () => {
   const crossfadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sectionElRef = useRef<HTMLElement | null>(null);
 
+  // Mobile "tap-to-bloom" for the main gallery photo: first tap blooms (zooms),
+  // second tap opens the lightbox.
+  const [isTouch, setIsTouch] = useState(false);
+  const [mainBloomed, setMainBloomed] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mq = window.matchMedia('(hover: none)');
+    const update = () => setIsTouch(mq.matches);
+    update();
+    mq.addEventListener?.('change', update);
+    return () => mq.removeEventListener?.('change', update);
+  }, []);
+  useEffect(() => {
+    if (!isTouch || !mainBloomed) return;
+    const close = (e: PointerEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t && t.closest('[data-wife-bloom="true"]')) return;
+      setMainBloomed(false);
+    };
+    document.addEventListener('pointerdown', close, { passive: true });
+    return () => document.removeEventListener('pointerdown', close);
+  }, [isTouch, mainBloomed]);
+
   useEffect(() => {
     if (codeOpen && codeVisible && codeVisibleLines === 0) {
       let current = 0;
@@ -246,11 +269,25 @@ const WifeSection = () => {
               </div>
             </div>
 
-            <div ref={galleryRef} className="relative rounded-2xl overflow-hidden border border-border/50 shadow-card mb-3 aspect-[4/5] max-h-[540px] mx-auto">
+            <div
+              ref={galleryRef}
+              data-wife-bloom="true"
+              data-bloomed={mainBloomed ? 'true' : 'false'}
+              onClick={() => {
+                if (isTouch) {
+                  if (mainBloomed) openLightbox();
+                  else setMainBloomed(true);
+                }
+              }}
+              className="group relative rounded-2xl overflow-hidden border border-border/50 shadow-card mb-3 aspect-[4/5] max-h-[540px] mx-auto cursor-pointer hover:border-primary/40 data-[bloomed=true]:border-primary/60 data-[bloomed=true]:shadow-glow"
+              style={{ transition: 'border-color 0.5s ease, box-shadow 0.6s ease' }}
+            >
               {prevPhoto !== null && (
                 <img
                   src={photos[prevPhoto]}
                   alt=""
+                  loading="lazy"
+                  decoding="async"
                   className="absolute inset-0 w-full h-full object-cover"
                   style={{ animation: 'galleryFadeOut 0.6s ease-in-out forwards' }}
                 />
@@ -259,18 +296,29 @@ const WifeSection = () => {
                 key={activePhoto}
                 src={photos[activePhoto]}
                 alt={`Kimmy photo ${activePhoto + 1}`}
-                className="absolute inset-0 w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04] group-data-[bloomed=true]:scale-[1.06]"
                 style={{ animation: prevPhoto !== null ? 'galleryFadeIn 0.6s ease-in-out' : 'none' }}
               />
               <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-background/60 to-transparent" />
-              <button onClick={openLightbox} className="absolute bottom-3 left-3 z-10 w-8 h-8 rounded-lg bg-card/80 backdrop-blur-sm border border-border/50 flex items-center justify-center hover:bg-card hover:scale-110 transition-all duration-300" aria-label="View full size">
+              {isTouch && mainBloomed && (
+                <div className="absolute top-3 right-3 z-10 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-primary/90 text-primary-foreground backdrop-blur-sm animate-fade-in pointer-events-none">
+                  Tap again to expand
+                </div>
+              )}
+              <button
+                onClick={(e) => { e.stopPropagation(); openLightbox(); }}
+                className="absolute bottom-3 left-3 z-10 w-8 h-8 rounded-lg bg-card/80 backdrop-blur-sm border border-border/50 flex items-center justify-center hover:bg-card hover:scale-110 transition-all duration-300"
+                aria-label="View full size"
+              >
                 <Maximize2 className="w-3.5 h-3.5 text-foreground" />
               </button>
             </div>
             <div className="grid grid-cols-6 gap-1.5 max-w-md mx-auto">
               {photos.map((photo, index) => (
                 <button key={index} onClick={() => handleThumbnailClick(index)} className={`relative rounded-lg overflow-hidden aspect-square border-2 transition-all duration-300 ${activePhoto === index ? 'border-primary shadow-glow scale-105' : 'border-border/30 opacity-60 hover:opacity-100 hover:border-border'}`}>
-                  <img src={photo} alt={`Kimmy thumbnail ${index + 1}`} className="w-full h-full object-cover" />
+                  <img src={photo} alt={`Kimmy thumbnail ${index + 1}`} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>

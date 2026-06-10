@@ -4,16 +4,28 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AnimatePresence, motion } from "framer-motion";
-import Index from "./pages/Index.tsx";
-import AboutPage from "./pages/AboutPage.tsx";
-import SkillsPage from "./pages/SkillsPage.tsx";
-import ProjectsPage from "./pages/ProjectsPage.tsx";
-import EquipmentPage from "./pages/EquipmentPage.tsx";
-import WifePage from "./pages/WifePage.tsx";
-import ContactPage from "./pages/ContactPage.tsx";
-import NotFound from "./pages/NotFound.tsx";
+import { lazy, Suspense } from "react";
 
-const queryClient = new QueryClient();
+// Lazy-load route pages so the initial bundle stays small. Each page is
+// fetched on demand, which significantly speeds up first load.
+const Index = lazy(() => import("./pages/Index.tsx"));
+const AboutPage = lazy(() => import("./pages/AboutPage.tsx"));
+const SkillsPage = lazy(() => import("./pages/SkillsPage.tsx"));
+const ProjectsPage = lazy(() => import("./pages/ProjectsPage.tsx"));
+const EquipmentPage = lazy(() => import("./pages/EquipmentPage.tsx"));
+const WifePage = lazy(() => import("./pages/WifePage.tsx"));
+const ContactPage = lazy(() => import("./pages/ContactPage.tsx"));
+const NotFound = lazy(() => import("./pages/NotFound.tsx"));
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const pageVariants = {
   initial: {
@@ -44,6 +56,12 @@ const pageVariants = {
   },
 };
 
+const RouteFallback = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="w-10 h-10 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+  </div>
+);
+
 const AnimatedRoutes = () => {
   const location = useLocation();
   return (
@@ -56,16 +74,18 @@ const AnimatedRoutes = () => {
         exit="exit"
         className="min-h-screen"
       >
-        <Routes location={location}>
-          <Route path="/" element={<Index />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/skills" element={<SkillsPage />} />
-          <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/equipment" element={<EquipmentPage />} />
-          <Route path="/wife" element={<WifePage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<RouteFallback />}>
+          <Routes location={location}>
+            <Route path="/" element={<Index />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/skills" element={<SkillsPage />} />
+            <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/equipment" element={<EquipmentPage />} />
+            <Route path="/wife" element={<WifePage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </motion.div>
     </AnimatePresence>
   );
@@ -81,6 +101,6 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);  
+);
 
 export default App;

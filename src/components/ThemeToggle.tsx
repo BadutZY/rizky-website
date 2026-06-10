@@ -7,15 +7,13 @@ const ThemeToggle = ({ visible = true }: { visible?: boolean }) => {
   const { isDark, toggleTheme } = useTheme();
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleToggle = useCallback(() => {
-    const root = document.documentElement;
-    root.style.setProperty('--theme-transition', '1');
-    root.classList.add('theme-transitioning');
-    toggleTheme();
-    setTimeout(() => {
-      root.classList.remove('theme-transitioning');
-      root.style.removeProperty('--theme-transition');
-    }, 800);
+  const handleToggle = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const origin = {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+    };
+    toggleTheme(origin);
   }, [toggleTheme]);
 
   return (

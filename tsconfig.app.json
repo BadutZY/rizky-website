@@ -31,5 +31,8 @@
   },
   "include": [
     "src"
-, "supabase"  ]
+  ],
+  "exclude": [
+    "supabase/functions"
+  ]
 }
