@@ -14,7 +14,7 @@ const PREVIEW_SITES = [
     description: 'Watch JKT48 videos',
     url:         'https://jkt48-stream.vercel.app',
     color:       '#eb1a1a',
-    badge:       'Website · Game',
+    badge:       'React · TypeScript · Supabase',
   },
 
   {
@@ -23,16 +23,16 @@ const PREVIEW_SITES = [
     description: 'Personal portfolio website',
     url:         'https://badutzy.vercel.app/',
     color:       '#d8700e',
-    badge:       'React · TypeScript · Vite',
+    badge:       'React · TypeScript · Supabase',
   },
 
   {
     id:          3,
     title:       'Box Siege Website',
     description: 'Game website',
-    url:         'https://box-siege.vercel.app/',
+    url:         'https://boxsiege.vercel.app/',
     color:       '#0871c7',
-    badge:       'React · Tailwind · Supabase',
+    badge:       'React · Tailwind · TypeScript',
   },
 ] as const;
 

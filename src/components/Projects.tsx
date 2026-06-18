@@ -82,7 +82,7 @@ const CONTRIBUTION_GAME_PROJECTS: GameProject[] = [
     developerTeam: {
       name: 'Equinox Interactive',
       logo: equinoxLogo,
-      website: 'https://equinox-website-seven.vercel.app/',
+      website: 'https://equinoxinteractive.vercel.app/',
       members: [
         {
           avatar: badutZy,
@@ -118,7 +118,7 @@ const CONTRIBUTION_GAME_PROJECTS: GameProject[] = [
     lang: 'C# / Unity',
     image: boxImg,
     video: boxSiegeVideo,
-    link: 'https://box-siege.vercel.app/',
+    link: 'https://boxsiege.vercel.app/',
     //downloadFile: ,
     description: 'PvP Co-op game',
     fullDescription:
@@ -178,8 +178,8 @@ const STATIC_MOD_PROJECTS: ModProject[] = [
 
 // Contribution Website projects
 const CONTRIBUTION_PROJECTS: ContributionProject[] = [
-  { id: 100, title: 'Equinox Interactive', category: 'Website', isContribution: true, lang: 'TypeScript / React / Tailwind', image: eqnoxImg, link: 'https://equinox-website-seven.vercel.app/', fullDescription: 'Website from the team that I created with my friend to make games.', description: 'Company Website', role: 'Game & Web Developer' },
-  { id: 101, title: 'Box Siege', category: 'Website', isContribution: true, lang: 'HTML / CSS / JS', image: boxImg, link: 'https://box-siege.vercel.app/', fullDescription: 'website to introduce games.', description: 'Game Website', role: 'Game & Web Developer' },
+  { id: 100, title: 'Equinox Interactive', category: 'Website', isContribution: true, lang: 'TypeScript / React / Tailwind', image: eqnoxImg, link: 'https://equinoxinteractive.vercel.app/', fullDescription: 'Website from the team that I created with my friend to make games.', description: 'Company Website', role: 'Game & Web Developer' },
+  { id: 101, title: 'Box Siege', category: 'Website', isContribution: true, lang: 'HTML / CSS / JS', image: boxImg, link: 'https://boxsiege.vercel.app/', fullDescription: 'website to introduce games.', description: 'Game Website', role: 'Game & Web Developer' },
   { id: 102, title: 'Chained Together', category: 'Website', isContribution: true, lang: 'TypeScript / React / Tailwind', image: ChainedT, link: 'https://chained-together.vercel.app/', fullDescription: 'website for e-commerce.', description: 'E-Commerce website', role: 'Web Developer' },
 ];
 
